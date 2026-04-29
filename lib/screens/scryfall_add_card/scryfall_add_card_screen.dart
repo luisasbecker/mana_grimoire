@@ -1,0 +1,214 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../data/remote/scryfall/scryfall_cache_service.dart';
+import '../../data/remote/scryfall/scryfall_client.dart';
+import '../../widgets/cached_card_thumbnail.dart';
+import '../../widgets/mana_internal_app_bar.dart';
+import '../../widgets/mana_empty_state.dart';
+import '../../widgets/mana_surface_card.dart';
+import 'widgets/add_to_collection_sheet.dart';
+
+class ScryfallAddCardScreen extends StatefulWidget {
+  const ScryfallAddCardScreen({
+    super.key,
+    required this.defaultCollectionId,
+  });
+
+  final String defaultCollectionId;
+
+  @override
+  State<ScryfallAddCardScreen> createState() => _ScryfallAddCardScreenState();
+}
+
+class _ScryfallAddCardScreenState extends State<ScryfallAddCardScreen> {
+  final _client = ScryfallClient();
+  final _cacheService = ScryfallCacheService();
+
+  Timer? _debounce;
+  bool _loading = false;
+  String? _error;
+  String _query = '';
+  List<Map<String, dynamic>> _results = [];
+
+  void _onQueryChanged(String v) {
+    setState(() => _query = v);
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 350), () {
+      _search();
+    });
+  }
+
+  Future<void> _search() async {
+    final q = _query.trim();
+    if (q.isEmpty) {
+      setState(() {
+        _results = [];
+        _error = null;
+      });
+      return;
+    }
+
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    try {
+      final res = await _client.searchCards(q);
+
+      final first = res.take(30).toList();
+      setState(() {
+        _results = first;
+      });
+
+      await _cacheService.cacheScryfallCards(first);
+    } catch (e) {
+      if (mounted) setState(() => _error = e.toString());
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final t = AppLocalizations.of(context)!;
+
+    return Scaffold(
+      appBar: ManaInternalAppBar(title: t.addCardToDeckTitle),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        child: Column(
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                hintText: t.addCardToDeckSearchHint,
+                prefixIcon: const Icon(Icons.search_rounded),
+              ),
+              onChanged: _onQueryChanged,
+            ),
+            const SizedBox(height: 12),
+            if (_loading) const LinearProgressIndicator(minHeight: 3),
+            const SizedBox(height: 8),
+            Expanded(
+              child: _results.isEmpty
+                  ? (_error != null
+                      ? ManaEmptyState(
+                          icon: Icons.cloud_off_rounded,
+                          title: t.error,
+                          subtitle: _error!,
+                        )
+                      : ManaEmptyState(
+                          icon: Icons.travel_explore_rounded,
+                          title: _query.trim().isEmpty
+                              ? t.addCardToDeckEmptyTitle
+                              : t.addCardToDeckNoResultsTitle,
+                          subtitle: _query.trim().isEmpty
+                              ? t.addCardToDeckEmptySubtitle
+                              : t.addCardToDeckNoResultsSubtitle,
+                        ))
+                  : ListView.separated(
+                      itemCount: _results.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 10),
+                      itemBuilder: (context, index) {
+                        final card = _results[index];
+                        final name = (card['name'] as String?) ?? 'Unknown';
+                        final typeLine = (card['type_line'] as String?) ?? '';
+                        final setCode = (card['set'] as String?) ?? '';
+                        final collector =
+                            (card['collector_number'] as String?) ?? '';
+                        final img = ScryfallClient.extractImageSmall(card);
+
+                        return ManaSurfaceCard(
+                          onTap: () async {
+                            final printingId = card['id'] as String?;
+                            final oracleId = card['oracle_id'] as String?;
+                            if (printingId == null || oracleId == null) return;
+
+                            await showModalBottomSheet<void>(
+                              context: context,
+                              isScrollControlled: true,
+                              showDragHandle: true,
+                              backgroundColor: scheme.surfaceContainerHigh,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20),
+                                ),
+                              ),
+                              builder: (_) => AddToCollectionSheet(
+                                defaultCollectionId: widget.defaultCollectionId,
+                                initialPrintingId: printingId,
+                                oracleId: oracleId,
+                              ),
+                            );
+                          },
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CachedCardThumbnail(
+                                imageUrl: img,
+                                width: 56,
+                                height: 78,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.w700),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      typeLine,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: scheme.onSurfaceVariant,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      '${setCode.toUpperCase()} · #$collector',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium
+                                          ?.copyWith(
+                                            color: scheme.primary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(Icons.add_circle_outline_rounded,
+                                  color: scheme.onSurfaceVariant),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
