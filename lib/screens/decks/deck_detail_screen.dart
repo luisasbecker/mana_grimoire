@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mana_grimoire/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/router.dart';
@@ -199,7 +199,10 @@ class DeckDetailScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 6),
                             child: Text(
                               t.deckCardsCount(totalCards),
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurfaceVariant,
@@ -309,8 +312,7 @@ class _DeckEntriesList extends StatelessWidget {
                 Text(
                   '($count)',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color:
-                            Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -368,10 +370,11 @@ class _DeckEntriesList extends StatelessWidget {
                       const SizedBox(height: 6),
                       Text(
                         setLine,
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
                       ),
                     ],
                   ],

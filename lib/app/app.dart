@@ -4,7 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../l10n/l10n.dart';
 import '../theme/mana_theme.dart';
 import 'router.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mana_grimoire/l10n/app_localizations.dart';
 
 class ManaGrimoireApp extends StatelessWidget {
   const ManaGrimoireApp({super.key});

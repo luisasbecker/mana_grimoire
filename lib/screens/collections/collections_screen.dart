@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mana_grimoire/l10n/app_localizations.dart';
 
 import '../../app/router.dart';
 import '../../data/local/db/db_instance.dart';

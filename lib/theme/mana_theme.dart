@@ -84,13 +84,13 @@ abstract final class ManaTheme {
           );
         }),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         color: _selection,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         clipBehavior: Clip.antiAlias,
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: _selection,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
@@ -109,7 +109,8 @@ abstract final class ManaTheme {
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: _purple, width: 1.5),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       chipTheme: ChipThemeData(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),

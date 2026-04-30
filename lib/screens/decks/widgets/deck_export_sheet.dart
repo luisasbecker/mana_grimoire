@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mana_grimoire/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 
 import '../../../data/local/db/daos/deck_entries_dao.dart';
@@ -100,7 +100,8 @@ class DeckExportSheet extends StatelessWidget {
                                     );
                                     if (!context.mounted) return;
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(t.deckExportCopied)),
+                                      SnackBar(
+                                          content: Text(t.deckExportCopied)),
                                     );
                                   },
                             icon: const Icon(Icons.copy_rounded),
@@ -119,4 +120,3 @@ class DeckExportSheet extends StatelessWidget {
     );
   }
 }
-

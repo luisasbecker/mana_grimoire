@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mana_grimoire/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
-import '../../../data/local/db/app_database.dart';
 import '../../../data/local/db/daos/deck_entries_dao.dart';
 import '../../../data/local/db/db_instance.dart';
 import '../../../data/remote/scryfall/scryfall_cache_service.dart';

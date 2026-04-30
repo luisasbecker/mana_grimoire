@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mana_grimoire/l10n/app_localizations.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../data/local/db/app_database.dart';
@@ -45,7 +45,8 @@ class _DeckToCollectionSheetState extends State<DeckToCollectionSheet> {
             child: Text(t.cancel),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.of(dialogContext).pop(controller.text.trim()),
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(controller.text.trim()),
             child: Text(t.create),
           ),
         ],
@@ -204,7 +205,8 @@ class _DeckToCollectionSheetState extends State<DeckToCollectionSheet> {
                           return ListTile(
                             title: Text(c.name),
                             trailing: const Icon(Icons.chevron_right_rounded),
-                            onTap: _adding ? null : () => _addDeckToCollection(c),
+                            onTap:
+                                _adding ? null : () => _addDeckToCollection(c),
                           );
                         },
                       );
@@ -219,4 +221,3 @@ class _DeckToCollectionSheetState extends State<DeckToCollectionSheet> {
     );
   }
 }
-

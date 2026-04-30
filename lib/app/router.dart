@@ -14,6 +14,7 @@ import '../screens/decks/add_card_to_deck_screen.dart';
 import '../screens/decks/decks_screen.dart';
 import '../screens/home/home_hub_screen.dart';
 import '../screens/placeholder/placeholder_tab_screen.dart';
+import '../screens/scan/scan_screen.dart';
 import '../screens/tabs/play_session_screen.dart';
 import '../screens/tabs/play_tab_screen.dart';
 import '../screens/scryfall_add_card/scryfall_add_card_screen.dart';
@@ -102,7 +103,8 @@ final GoRouter appRouter = GoRouter(
                           name: AppRoutes.addCard,
                           builder: (context, state) {
                             final id = state.pathParameters['collectionId']!;
-                            return ScryfallAddCardScreen(defaultCollectionId: id);
+                            return ScryfallAddCardScreen(
+                                defaultCollectionId: id);
                           },
                         ),
                       ],
@@ -157,10 +159,7 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/scan',
               name: AppRoutes.scan,
-              builder: (_, __) => const PlaceholderTabScreen(
-                title: 'Scan',
-                subtitle: 'Digitaliza cartas — em breve.',
-              ),
+              builder: (_, __) => const ScanScreen(),
             ),
           ],
         ),
