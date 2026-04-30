@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mana_grimoire/l10n/app_localizations.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../data/local/db/db_instance.dart';
@@ -30,7 +30,9 @@ class _CreateDeckScreenState extends State<CreateDeckScreen> {
     final name = _name.text.trim();
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.createDeckNameRequired)),
+        SnackBar(
+            content:
+                Text(AppLocalizations.of(context)!.createDeckNameRequired)),
       );
       return;
     }
@@ -85,7 +87,9 @@ class _CreateDeckScreenState extends State<CreateDeckScreen> {
                 DropdownMenuItem(value: 'Modern', child: Text('Modern')),
                 DropdownMenuItem(value: 'Other', child: Text('Other')),
               ],
-              onChanged: _saving ? null : (v) => setState(() => _format = v ?? 'Commander'),
+              onChanged: _saving
+                  ? null
+                  : (v) => setState(() => _format = v ?? 'Commander'),
             ),
             const Spacer(),
             FilledButton(
@@ -104,4 +108,3 @@ class _CreateDeckScreenState extends State<CreateDeckScreen> {
     );
   }
 }
-

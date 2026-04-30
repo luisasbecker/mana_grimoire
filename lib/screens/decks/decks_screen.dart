@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mana_grimoire/l10n/app_localizations.dart';
 
 import '../../app/router.dart';
 import '../../data/local/db/db_instance.dart';
@@ -205,8 +205,7 @@ class _DecksScreenState extends State<DecksScreen> {
               return StreamBuilder<Map<String, bool>>(
                 stream: appDb.decksDao.watchDeckCompleteness(),
                 builder: (context, cSnap) {
-                  final completeByDeckId =
-                      cSnap.data ?? const <String, bool>{};
+                  final completeByDeckId = cSnap.data ?? const <String, bool>{};
                   return IconButton(
                     tooltip: t.activeDeckPickerTitle,
                     icon: const Icon(Icons.more_vert_rounded),
@@ -302,7 +301,8 @@ class _DecksScreenState extends State<DecksScreen> {
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium
-                                          ?.copyWith(fontWeight: FontWeight.w900),
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.w900),
                                     ),
                                   ),
                                 ],
@@ -353,7 +353,8 @@ class _DecksScreenState extends State<DecksScreen> {
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: scheme.primary.withOpacity(0.55)),
+                      border:
+                          Border.all(color: scheme.primary.withOpacity(0.55)),
                       boxShadow: [
                         BoxShadow(
                           color: scheme.primary.withOpacity(0.18),
@@ -373,4 +374,3 @@ class _DecksScreenState extends State<DecksScreen> {
     );
   }
 }
-

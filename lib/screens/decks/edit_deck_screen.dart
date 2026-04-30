@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mana_grimoire/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
@@ -232,7 +232,9 @@ class _EditDeckScreenState extends State<EditDeckScreen> {
                 DropdownMenuItem(value: 'Modern', child: Text('Modern')),
                 DropdownMenuItem(value: 'Other', child: Text('Other')),
               ],
-              onChanged: _saving ? null : (v) => setState(() => _format = v ?? 'Commander'),
+              onChanged: _saving
+                  ? null
+                  : (v) => setState(() => _format = v ?? 'Commander'),
             ),
             if (_format == 'Commander') ...[
               const SizedBox(height: 12),
@@ -285,16 +287,16 @@ class _EditDeckScreenState extends State<EditDeckScreen> {
                         if (commanders.isEmpty)
                           Text(
                             t.noCommanderSelected,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                                ),
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    ),
                           )
                         else
                           ...commanders.map((c) {
-                            final name =
-                                c.printing?.name ?? c.entry.oracleId;
+                            final name = c.printing?.name ?? c.entry.oracleId;
                             return ListTile(
                               dense: true,
                               contentPadding: EdgeInsets.zero,
@@ -350,4 +352,3 @@ class _EditDeckScreenState extends State<EditDeckScreen> {
     );
   }
 }
-

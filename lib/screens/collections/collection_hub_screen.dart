@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mana_grimoire/l10n/app_localizations.dart';
 
 import '../../app/router.dart';
 import '../../widgets/mana_tab_main_app_bar.dart';
@@ -52,7 +52,8 @@ class CollectionHubScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: scheme.onSurfaceVariant),
+                Icon(Icons.chevron_right_rounded,
+                    color: scheme.onSurfaceVariant),
               ],
             ),
           ),
@@ -88,7 +89,8 @@ class CollectionHubScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: scheme.onSurfaceVariant),
+                Icon(Icons.chevron_right_rounded,
+                    color: scheme.onSurfaceVariant),
               ],
             ),
           ),
@@ -125,4 +127,3 @@ class _HubIcon extends StatelessWidget {
     );
   }
 }
-

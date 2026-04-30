@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mana_grimoire/l10n/app_localizations.dart';
 
 import '../../../data/local/db/daos/deck_entries_dao.dart';
 import 'deck_card_detail_sheet.dart';
@@ -144,7 +144,6 @@ class _DeckCardPreviewViewerState extends State<DeckCardPreviewViewer> {
                   );
                 },
               ),
-
             Positioned(
               top: 10,
               right: 10,
@@ -153,7 +152,6 @@ class _DeckCardPreviewViewerState extends State<DeckCardPreviewViewer> {
                 icon: const Icon(Icons.close_rounded),
               ),
             ),
-
             Align(
               alignment: Alignment.bottomCenter,
               child: SafeArea(
@@ -259,4 +257,3 @@ class _CollapsedActionPanel extends StatelessWidget {
     );
   }
 }
-

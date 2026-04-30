@@ -5,7 +5,6 @@ import 'package:uuid/uuid.dart';
 import '../../../app/router.dart' show AppRoutes, rootNavigatorKey;
 import '../../../data/local/db/db_instance.dart';
 import '../../../data/remote/scryfall/scryfall_cache_service.dart';
-import '../../../data/remote/scryfall/scryfall_client.dart';
 
 class AddToCollectionSheet extends StatefulWidget {
   const AddToCollectionSheet({

@@ -51,6 +51,42 @@ class ScryfallClient {
     return list;
   }
 
+  /// Busca segura para fluxos heurísticos: Scryfall responde 404 quando não há
+  /// resultados; aqui isso vira lista vazia.
+  Future<List<Map<String, dynamic>>> searchCardsOrEmpty(
+    String query, {
+    String unique = 'cards',
+  }) async {
+    try {
+      return await searchCards(query, unique: unique);
+    } on DioException catch (error) {
+      final status = error.response?.statusCode;
+      if (status == 400 || status == 404) {
+        return const [];
+      }
+      rethrow;
+    }
+  }
+
+  /// Resolve uma carta pelo endpoint fuzzy `/cards/named`.
+  Future<Map<String, dynamic>?> getNamedCardFuzzy(String query) async {
+    try {
+      final res = await _dio.get(
+        '/cards/named',
+        queryParameters: {'fuzzy': query},
+      );
+      final data = res.data as Map<String, dynamic>;
+      if (data['object'] == 'error') return null;
+      return data;
+    } on DioException catch (error) {
+      final status = error.response?.statusCode;
+      if (status == 400 || status == 404) {
+        return null;
+      }
+      rethrow;
+    }
+  }
+
   /// Primeira página de `/cards/search` (útil para carregar aos poucos no cliente).
   Future<ScryfallCardSearchPage> searchCardsFirstPage(
     String query, {
@@ -69,7 +105,8 @@ class ScryfallClient {
   }
 
   /// Página seguinte usando a URL absoluta devolvida por `next_page`.
-  Future<ScryfallCardSearchPage> fetchSearchNextPage(String nextPageAbsoluteUrl) async {
+  Future<ScryfallCardSearchPage> fetchSearchNextPage(
+      String nextPageAbsoluteUrl) async {
     final res = await _dio.getUri(Uri.parse(nextPageAbsoluteUrl));
     return _parseSearchPage(res);
   }
