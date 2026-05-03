@@ -245,6 +245,9 @@ class ManaScanRecognitionService {
       id: json['id']?.toString() ?? '',
       oracleId: json['oracle_id']?.toString() ?? '',
       name: json['name']?.toString() ?? primaryFace?['name']?.toString() ?? '',
+      printedName: json['printed_name']?.toString() ??
+          primaryFace?['printed_name']?.toString(),
+      printedLanguage: json['lang']?.toString(),
       setCode: json['set']?.toString() ?? '',
       setName: json['set_name']?.toString() ?? '',
       collectorNumber: json['collector_number']?.toString() ?? '',
@@ -305,7 +308,7 @@ class ManaScanRecognitionService {
     required String? setCode,
   }) {
     final normalizedQuery = _normalize(query);
-    final aliases = _aliasesForName(card.name);
+    final aliases = _aliasesForCard(card);
     var score = 0.0;
 
     for (final alias in aliases) {
@@ -339,14 +342,18 @@ class ManaScanRecognitionService {
     return score.clamp(0, 1).toDouble();
   }
 
-  Set<String> _aliasesForName(String name) {
-    final aliases = <String>{
-      _normalize(name),
-      _ocrFriendlyNormalize(name),
-    };
-    for (final separator in const ['//', '/', '(']) {
-      if (name.contains(separator)) {
-        aliases.add(_normalize(name.split(separator).first));
+  Set<String> _aliasesForCard(ScanCatalogCard card) {
+    final aliases = <String>{};
+    for (final name in [card.name, card.printedName]) {
+      if (name == null || name.trim().isEmpty) continue;
+      aliases.add(_normalize(name));
+      aliases.add(_ocrFriendlyNormalize(name));
+      for (final separator in const ['//', '/', '(']) {
+        if (name.contains(separator)) {
+          final firstPart = name.split(separator).first;
+          aliases.add(_normalize(firstPart));
+          aliases.add(_ocrFriendlyNormalize(firstPart));
+        }
       }
     }
     return aliases.where((alias) => alias.length >= 2).toSet();
@@ -368,7 +375,27 @@ class ManaScanRecognitionService {
   }
 
   String _normalize(String value) {
-    return value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+    return _foldDiacritics(value.toLowerCase())
+        .replaceAll(RegExp(r'[^a-z0-9]'), '');
+  }
+
+  String _foldDiacritics(String value) {
+    return value
+        .replaceAll(RegExp('[áàâãäåāăą]'), 'a')
+        .replaceAll(RegExp('[çćč]'), 'c')
+        .replaceAll(RegExp('[ďđ]'), 'd')
+        .replaceAll(RegExp('[éèêëēėęě]'), 'e')
+        .replaceAll(RegExp('[íìîïīįı]'), 'i')
+        .replaceAll(RegExp('[ñń]'), 'n')
+        .replaceAll(RegExp('[óòôõöøōő]'), 'o')
+        .replaceAll(RegExp('[ŕř]'), 'r')
+        .replaceAll(RegExp('[śš]'), 's')
+        .replaceAll(RegExp('[ť]'), 't')
+        .replaceAll(RegExp('[úùûüūůűų]'), 'u')
+        .replaceAll(RegExp('[ýÿ]'), 'y')
+        .replaceAll(RegExp('[žźż]'), 'z')
+        .replaceAll('æ', 'ae')
+        .replaceAll('œ', 'oe');
   }
 
   String _ocrFriendlyNormalize(String value) {

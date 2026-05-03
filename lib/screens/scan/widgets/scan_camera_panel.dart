@@ -1,5 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+
+import '../../../data/scan/live_scan_frame_cropper.dart';
+import '../../../data/scan/scan_models.dart';
 
 class ScanCameraPanel extends StatelessWidget {
   const ScanCameraPanel({
@@ -10,6 +15,11 @@ class ScanCameraPanel extends StatelessWidget {
     required this.showSuccessFrame,
     required this.status,
     this.error,
+    this.liveCandidate,
+    this.bufferCount = 0,
+    this.catalogReady = false,
+    this.confirmationsSeen = 0,
+    this.confirmationsRequired = 0,
   });
 
   final CameraController? controller;
@@ -18,6 +28,11 @@ class ScanCameraPanel extends StatelessWidget {
   final bool showSuccessFrame;
   final String status;
   final String? error;
+  final ScanRecognitionCandidate? liveCandidate;
+  final int bufferCount;
+  final bool catalogReady;
+  final int confirmationsSeen;
+  final int confirmationsRequired;
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +68,48 @@ class ScanCameraPanel extends StatelessWidget {
               ),
             if (initialized)
               _ScanFrameOverlay(
+                controller: controller!,
                 isScanning: scanLoopActive,
                 isMatched: showSuccessFrame,
+              ),
+            Positioned(
+              left: 12,
+              right: 12,
+              top: 12,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _HudPill(
+                      icon: catalogReady
+                          ? Icons.offline_pin_outlined
+                          : Icons.cloud_off_outlined,
+                      label: catalogReady ? 'offline ok' : 'catálogo pendente',
+                      color: catalogReady
+                          ? const Color(0xFF50FA7B)
+                          : scheme.secondary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _HudPill(
+                      icon: Icons.style_outlined,
+                      label: '$bufferCount no buffer',
+                      color: scheme.tertiary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (liveCandidate != null)
+              Positioned(
+                left: 14,
+                right: 14,
+                bottom: 70,
+                child: _CandidateBadge(
+                  candidate: liveCandidate!,
+                  confirmationsSeen: confirmationsSeen,
+                  confirmationsRequired: confirmationsRequired,
+                ),
               ),
             Positioned(
               left: 12,
@@ -105,6 +160,140 @@ class ScanCameraPanel extends StatelessWidget {
   }
 }
 
+class _HudPill extends StatelessWidget {
+  const _HudPill({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.58),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: 0.42)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: color),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                    ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CandidateBadge extends StatelessWidget {
+  const _CandidateBadge({
+    required this.candidate,
+    required this.confirmationsSeen,
+    required this.confirmationsRequired,
+  });
+
+  final ScanRecognitionCandidate candidate;
+  final int confirmationsSeen;
+  final int confirmationsRequired;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final score = candidate.score.clamp(0, 1).toDouble();
+    final accent = score >= 0.82 ? const Color(0xFF50FA7B) : scheme.secondary;
+    final seen = confirmationsSeen.clamp(0, confirmationsRequired);
+    final confirmationLabel = confirmationsRequired <= 0
+        ? 'analisando'
+        : '$seen/$confirmationsRequired frames';
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.76),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: accent.withValues(alpha: 0.46)),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: 0.16),
+            blurRadius: 22,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 10, 10, 10),
+        child: Row(
+          children: [
+            Icon(Icons.center_focus_strong_rounded, color: accent, size: 24),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    candidate.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                        ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${candidate.editionLabel} · $confirmationLabel',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.72),
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.16),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+                child: Text(
+                  '${(score * 100).round()}%',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: accent,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _LiveCameraPreview extends StatelessWidget {
   const _LiveCameraPreview({required this.controller});
 
@@ -137,10 +326,12 @@ class _LiveCameraPreview extends StatelessWidget {
 
 class _ScanFrameOverlay extends StatelessWidget {
   const _ScanFrameOverlay({
+    required this.controller,
     required this.isScanning,
     required this.isMatched,
   });
 
+  final CameraController controller;
   final bool isScanning;
   final bool isMatched;
 
@@ -150,28 +341,80 @@ class _ScanFrameOverlay extends StatelessWidget {
         ? const Color(0xFF31E981)
         : Colors.white.withValues(alpha: isScanning ? 0.92 : 0.72);
     return IgnorePointer(
-      child: Center(
-        child: FractionallySizedBox(
-          widthFactor: 0.72,
-          heightFactor: 0.78,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.03),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: color, width: isMatched ? 3 : 2),
-              boxShadow: [
-                if (isMatched)
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.45),
-                    blurRadius: 26,
-                    spreadRadius: 2,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final rect = _mappedGuideRect(context, constraints.biggest);
+          return Stack(
+            fit: StackFit.expand,
+            clipBehavior: Clip.hardEdge,
+            children: [
+              Positioned(
+                left: rect.left,
+                top: rect.top,
+                width: rect.width,
+                height: rect.height,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.03),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: color,
+                      width: isMatched ? 3 : 2,
+                    ),
+                    boxShadow: [
+                      if (isMatched)
+                        BoxShadow(
+                          color: color.withValues(alpha: 0.45),
+                          blurRadius: 26,
+                          spreadRadius: 2,
+                        ),
+                    ],
                   ),
-              ],
-            ),
-            child: CustomPaint(painter: _CornerGuidePainter(color: color)),
-          ),
-        ),
+                  child: CustomPaint(
+                    painter: _CornerGuidePainter(color: color),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
+    );
+  }
+
+  Rect _mappedGuideRect(BuildContext context, Size panelSize) {
+    final previewSize = controller.value.previewSize;
+    if (previewSize == null || panelSize.isEmpty) {
+      final guide = LiveScanFrameCropper.cardGuideForUprightFrame(
+        width: panelSize.width,
+        height: panelSize.height,
+      );
+      return Rect.fromLTWH(guide.left, guide.top, guide.width, guide.height);
+    }
+
+    final isPortrait =
+        MediaQuery.orientationOf(context) == Orientation.portrait;
+    final uprightWidth = isPortrait ? previewSize.height : previewSize.width;
+    final uprightHeight = isPortrait ? previewSize.width : previewSize.height;
+    final guide = LiveScanFrameCropper.cardGuideForUprightFrame(
+      width: uprightWidth,
+      height: uprightHeight,
+    );
+
+    final scale = math.max(
+      panelSize.width / uprightWidth,
+      panelSize.height / uprightHeight,
+    );
+    final renderedWidth = uprightWidth * scale;
+    final renderedHeight = uprightHeight * scale;
+    final dx = (panelSize.width - renderedWidth) / 2;
+    final dy = (panelSize.height - renderedHeight) / 2;
+
+    return Rect.fromLTWH(
+      dx + (guide.left * scale),
+      dy + (guide.top * scale),
+      guide.width * scale,
+      guide.height * scale,
     );
   }
 }

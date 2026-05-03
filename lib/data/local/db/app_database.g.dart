@@ -26,6 +26,18 @@ class $ScryfallPrintingsTable extends ScryfallPrintings
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _printedNameMeta =
+      const VerificationMeta('printedName');
+  @override
+  late final GeneratedColumn<String> printedName = GeneratedColumn<String>(
+      'printed_name', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _languageMeta =
+      const VerificationMeta('language');
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+      'language', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _typeLineMeta =
       const VerificationMeta('typeLine');
   @override
@@ -108,6 +120,8 @@ class $ScryfallPrintingsTable extends ScryfallPrintings
         printingId,
         oracleId,
         name,
+        printedName,
+        language,
         typeLine,
         setCode,
         setName,
@@ -151,6 +165,16 @@ class $ScryfallPrintingsTable extends ScryfallPrintings
           _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
+    }
+    if (data.containsKey('printed_name')) {
+      context.handle(
+          _printedNameMeta,
+          printedName.isAcceptableOrUnknown(
+              data['printed_name']!, _printedNameMeta));
+    }
+    if (data.containsKey('language')) {
+      context.handle(_languageMeta,
+          language.isAcceptableOrUnknown(data['language']!, _languageMeta));
     }
     if (data.containsKey('type_line')) {
       context.handle(_typeLineMeta,
@@ -241,6 +265,10 @@ class $ScryfallPrintingsTable extends ScryfallPrintings
           .read(DriftSqlType.string, data['${effectivePrefix}oracle_id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      printedName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}printed_name']),
+      language: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}language']),
       typeLine: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}type_line'])!,
       setCode: attachedDatabase.typeMapping
@@ -281,6 +309,8 @@ class ScryfallPrinting extends DataClass
   final String printingId;
   final String oracleId;
   final String name;
+  final String? printedName;
+  final String? language;
   final String typeLine;
   final String setCode;
   final String setName;
@@ -300,6 +330,8 @@ class ScryfallPrinting extends DataClass
       {required this.printingId,
       required this.oracleId,
       required this.name,
+      this.printedName,
+      this.language,
       required this.typeLine,
       required this.setCode,
       required this.setName,
@@ -319,6 +351,12 @@ class ScryfallPrinting extends DataClass
     map['printing_id'] = Variable<String>(printingId);
     map['oracle_id'] = Variable<String>(oracleId);
     map['name'] = Variable<String>(name);
+    if (!nullToAbsent || printedName != null) {
+      map['printed_name'] = Variable<String>(printedName);
+    }
+    if (!nullToAbsent || language != null) {
+      map['language'] = Variable<String>(language);
+    }
     map['type_line'] = Variable<String>(typeLine);
     map['set_code'] = Variable<String>(setCode);
     map['set_name'] = Variable<String>(setName);
@@ -356,6 +394,12 @@ class ScryfallPrinting extends DataClass
       printingId: Value(printingId),
       oracleId: Value(oracleId),
       name: Value(name),
+      printedName: printedName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(printedName),
+      language: language == null && nullToAbsent
+          ? const Value.absent()
+          : Value(language),
       typeLine: Value(typeLine),
       setCode: Value(setCode),
       setName: Value(setName),
@@ -394,6 +438,8 @@ class ScryfallPrinting extends DataClass
       printingId: serializer.fromJson<String>(json['printingId']),
       oracleId: serializer.fromJson<String>(json['oracleId']),
       name: serializer.fromJson<String>(json['name']),
+      printedName: serializer.fromJson<String?>(json['printedName']),
+      language: serializer.fromJson<String?>(json['language']),
       typeLine: serializer.fromJson<String>(json['typeLine']),
       setCode: serializer.fromJson<String>(json['setCode']),
       setName: serializer.fromJson<String>(json['setName']),
@@ -416,6 +462,8 @@ class ScryfallPrinting extends DataClass
       'printingId': serializer.toJson<String>(printingId),
       'oracleId': serializer.toJson<String>(oracleId),
       'name': serializer.toJson<String>(name),
+      'printedName': serializer.toJson<String?>(printedName),
+      'language': serializer.toJson<String?>(language),
       'typeLine': serializer.toJson<String>(typeLine),
       'setCode': serializer.toJson<String>(setCode),
       'setName': serializer.toJson<String>(setName),
@@ -436,6 +484,8 @@ class ScryfallPrinting extends DataClass
           {String? printingId,
           String? oracleId,
           String? name,
+          Value<String?> printedName = const Value.absent(),
+          Value<String?> language = const Value.absent(),
           String? typeLine,
           String? setCode,
           String? setName,
@@ -453,6 +503,8 @@ class ScryfallPrinting extends DataClass
         printingId: printingId ?? this.printingId,
         oracleId: oracleId ?? this.oracleId,
         name: name ?? this.name,
+        printedName: printedName.present ? printedName.value : this.printedName,
+        language: language.present ? language.value : this.language,
         typeLine: typeLine ?? this.typeLine,
         setCode: setCode ?? this.setCode,
         setName: setName ?? this.setName,
@@ -474,6 +526,9 @@ class ScryfallPrinting extends DataClass
           data.printingId.present ? data.printingId.value : this.printingId,
       oracleId: data.oracleId.present ? data.oracleId.value : this.oracleId,
       name: data.name.present ? data.name.value : this.name,
+      printedName:
+          data.printedName.present ? data.printedName.value : this.printedName,
+      language: data.language.present ? data.language.value : this.language,
       typeLine: data.typeLine.present ? data.typeLine.value : this.typeLine,
       setCode: data.setCode.present ? data.setCode.value : this.setCode,
       setName: data.setName.present ? data.setName.value : this.setName,
@@ -505,6 +560,8 @@ class ScryfallPrinting extends DataClass
           ..write('printingId: $printingId, ')
           ..write('oracleId: $oracleId, ')
           ..write('name: $name, ')
+          ..write('printedName: $printedName, ')
+          ..write('language: $language, ')
           ..write('typeLine: $typeLine, ')
           ..write('setCode: $setCode, ')
           ..write('setName: $setName, ')
@@ -527,6 +584,8 @@ class ScryfallPrinting extends DataClass
       printingId,
       oracleId,
       name,
+      printedName,
+      language,
       typeLine,
       setCode,
       setName,
@@ -547,6 +606,8 @@ class ScryfallPrinting extends DataClass
           other.printingId == this.printingId &&
           other.oracleId == this.oracleId &&
           other.name == this.name &&
+          other.printedName == this.printedName &&
+          other.language == this.language &&
           other.typeLine == this.typeLine &&
           other.setCode == this.setCode &&
           other.setName == this.setName &&
@@ -566,6 +627,8 @@ class ScryfallPrintingsCompanion extends UpdateCompanion<ScryfallPrinting> {
   final Value<String> printingId;
   final Value<String> oracleId;
   final Value<String> name;
+  final Value<String?> printedName;
+  final Value<String?> language;
   final Value<String> typeLine;
   final Value<String> setCode;
   final Value<String> setName;
@@ -584,6 +647,8 @@ class ScryfallPrintingsCompanion extends UpdateCompanion<ScryfallPrinting> {
     this.printingId = const Value.absent(),
     this.oracleId = const Value.absent(),
     this.name = const Value.absent(),
+    this.printedName = const Value.absent(),
+    this.language = const Value.absent(),
     this.typeLine = const Value.absent(),
     this.setCode = const Value.absent(),
     this.setName = const Value.absent(),
@@ -603,6 +668,8 @@ class ScryfallPrintingsCompanion extends UpdateCompanion<ScryfallPrinting> {
     required String printingId,
     required String oracleId,
     required String name,
+    this.printedName = const Value.absent(),
+    this.language = const Value.absent(),
     required String typeLine,
     required String setCode,
     required String setName,
@@ -629,6 +696,8 @@ class ScryfallPrintingsCompanion extends UpdateCompanion<ScryfallPrinting> {
     Expression<String>? printingId,
     Expression<String>? oracleId,
     Expression<String>? name,
+    Expression<String>? printedName,
+    Expression<String>? language,
     Expression<String>? typeLine,
     Expression<String>? setCode,
     Expression<String>? setName,
@@ -648,6 +717,8 @@ class ScryfallPrintingsCompanion extends UpdateCompanion<ScryfallPrinting> {
       if (printingId != null) 'printing_id': printingId,
       if (oracleId != null) 'oracle_id': oracleId,
       if (name != null) 'name': name,
+      if (printedName != null) 'printed_name': printedName,
+      if (language != null) 'language': language,
       if (typeLine != null) 'type_line': typeLine,
       if (setCode != null) 'set_code': setCode,
       if (setName != null) 'set_name': setName,
@@ -669,6 +740,8 @@ class ScryfallPrintingsCompanion extends UpdateCompanion<ScryfallPrinting> {
       {Value<String>? printingId,
       Value<String>? oracleId,
       Value<String>? name,
+      Value<String?>? printedName,
+      Value<String?>? language,
       Value<String>? typeLine,
       Value<String>? setCode,
       Value<String>? setName,
@@ -687,6 +760,8 @@ class ScryfallPrintingsCompanion extends UpdateCompanion<ScryfallPrinting> {
       printingId: printingId ?? this.printingId,
       oracleId: oracleId ?? this.oracleId,
       name: name ?? this.name,
+      printedName: printedName ?? this.printedName,
+      language: language ?? this.language,
       typeLine: typeLine ?? this.typeLine,
       setCode: setCode ?? this.setCode,
       setName: setName ?? this.setName,
@@ -715,6 +790,12 @@ class ScryfallPrintingsCompanion extends UpdateCompanion<ScryfallPrinting> {
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (printedName.present) {
+      map['printed_name'] = Variable<String>(printedName.value);
+    }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
     }
     if (typeLine.present) {
       map['type_line'] = Variable<String>(typeLine.value);
@@ -767,6 +848,8 @@ class ScryfallPrintingsCompanion extends UpdateCompanion<ScryfallPrinting> {
           ..write('printingId: $printingId, ')
           ..write('oracleId: $oracleId, ')
           ..write('name: $name, ')
+          ..write('printedName: $printedName, ')
+          ..write('language: $language, ')
           ..write('typeLine: $typeLine, ')
           ..write('setCode: $setCode, ')
           ..write('setName: $setName, ')
@@ -2842,6 +2925,8 @@ typedef $$ScryfallPrintingsTableCreateCompanionBuilder
   required String printingId,
   required String oracleId,
   required String name,
+  Value<String?> printedName,
+  Value<String?> language,
   required String typeLine,
   required String setCode,
   required String setName,
@@ -2862,6 +2947,8 @@ typedef $$ScryfallPrintingsTableUpdateCompanionBuilder
   Value<String> printingId,
   Value<String> oracleId,
   Value<String> name,
+  Value<String?> printedName,
+  Value<String?> language,
   Value<String> typeLine,
   Value<String> setCode,
   Value<String> setName,
@@ -2895,6 +2982,12 @@ class $$ScryfallPrintingsTableFilterComposer
 
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get printedName => $composableBuilder(
+      column: $table.printedName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get language => $composableBuilder(
+      column: $table.language, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get typeLine => $composableBuilder(
       column: $table.typeLine, builder: (column) => ColumnFilters(column));
@@ -2957,6 +3050,12 @@ class $$ScryfallPrintingsTableOrderingComposer
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get printedName => $composableBuilder(
+      column: $table.printedName, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get language => $composableBuilder(
+      column: $table.language, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get typeLine => $composableBuilder(
       column: $table.typeLine, builder: (column) => ColumnOrderings(column));
 
@@ -3017,6 +3116,12 @@ class $$ScryfallPrintingsTableAnnotationComposer
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get printedName => $composableBuilder(
+      column: $table.printedName, builder: (column) => column);
+
+  GeneratedColumn<String> get language =>
+      $composableBuilder(column: $table.language, builder: (column) => column);
 
   GeneratedColumn<String> get typeLine =>
       $composableBuilder(column: $table.typeLine, builder: (column) => column);
@@ -3089,6 +3194,8 @@ class $$ScryfallPrintingsTableTableManager extends RootTableManager<
             Value<String> printingId = const Value.absent(),
             Value<String> oracleId = const Value.absent(),
             Value<String> name = const Value.absent(),
+            Value<String?> printedName = const Value.absent(),
+            Value<String?> language = const Value.absent(),
             Value<String> typeLine = const Value.absent(),
             Value<String> setCode = const Value.absent(),
             Value<String> setName = const Value.absent(),
@@ -3108,6 +3215,8 @@ class $$ScryfallPrintingsTableTableManager extends RootTableManager<
             printingId: printingId,
             oracleId: oracleId,
             name: name,
+            printedName: printedName,
+            language: language,
             typeLine: typeLine,
             setCode: setCode,
             setName: setName,
@@ -3127,6 +3236,8 @@ class $$ScryfallPrintingsTableTableManager extends RootTableManager<
             required String printingId,
             required String oracleId,
             required String name,
+            Value<String?> printedName = const Value.absent(),
+            Value<String?> language = const Value.absent(),
             required String typeLine,
             required String setCode,
             required String setName,
@@ -3146,6 +3257,8 @@ class $$ScryfallPrintingsTableTableManager extends RootTableManager<
             printingId: printingId,
             oracleId: oracleId,
             name: name,
+            printedName: printedName,
+            language: language,
             typeLine: typeLine,
             setCode: setCode,
             setName: setName,

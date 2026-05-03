@@ -12,6 +12,7 @@ import '../../data/local/db/app_database.dart' show Collection;
 import '../../data/local/db/db_instance.dart';
 import '../../data/scan/catalog_scan_index.dart';
 import '../../data/scan/catalog_sync_service.dart';
+import '../../data/scan/live_scan_acceptance.dart';
 import '../../data/scan/live_scan_frame_cropper.dart';
 import '../../data/scan/scan_buffer_store.dart';
 import '../../data/scan/scan_models.dart';
@@ -53,6 +54,7 @@ class _ScanScreenState extends State<ScanScreen> {
   final _uuid = const Uuid();
   final _bufferStore = ScanBufferStore();
   final _frameCropper = const LiveScanFrameCropper();
+  final _duplicateGate = LiveScanDuplicateGate();
   late final CatalogScanIndex _scanIndex;
   late final ScanCatalogSyncService _catalogSyncService;
   late final ManaScanRecognitionService _recognitionService;
@@ -71,13 +73,14 @@ class _ScanScreenState extends State<ScanScreen> {
   DateTime? _liveNameAnchorSeenAt;
   Timer? _successFrameTimer;
   String? _selectedCollectionId;
-  String? _lastBufferedVariantKey;
   String? _pendingLiveCandidateId;
   String? _liveNameText;
   String? _error;
   String _status = 'Prepare o catálogo local e inicie o scan contínuo.';
   ScanRecognitionCandidate? _liveNameAnchor;
+  ScanRecognitionCandidate? _livePreviewCandidate;
   int _pendingLiveCandidateSeenCount = 0;
+  int _pendingLiveCandidateConfirmationsRequired = 0;
   int _scanGeneration = 0;
   int _liveOcrCycle = 0;
   List<BufferedScanEntry> _buffer = const [];
@@ -126,7 +129,7 @@ class _ScanScreenState extends State<ScanScreen> {
     setState(() => _catalogStatus = status);
   }
 
-  Future<void> _runCatalogSync({bool force = true}) async {
+  Future<void> _runCatalogSync({bool force = false}) async {
     if (_syncingCatalog || _scanLoopActive) return;
     final startedAt = DateTime.now().toUtc();
     setState(() {
@@ -278,7 +281,11 @@ class _ScanScreenState extends State<ScanScreen> {
       _error = null;
     });
 
-    final hasLocalIndex = await _scanIndex.ensureLoaded();
+    final catalogStatus = await _catalogSyncService.currentStatus();
+    if (!mounted) return;
+    _catalogStatus = catalogStatus;
+    final hasViableCatalog = await _catalogSyncService.hasSyncedCatalog();
+    final hasLocalIndex = hasViableCatalog && await _scanIndex.ensureLoaded();
     if (!hasLocalIndex) {
       if (!mounted) return;
       setState(() {
@@ -308,8 +315,8 @@ class _ScanScreenState extends State<ScanScreen> {
     setState(() {
       _scanLoopActive = false;
       _status = 'Live scan pausado.';
-      _lastBufferedVariantKey = null;
     });
+    _duplicateGate.reset();
   }
 
   Future<void> _stopImageStream() async {
@@ -348,7 +355,7 @@ class _ScanScreenState extends State<ScanScreen> {
       if (primary == null || primary.score < _minimumConfidence) {
         setState(() {
           _status = 'Escaneando...';
-          _lastBufferedVariantKey = null;
+          _livePreviewCandidate = primary;
         });
         return;
       }
@@ -358,7 +365,7 @@ class _ScanScreenState extends State<ScanScreen> {
         _clearPendingLiveCandidate();
         setState(() {
           _status = acceptance.statusMessage;
-          _lastBufferedVariantKey = null;
+          _livePreviewCandidate = primary;
         });
         return;
       }
@@ -366,7 +373,7 @@ class _ScanScreenState extends State<ScanScreen> {
       if (!_isLiveCandidateStable(primary, acceptance.confirmationsRequired)) {
         setState(() {
           _status = 'Verificando ${primary.name} (${primary.editionLabel})...';
-          _lastBufferedVariantKey = null;
+          _livePreviewCandidate = primary;
         });
         return;
       }
@@ -451,11 +458,114 @@ class _ScanScreenState extends State<ScanScreen> {
       if (!_isActiveScanGeneration(generation)) return null;
       final visualPrimary = visualResult?.primary;
       if (visualPrimary != null && visualPrimary.score >= _minimumConfidence) {
+        if (mounted) {
+          setState(() => _livePreviewCandidate = visualPrimary);
+        }
         return visualResult;
       }
     }
 
     final roiKind = _nextOcrRoiKind(activeNameAnchor);
+    final ocrResult = await _recognizeOcrCrop(
+      crops: crops,
+      roiKind: roiKind,
+      rotation: rotation,
+      inputFormat: inputFormat,
+    );
+    if (!_isActiveScanGeneration(generation)) return null;
+
+    final text =
+        ocrResult == null ? '' : _prioritizedTextForRoi(ocrResult, roiKind);
+    ScanRecognitionResult? roiResult;
+
+    if (text.trim().isNotEmpty && roiKind == LiveScanRoiKind.nameBand) {
+      roiResult = await _recognizeLiveText(text).timeout(_recognitionTimeout);
+      if (!_isActiveScanGeneration(generation)) return null;
+      final primary = roiResult?.primary;
+      if (primary != null && primary.score >= _minimumNameAnchorConfidence) {
+        _updateLiveNameAnchor(primary, text);
+      }
+      if (roiResult != null) return roiResult;
+    } else if (text.trim().isNotEmpty) {
+      final nameAnchor = activeNameAnchor ?? _activeNameAnchor();
+      if (nameAnchor != null) {
+        final combinedText = [
+          _liveNameText ?? nameAnchor.name,
+          text,
+        ].where((value) => value.trim().isNotEmpty).join('\n');
+        roiResult =
+            await _recognizeLiveText(combinedText).timeout(_recognitionTimeout);
+        if (!_isActiveScanGeneration(generation)) return null;
+        roiResult =
+            _constrainToNameAnchor(result: roiResult, nameAnchor: nameAnchor);
+        if (roiResult != null) return roiResult;
+      }
+    }
+
+    if (!_shouldRunFullCardOcrFallback(roiKind: roiKind, roiText: text)) {
+      return null;
+    }
+
+    final nameAnchor = activeNameAnchor ?? _activeNameAnchor();
+    return _recognizeFullCardFallback(
+      crops: crops,
+      baseRotationDegrees: rotationDegrees,
+      inputFormat: inputFormat,
+      nameAnchor: nameAnchor,
+      generation: generation,
+    );
+  }
+
+  Future<ScanRecognitionResult?> _recognizeFullCardFallback({
+    required Map<LiveScanRoiKind, LiveScanCrop> crops,
+    required int baseRotationDegrees,
+    required InputImageFormat inputFormat,
+    required ScanRecognitionCandidate? nameAnchor,
+    required int generation,
+  }) async {
+    for (final offset in const [0, 90, 270, 180]) {
+      final rotation = InputImageRotationValue.fromRawValue(
+        (baseRotationDegrees + offset) % 360,
+      );
+      if (rotation == null) continue;
+      final fallbackOcr = await _recognizeOcrCrop(
+        crops: crops,
+        roiKind: LiveScanRoiKind.card,
+        rotation: rotation,
+        inputFormat: inputFormat,
+      );
+      if (!_isActiveScanGeneration(generation)) return null;
+      if (fallbackOcr == null) continue;
+
+      final fallbackText =
+          _prioritizedTextForRoi(fallbackOcr, LiveScanRoiKind.card);
+      if (fallbackText.trim().isEmpty) continue;
+      final fallbackCombinedText = [
+        if (nameAnchor != null) _liveNameText ?? nameAnchor.name,
+        fallbackText,
+      ].where((value) => value.trim().isNotEmpty).join('\n');
+      final fallbackResult = await _recognizeLiveText(fallbackCombinedText)
+          .timeout(_recognitionTimeout);
+      if (!_isActiveScanGeneration(generation)) return null;
+      if (nameAnchor == null) {
+        if (fallbackResult?.primary != null) return fallbackResult;
+        continue;
+      }
+      final constrained = _constrainToNameAnchor(
+        result: fallbackResult,
+        nameAnchor: nameAnchor,
+      );
+      if (constrained?.primary != null) return constrained;
+    }
+    return null;
+  }
+
+  Future<OcrTextResult?> _recognizeOcrCrop({
+    required Map<LiveScanRoiKind, LiveScanCrop> crops,
+    required LiveScanRoiKind roiKind,
+    required InputImageRotation rotation,
+    required InputImageFormat inputFormat,
+  }) async {
     final crop = crops[roiKind];
     if (crop == null) return null;
 
@@ -468,35 +578,18 @@ class _ScanScreenState extends State<ScanScreen> {
         bytesPerRow: crop.bytesPerRow,
       ),
     );
-    final ocrResult = await _recognitionService.ocrEngine
+    return _recognitionService.ocrEngine
         .recognizeInputImageDetailed(inputImage)
         .timeout(_ocrTimeout);
-    if (!_isActiveScanGeneration(generation)) return null;
+  }
 
-    final text = _prioritizedTextForRoi(ocrResult, roiKind);
-    if (text.trim().isEmpty) return null;
-
-    if (roiKind == LiveScanRoiKind.nameBand) {
-      final result =
-          await _recognizeLiveText(text).timeout(_recognitionTimeout);
-      if (!_isActiveScanGeneration(generation)) return null;
-      final primary = result?.primary;
-      if (primary != null && primary.score >= _minimumNameAnchorConfidence) {
-        _updateLiveNameAnchor(primary, text);
-      }
-      return null;
-    }
-
-    final nameAnchor = activeNameAnchor ?? _activeNameAnchor();
-    if (nameAnchor == null) return null;
-    final combinedText = [
-      _liveNameText ?? nameAnchor.name,
-      text,
-    ].where((value) => value.trim().isNotEmpty).join('\n');
-    final result =
-        await _recognizeLiveText(combinedText).timeout(_recognitionTimeout);
-    if (!_isActiveScanGeneration(generation)) return null;
-    return _constrainToNameAnchor(result: result, nameAnchor: nameAnchor);
+  bool _shouldRunFullCardOcrFallback({
+    required LiveScanRoiKind roiKind,
+    required String roiText,
+  }) {
+    if (roiKind == LiveScanRoiKind.card) return false;
+    if (roiText.trim().isEmpty) return true;
+    return _liveOcrCycle % 4 == 0;
   }
 
   Future<ScanRecognitionResult?> _recognizeLiveText(String rawText) async {
@@ -543,7 +636,7 @@ class _ScanScreenState extends State<ScanScreen> {
       crop: crop,
       format: format,
       allowedCardIds: allowedCardIds,
-      minScore: nameAnchor == null ? 0.86 : 0.76,
+      minScore: nameAnchor == null ? 0.82 : 0.70,
     );
     if (visualMatches.isEmpty) return null;
 
@@ -696,34 +789,11 @@ class _ScanScreenState extends State<ScanScreen> {
     );
   }
 
-  _ScanAcceptance _scanAcceptanceFor(ScanRecognitionCandidate candidate) {
-    final reason = candidate.matchReason.toLowerCase();
-    final isVisual = reason.contains('visual fingerprint');
-    final hasEditionCue = reason.contains('edition cue');
-    final isUniqueName = reason.contains('unique name');
-    final isAmbiguousNameOnly = reason.contains('ambiguous name only');
-
-    if (isVisual && candidate.score >= 0.76) {
-      return _ScanAcceptance.accept(
-          confirmationsRequired: _fastLiveConfirmations);
-    }
-    if (hasEditionCue && candidate.score >= 0.78) {
-      return _ScanAcceptance.accept(
-          confirmationsRequired: _fastLiveConfirmations);
-    }
-    if (isUniqueName && candidate.score >= 0.88) {
-      return _ScanAcceptance.accept(
-          confirmationsRequired: _fastLiveConfirmations);
-    }
-    if (isAmbiguousNameOnly && candidate.score >= 0.66) {
-      return _ScanAcceptance.accept(
-        confirmationsRequired: _strictLiveConfirmations,
-      );
-    }
-
-    return _ScanAcceptance.reject(
-      'Possível ${candidate.name} (${candidate.editionLabel}). Mantenha na mira para confirmar.',
-    );
+  LiveScanAcceptance _scanAcceptanceFor(ScanRecognitionCandidate candidate) {
+    return const LiveScanAcceptancePolicy(
+      fastConfirmations: _fastLiveConfirmations,
+      strictConfirmations: _strictLiveConfirmations,
+    ).evaluate(candidate);
   }
 
   bool _isLiveCandidateStable(
@@ -740,10 +810,12 @@ class _ScanScreenState extends State<ScanScreen> {
       _pendingLiveCandidateId = candidate.printingId;
       _pendingLiveCandidateFirstSeenAt = now;
       _pendingLiveCandidateSeenCount = 1;
+      _pendingLiveCandidateConfirmationsRequired = confirmationsRequired;
       return false;
     }
 
     _pendingLiveCandidateSeenCount++;
+    _pendingLiveCandidateConfirmationsRequired = confirmationsRequired;
     return _pendingLiveCandidateSeenCount >= confirmationsRequired;
   }
 
@@ -751,11 +823,13 @@ class _ScanScreenState extends State<ScanScreen> {
     _pendingLiveCandidateId = null;
     _pendingLiveCandidateFirstSeenAt = null;
     _pendingLiveCandidateSeenCount = 0;
+    _pendingLiveCandidateConfirmationsRequired = 0;
   }
 
   void _clearLiveScanState() {
     _clearPendingLiveCandidate();
     _liveNameAnchor = null;
+    _livePreviewCandidate = null;
     _liveNameText = null;
     _liveNameAnchorSeenAt = null;
     _liveOcrCycle = 0;
@@ -772,7 +846,8 @@ class _ScanScreenState extends State<ScanScreen> {
       confidence: candidate.score,
     );
 
-    if (_lastBufferedVariantKey == defaultEntry.variantKey) {
+    if (!_duplicateGate.shouldAccept(defaultEntry.variantKey)) {
+      _livePreviewCandidate = candidate;
       _status =
           'Reconhecida ${candidate.name}. Aponte para outra carta para contar outra cópia.';
       return;
@@ -794,7 +869,7 @@ class _ScanScreenState extends State<ScanScreen> {
       _buffer = [defaultEntry, ..._buffer];
     }
 
-    _lastBufferedVariantKey = defaultEntry.variantKey;
+    _livePreviewCandidate = candidate;
     _status = 'Adicionada ${candidate.name} (${candidate.editionLabel}).';
     unawaited(_persistBuffer());
   }
@@ -848,9 +923,7 @@ class _ScanScreenState extends State<ScanScreen> {
     setState(() {
       _buffer =
           _buffer.where((item) => item.variantKey != entry.variantKey).toList();
-      if (_lastBufferedVariantKey == entry.variantKey) {
-        _lastBufferedVariantKey = null;
-      }
+      _duplicateGate.forget(entry.variantKey);
     });
     unawaited(_persistBuffer());
   }
@@ -903,7 +976,7 @@ class _ScanScreenState extends State<ScanScreen> {
       if (!mounted) return;
       setState(() {
         _buffer = const [];
-        _lastBufferedVariantKey = null;
+        _duplicateGate.reset();
         _status = 'Cartas salvas na coleção.';
       });
       unawaited(_clearPersistedBuffer());
@@ -953,37 +1026,24 @@ class _ScanScreenState extends State<ScanScreen> {
       appBar: const ManaTabMainAppBar(title: 'Live Scan'),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          if (constraints.maxHeight < 680) {
-            final cameraHeight =
-                (constraints.maxHeight * 0.62).clamp(360.0, 560.0);
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-              children: [
-                SizedBox(
-                    height: cameraHeight, child: _buildCameraPanel(context)),
-                const SizedBox(height: 12),
-                _buildCatalogStatusCard(context),
-                const SizedBox(height: 10),
-                _buildControlsCard(context),
-                const SizedBox(height: 10),
-                SizedBox(height: 220, child: _buildBufferPanel(context)),
-              ],
-            );
-          }
-
-          return Padding(
+          final contentWidth = constraints.maxWidth - 32;
+          final idealCameraHeight =
+              contentWidth / LiveScanFrameCropper.cardAspectRatio;
+          final cameraHeight = idealCameraHeight.clamp(520.0, 760.0).toDouble();
+          return ListView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-            child: Column(
-              children: [
-                Expanded(flex: 10, child: _buildCameraPanel(context)),
-                const SizedBox(height: 12),
-                _buildCatalogStatusCard(context),
-                const SizedBox(height: 10),
-                _buildControlsCard(context),
-                const SizedBox(height: 10),
-                Expanded(flex: 3, child: _buildBufferPanel(context)),
-              ],
-            ),
+            children: [
+              SizedBox(height: cameraHeight, child: _buildCameraPanel(context)),
+              const SizedBox(height: 12),
+              _buildCatalogStatusCard(context),
+              const SizedBox(height: 10),
+              _buildControlsCard(context),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: (constraints.maxHeight * 0.22).clamp(180.0, 260.0),
+                child: _buildBufferPanel(context),
+              ),
+            ],
           );
         },
       ),
@@ -991,6 +1051,10 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   Widget _buildCameraPanel(BuildContext context) {
+    final catalogReady =
+        _catalogStatus.phase == ScanCatalogSyncPhase.completed &&
+            _catalogStatus.cardCount >=
+                ScanCatalogSyncService.minimumViableCardCount;
     return ScanCameraPanel(
       controller: _cameraController,
       cameraLoading: _cameraLoading,
@@ -998,6 +1062,11 @@ class _ScanScreenState extends State<ScanScreen> {
       showSuccessFrame: _showSuccessFrame,
       status: _status,
       error: _error,
+      liveCandidate: _livePreviewCandidate,
+      bufferCount: _totalBuffered,
+      catalogReady: catalogReady,
+      confirmationsSeen: _pendingLiveCandidateSeenCount,
+      confirmationsRequired: _pendingLiveCandidateConfirmationsRequired,
     );
   }
 
@@ -1007,8 +1076,10 @@ class _ScanScreenState extends State<ScanScreen> {
     final percent = progress == null
         ? null
         : (progress.clamp(0, 1) * 100).round().clamp(0, 100);
+    final hasLocalCatalog = _catalogStatus.cardCount >=
+        ScanCatalogSyncService.minimumViableCardCount;
     final ready = _catalogStatus.phase == ScanCatalogSyncPhase.completed &&
-        _catalogStatus.cardCount > 0;
+        hasLocalCatalog;
     return ManaSurfaceCard(
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -1017,10 +1088,10 @@ class _ScanScreenState extends State<ScanScreen> {
           Row(
             children: [
               Icon(
-                ready
+                hasLocalCatalog
                     ? Icons.offline_pin_outlined
                     : Icons.cloud_download_outlined,
-                color: ready ? scheme.primary : scheme.secondary,
+                color: hasLocalCatalog ? scheme.primary : scheme.secondary,
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -1053,7 +1124,7 @@ class _ScanScreenState extends State<ScanScreen> {
               OutlinedButton.icon(
                 onPressed: _syncingCatalog || _scanLoopActive
                     ? null
-                    : () => _runCatalogSync(),
+                    : () => _runCatalogSync(force: ready),
                 icon: _syncingCatalog
                     ? const SizedBox.square(
                         dimension: 16,
@@ -1122,6 +1193,10 @@ class _ScanScreenState extends State<ScanScreen> {
           '${snapshot.cardCount} cartas indexadas',
         _ => '${snapshot.cardCount} cartas no banco local',
       };
+    }
+    if (snapshot.phase == ScanCatalogSyncPhase.idle &&
+        snapshot.lastError != null) {
+      return snapshot.lastError!;
     }
     return '${snapshot.cardCount} cartas no banco local';
   }
@@ -1370,32 +1445,4 @@ class _ScanScreenState extends State<ScanScreen> {
     }
     return previous[right.length];
   }
-}
-
-class _ScanAcceptance {
-  const _ScanAcceptance._({
-    required this.canAutoAccept,
-    required this.confirmationsRequired,
-    required this.statusMessage,
-  });
-
-  factory _ScanAcceptance.accept({required int confirmationsRequired}) {
-    return _ScanAcceptance._(
-      canAutoAccept: true,
-      confirmationsRequired: confirmationsRequired,
-      statusMessage: 'Candidato confirmado.',
-    );
-  }
-
-  factory _ScanAcceptance.reject(String statusMessage) {
-    return _ScanAcceptance._(
-      canAutoAccept: false,
-      confirmationsRequired: 0,
-      statusMessage: statusMessage,
-    );
-  }
-
-  final bool canAutoAccept;
-  final int confirmationsRequired;
-  final String statusMessage;
 }

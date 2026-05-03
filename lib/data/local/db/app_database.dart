@@ -25,7 +25,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forExecutor(super.executor);
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -47,6 +47,10 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 6) {
             await m.addColumn(decks, decks.isActive);
+          }
+          if (from < 7) {
+            await m.addColumn(scryfallPrintings, scryfallPrintings.printedName);
+            await m.addColumn(scryfallPrintings, scryfallPrintings.language);
           }
         },
       );
