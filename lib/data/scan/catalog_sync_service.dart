@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 
 import '../local/db/app_database.dart';
+import 'scan_catalog_filter.dart';
 
 enum ScanCatalogSyncPhase { idle, checking, importing, completed, failed }
 
@@ -445,6 +446,7 @@ class ScanCatalogSyncService {
       }
 
       for (final json in data.whereType<Map<String, dynamic>>()) {
+        if (!ScanCatalogFilter.isScanEligibleJson(json)) continue;
         final printing = _mapBulkPrinting(json, refreshedAt: refreshedAt);
         if (printing == null) continue;
         printings.add(printing);
@@ -580,6 +582,7 @@ class ScanCatalogSyncService {
       final textStream = byteStream.transform(utf8.decoder);
       await for (final json in _streamJsonObjects(textStream)) {
         if (_cancelRequested) throw const _CatalogSyncCancelled();
+        if (!ScanCatalogFilter.isScanEligibleJson(json)) continue;
         final printing = _mapBulkPrinting(
           json,
           refreshedAt: refreshedAt,

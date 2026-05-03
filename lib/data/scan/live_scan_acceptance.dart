@@ -50,11 +50,6 @@ class LiveScanAcceptancePolicy {
         confirmationsRequired: fastConfirmations,
       );
     }
-    if (isVisual && candidate.score >= 0.76) {
-      return LiveScanAcceptance.accept(
-        confirmationsRequired: fastConfirmations,
-      );
-    }
     if (hasEditionCue && candidate.score >= 0.78) {
       return LiveScanAcceptance.accept(
         confirmationsRequired: fastConfirmations,

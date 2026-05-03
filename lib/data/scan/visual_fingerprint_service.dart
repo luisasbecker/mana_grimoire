@@ -8,6 +8,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import 'live_scan_frame_cropper.dart';
+import 'scan_catalog_filter.dart';
 import 'scan_models.dart';
 
 class AverageHashVisualFingerprintService {
@@ -34,6 +35,7 @@ class AverageHashVisualFingerprintService {
     required String imagePath,
     required ScanCatalogCard card,
   }) async {
+    if (!ScanCatalogFilter.isScanEligibleCard(card)) return null;
     final candidateUrl = _visualSourceUrl(card);
     if (candidateUrl == null || candidateUrl.isEmpty) return null;
 
@@ -48,6 +50,7 @@ class AverageHashVisualFingerprintService {
     var changed = false;
 
     for (final card in cards.take(96)) {
+      if (!ScanCatalogFilter.isScanEligibleCard(card)) continue;
       if (_index.containsKey(card.id)) continue;
       final imageUrl = _visualSourceUrl(card);
       if (imageUrl == null || imageUrl.isEmpty) continue;
@@ -86,6 +89,7 @@ class AverageHashVisualFingerprintService {
 
     final matches = <ScanRecognitionCandidate>[];
     for (final entry in _index.values) {
+      if (!ScanCatalogFilter.isScanEligibleCard(entry.card)) continue;
       final score = _fingerprintSimilarity(localFingerprint, entry.fingerprint);
       if (score >= minScore) {
         matches.add(
@@ -117,6 +121,7 @@ class AverageHashVisualFingerprintService {
 
     final matches = <ScanRecognitionCandidate>[];
     for (final entry in _index.values) {
+      if (!ScanCatalogFilter.isScanEligibleCard(entry.card)) continue;
       if (allowedCardIds != null && !allowedCardIds.contains(entry.card.id)) {
         continue;
       }
@@ -196,7 +201,10 @@ class AverageHashVisualFingerprintService {
       if (entries is! List<dynamic>) return;
       for (final entry in entries.whereType<Map<String, dynamic>>()) {
         final indexed = _IndexedFingerprint.fromJson(entry);
-        if (indexed != null) _index[indexed.card.id] = indexed;
+        if (indexed != null &&
+            ScanCatalogFilter.isScanEligibleCard(indexed.card)) {
+          _index[indexed.card.id] = indexed;
+        }
       }
       _pruneIndex();
     } on FormatException {

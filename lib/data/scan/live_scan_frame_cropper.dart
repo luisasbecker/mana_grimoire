@@ -118,7 +118,7 @@ class LiveScanFrameCropper {
     final nameBand =
         uprightCard.inflateHorizontal(-0.06).relative(top: 0.07, height: 0.17);
     final collectorBand =
-        uprightCard.inflateHorizontal(-0.06).relative(top: 0.80, height: 0.15);
+        uprightCard.inflateHorizontal(-0.03).relative(top: 0.86, height: 0.12);
 
     return [
       _mapUprightRect(

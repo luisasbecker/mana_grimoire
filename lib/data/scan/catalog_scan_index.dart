@@ -4,6 +4,8 @@ import 'dart:math' as math;
 import 'package:drift/drift.dart';
 
 import '../local/db/app_database.dart';
+import 'scan_catalog_filter.dart';
+import 'scan_edition_cue.dart';
 import 'scan_models.dart';
 
 class CatalogScanIndex {
@@ -42,8 +44,7 @@ class CatalogScanIndex {
     if (hints.isEmpty) return const <ScanRecognitionCandidate>[];
 
     final normalizedRaw = _normalize(rawText);
-    final collectorNumber = _extractCollectorNumber(rawText);
-    final setCode = _extractSetCode(rawText);
+    final editionCue = ScanEditionCue.fromRawText(rawText);
     final candidatesById = <String, ScanRecognitionCandidate>{};
 
     for (final hint in hints.take(8)) {
@@ -54,20 +55,24 @@ class CatalogScanIndex {
             entry: entry,
             variant: variant,
             normalizedRawText: normalizedRaw,
-            collectorNumber: collectorNumber,
-            setCode: setCode,
+            editionCue: editionCue,
           );
-          if (score.value < 0.34) continue;
+          if (score.nameValue < 0.34 || score.value < 0.34) continue;
           final existing = candidatesById[entry.card.id];
           if (existing == null || score.value > existing.score) {
+            final editionLabel = score.hasPrintCue
+                ? 'exact edition cue'
+                : score.hasEditionCue
+                    ? 'edition cue'
+                    : null;
             candidatesById[entry.card.id] = ScanRecognitionCandidate(
               card: entry.card,
               score: score.value,
-              matchReason: score.hasEditionCue
-                  ? 'Live catalog index; edition cue'
-                  : entry.isAmbiguousPrint
+              matchReason: editionLabel == null
+                  ? entry.isAmbiguousPrint
                       ? 'Live catalog index; ambiguous name only'
-                      : 'Live catalog index; unique name',
+                      : 'Live catalog index; unique name'
+                  : 'Live catalog index; $editionLabel',
             );
           }
         }
@@ -110,7 +115,10 @@ class CatalogScanIndex {
     }
 
     _clear();
-    final cards = rows.map(scanCatalogCardFromPrinting).toList();
+    final cards = rows
+        .where(ScanCatalogFilter.isScanEligiblePrinting)
+        .map(scanCatalogCardFromPrinting)
+        .toList();
     final printCountsByName = <String, int>{};
     for (final card in cards) {
       final nameKey = _normalize(card.name);
@@ -202,39 +210,34 @@ class CatalogScanIndex {
     required _ScanIndexEntry entry,
     required String variant,
     required String normalizedRawText,
-    required String? collectorNumber,
-    required String? setCode,
+    required ScanEditionCue editionCue,
   }) {
-    var score = 0.0;
+    var nameScore = 0.0;
     for (final alias in entry.aliases) {
       if (alias == variant) {
-        score = math.max(score, 0.95);
+        nameScore = math.max(nameScore, 0.95);
       } else if (alias.startsWith(variant) || variant.startsWith(alias)) {
-        score = math.max(score, 0.82);
+        nameScore = math.max(nameScore, 0.82);
       } else if (alias.contains(variant) || variant.contains(alias)) {
-        score = math.max(score, 0.74);
+        nameScore = math.max(nameScore, 0.74);
       } else if (normalizedRawText.contains(alias)) {
-        score = math.max(score, 0.88);
+        nameScore = math.max(nameScore, 0.88);
       } else {
         final similarity = _similarity(alias, variant);
         if (similarity >= 0.56) {
-          score = math.max(score, 0.34 + (similarity * 0.55));
+          nameScore = math.max(nameScore, 0.34 + (similarity * 0.55));
         }
       }
     }
 
-    final normalizedCollector = _normalize(entry.card.collectorNumber);
-    final hasCollectorCue =
-        collectorNumber != null && normalizedCollector == collectorNumber;
-    final hasSetCue =
-        setCode != null && entry.card.setCode.toLowerCase() == setCode;
-    final hasEditionCue = hasCollectorCue || hasSetCue;
-    if (hasCollectorCue) {
-      score += 0.22;
-    }
-    if (hasSetCue) {
-      score += 0.12;
-    }
+    var score = nameScore;
+    final editionScore = editionCue.scoreFor(
+      setCode: entry.card.setCode,
+      collectorNumber: entry.card.collectorNumber,
+    );
+    final hasPrintCue = editionScore >= 0.38;
+    final hasEditionCue = editionScore > 0;
+    score += editionScore;
     if (normalizedRawText.contains(_normalize(entry.card.typeLine))) {
       score += 0.02;
     }
@@ -242,7 +245,11 @@ class CatalogScanIndex {
       score = math.min(score, 0.68);
     }
     return _EntryScore(
-        value: score.clamp(0, 1).toDouble(), hasEditionCue: hasEditionCue);
+      value: score.clamp(0, 1).toDouble(),
+      nameValue: nameScore.clamp(0, 1).toDouble(),
+      hasEditionCue: hasEditionCue,
+      hasPrintCue: hasPrintCue,
+    );
   }
 
   List<String> _extractQueryHints(String rawText) {
@@ -287,21 +294,6 @@ class CatalogScanIndex {
     final ocrFriendly = _ocrFriendlyNormalize(value);
     if (normalized.isNotEmpty) yield normalized;
     if (ocrFriendly.isNotEmpty && ocrFriendly != normalized) yield ocrFriendly;
-  }
-
-  String? _extractCollectorNumber(String rawText) {
-    final match = RegExp(r'\b\d{1,4}[a-zA-Z]?\b').firstMatch(rawText);
-    return match == null ? null : _normalize(match.group(0)!);
-  }
-
-  String? _extractSetCode(String rawText) {
-    final matches =
-        RegExp(r'\b[A-Z0-9]{3,5}\b', caseSensitive: false).allMatches(rawText);
-    for (final match in matches) {
-      final value = match.group(0)!.toLowerCase();
-      if (!RegExp(r'^\d+$').hasMatch(value)) return value;
-    }
-    return null;
   }
 
   Iterable<String> _trigrams(String value) sync* {
@@ -414,8 +406,15 @@ class _ScanIndexEntry {
 }
 
 class _EntryScore {
-  const _EntryScore({required this.value, required this.hasEditionCue});
+  const _EntryScore({
+    required this.value,
+    required this.nameValue,
+    required this.hasEditionCue,
+    required this.hasPrintCue,
+  });
 
   final double value;
+  final double nameValue;
   final bool hasEditionCue;
+  final bool hasPrintCue;
 }
