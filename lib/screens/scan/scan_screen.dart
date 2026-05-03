@@ -15,6 +15,8 @@ import '../../data/scan/catalog_sync_service.dart';
 import '../../data/scan/live_scan_acceptance.dart';
 import '../../data/scan/live_scan_frame_cropper.dart';
 import '../../data/scan/scan_buffer_store.dart';
+import '../../data/scan/scan_feedback_service.dart';
+import '../../data/scan/scan_settings_store.dart';
 import '../../data/scan/scan_models.dart';
 import '../../data/scan/scan_recognition_service.dart';
 import '../../widgets/create_collection_dialog.dart';
@@ -53,6 +55,8 @@ class _ScanScreenState extends State<ScanScreen> {
 
   final _uuid = const Uuid();
   final _bufferStore = ScanBufferStore();
+  final _settingsStore = ScanSettingsStore();
+  final _feedbackService = ScanFeedbackService();
   final _frameCropper = const LiveScanFrameCropper();
   final _duplicateGate = LiveScanDuplicateGate();
   late final CatalogScanIndex _scanIndex;
@@ -68,6 +72,7 @@ class _ScanScreenState extends State<ScanScreen> {
   bool _saving = false;
   bool _restoringBuffer = true;
   bool _showSuccessFrame = false;
+  bool _recognitionSoundEnabled = false;
   DateTime? _lastFrameProcessedAt;
   DateTime? _pendingLiveCandidateFirstSeenAt;
   DateTime? _liveNameAnchorSeenAt;
@@ -106,6 +111,7 @@ class _ScanScreenState extends State<ScanScreen> {
       scanIndex: _scanIndex,
     );
     unawaited(_restorePersistedBuffer());
+    unawaited(_restoreScanSettings());
     unawaited(_refreshCatalogStatus());
     if (_scanSupported) {
       unawaited(_ensureCameraReady());
@@ -202,6 +208,26 @@ class _ScanScreenState extends State<ScanScreen> {
   Future<void> _persistBuffer() => _bufferStore.save(_buffer);
 
   Future<void> _clearPersistedBuffer() => _bufferStore.clear();
+
+  Future<void> _restoreScanSettings() async {
+    final settings = await _settingsStore.load();
+    if (!mounted) return;
+    setState(() {
+      _recognitionSoundEnabled = settings.recognitionSoundEnabled;
+    });
+  }
+
+  void _setRecognitionSoundEnabled(bool enabled) {
+    setState(() => _recognitionSoundEnabled = enabled);
+    unawaited(
+      _settingsStore.save(
+        ScanSettings(recognitionSoundEnabled: enabled),
+      ),
+    );
+    if (enabled) {
+      unawaited(_feedbackService.playRecognitionSound(enabled: true));
+    }
+  }
 
   Future<void> _ensureCameraReady() async {
     if (_cameraController != null &&
@@ -448,7 +474,7 @@ class _ScanScreenState extends State<ScanScreen> {
 
     final cardCrop = crops[LiveScanRoiKind.card];
     final activeNameAnchor = _activeNameAnchor();
-    if (cardCrop != null) {
+    if (cardCrop != null && activeNameAnchor == null) {
       final visualResult = await _recognizeVisualCrop(
         crop: cardCrop,
         format: pixelFormat,
@@ -498,9 +524,26 @@ class _ScanScreenState extends State<ScanScreen> {
         if (!_isActiveScanGeneration(generation)) return null;
         roiResult =
             _constrainToNameAnchor(result: roiResult, nameAnchor: nameAnchor);
-        if (roiResult != null) return roiResult;
+        if (_hasEditionCue(roiResult?.primary)) return roiResult;
       }
     }
+
+    final visualNameAnchor = activeNameAnchor ?? _activeNameAnchor();
+    if (cardCrop != null && visualNameAnchor != null) {
+      final visualResult = await _recognizeVisualCrop(
+        crop: cardCrop,
+        format: pixelFormat,
+        nameAnchor: visualNameAnchor,
+        ocrResult: roiResult,
+      );
+      if (!_isActiveScanGeneration(generation)) return null;
+      final visualPrimary = visualResult?.primary;
+      if (visualPrimary != null && visualPrimary.score >= _minimumConfidence) {
+        return visualResult;
+      }
+    }
+
+    if (roiResult != null) return roiResult;
 
     if (!_shouldRunFullCardOcrFallback(roiKind: roiKind, roiText: text)) {
       return null;
@@ -722,10 +765,14 @@ class _ScanScreenState extends State<ScanScreen> {
       LiveScanRoiKind.nameBand =>
         result.prioritizedText(topLineCount: 3, bottomLineCount: 0),
       LiveScanRoiKind.collectorBand =>
-        result.prioritizedText(topLineCount: 3, bottomLineCount: 1),
+        result.prioritizedText(topLineCount: 1, bottomLineCount: 3),
       LiveScanRoiKind.card =>
         result.prioritizedText(topLineCount: 5, bottomLineCount: 3),
     };
+  }
+
+  bool _hasEditionCue(ScanRecognitionCandidate? candidate) {
+    return candidate?.matchReason.toLowerCase().contains('edition cue') == true;
   }
 
   LiveScanPixelFormat? _liveScanPixelFormat(InputImageFormat? format) {
@@ -871,6 +918,11 @@ class _ScanScreenState extends State<ScanScreen> {
 
     _livePreviewCandidate = candidate;
     _status = 'Adicionada ${candidate.name} (${candidate.editionLabel}).';
+    unawaited(
+      _feedbackService.playRecognitionSound(
+        enabled: _recognitionSoundEnabled,
+      ),
+    );
     unawaited(_persistBuffer());
   }
 
@@ -1248,6 +1300,29 @@ class _ScanScreenState extends State<ScanScreen> {
             ],
           ),
           const SizedBox(height: 10),
+          SwitchListTile(
+            value: _recognitionSoundEnabled,
+            onChanged: _setRecognitionSoundEnabled,
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+            secondary: Icon(
+              _recognitionSoundEnabled
+                  ? Icons.volume_up_outlined
+                  : Icons.volume_off_outlined,
+              color: _recognitionSoundEnabled
+                  ? scheme.primary
+                  : scheme.onSurfaceVariant,
+            ),
+            title: Text(
+              'Som ao reconhecer',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+          ),
+          const SizedBox(height: 6),
           LayoutBuilder(
             builder: (context, constraints) {
               final liveButton = FilledButton.icon(

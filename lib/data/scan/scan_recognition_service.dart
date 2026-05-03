@@ -7,6 +7,8 @@ import '../local/db/app_database.dart';
 import '../remote/scryfall/scryfall_cache_service.dart';
 import '../remote/scryfall/scryfall_client.dart';
 import 'catalog_scan_index.dart';
+import 'scan_catalog_filter.dart';
+import 'scan_edition_cue.dart';
 import 'scan_models.dart';
 import 'visual_fingerprint_service.dart';
 
@@ -154,8 +156,7 @@ class ManaScanRecognitionService {
     if (queryHints.isEmpty) return const <ScanRecognitionCandidate>[];
 
     final normalizedRawText = _normalize(rawText);
-    final collectorNumber = _extractCollectorNumber(rawText);
-    final setCode = _extractSetCode(rawText);
+    final editionCue = ScanEditionCue.fromRawText(rawText);
     final candidatesById = <String, ScanRecognitionCandidate>{};
 
     for (final query in queryHints.take(maxQueryHints)) {
@@ -164,20 +165,23 @@ class ManaScanRecognitionService {
       if (fuzzy != null) cards.add(fuzzy);
       cards.addAll((await _client.searchCardsOrEmpty(query)).take(8));
 
-      for (final json in cards) {
+      final eligibleCards = cards
+          .where(ScanCatalogFilter.isScanEligibleJson)
+          .toList(growable: false);
+
+      for (final json in eligibleCards) {
         final card = _scanCatalogCardFromJson(json);
         if (card.id.isEmpty || card.oracleId.isEmpty) continue;
         final score = _scoreCard(
           card: card,
           normalizedRawText: normalizedRawText,
           query: query,
-          collectorNumber: collectorNumber,
-          setCode: setCode,
+          editionCue: editionCue,
         );
         final candidate = ScanRecognitionCandidate(
           card: card,
           score: score,
-          matchReason: collectorNumber != null || setCode != null
+          matchReason: editionCue.hasAnyCue
               ? 'OCR name and edition cue'
               : 'OCR name heuristic',
         );
@@ -186,7 +190,7 @@ class ManaScanRecognitionService {
           candidatesById[card.id] = candidate;
         }
       }
-      await _cacheService.cacheScryfallCards(cards);
+      await _cacheService.cacheScryfallCards(eligibleCards);
     }
 
     final candidates = candidatesById.values.toList()
@@ -304,8 +308,7 @@ class ManaScanRecognitionService {
     required ScanCatalogCard card,
     required String normalizedRawText,
     required String query,
-    required String? collectorNumber,
-    required String? setCode,
+    required ScanEditionCue editionCue,
   }) {
     final normalizedQuery = _normalize(query);
     final aliases = _aliasesForCard(card);
@@ -331,13 +334,10 @@ class ManaScanRecognitionService {
       }
     }
 
-    final normalizedCollector = _normalize(card.collectorNumber);
-    if (collectorNumber != null && normalizedCollector == collectorNumber) {
-      score += 0.22;
-    }
-    if (setCode != null && card.setCode.toLowerCase() == setCode) {
-      score += 0.12;
-    }
+    score += editionCue.scoreFor(
+      setCode: card.setCode,
+      collectorNumber: card.collectorNumber,
+    );
 
     return score.clamp(0, 1).toDouble();
   }
@@ -357,21 +357,6 @@ class ManaScanRecognitionService {
       }
     }
     return aliases.where((alias) => alias.length >= 2).toSet();
-  }
-
-  String? _extractCollectorNumber(String rawText) {
-    final match = RegExp(r'\b\d{1,4}[a-zA-Z]?\b').firstMatch(rawText);
-    return match == null ? null : _normalize(match.group(0)!);
-  }
-
-  String? _extractSetCode(String rawText) {
-    final matches =
-        RegExp(r'\b[A-Z0-9]{3,5}\b', caseSensitive: false).allMatches(rawText);
-    for (final match in matches) {
-      final value = match.group(0)!.toLowerCase();
-      if (!RegExp(r'^\d+$').hasMatch(value)) return _normalize(value);
-    }
-    return null;
   }
 
   String _normalize(String value) {
