@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@id/root_layout" android:padding="0.0dp" android:layout_width="100.0dp" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/closeLayout" android:background="@drawable/white_box" android:layout_width="24.0dp" android:layout_height="24.0dp" android:elevation="100.0dp" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent">
+        <TextView android:textSize="18.0sp" android:textColor="@color/loser_red" android:gravity="center" android:id="@id/scanListExportTextView" android:visibility="visible" android:layout_width="26.0dp" android:layout_height="27.0dp" android:layout_marginLeft="1.0dp" android:text="" android:fontFamily="@font/fa6solid" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <com.studiolaganne.lengendarylens.LoadingImageView android:id="@id/cardImage" android:layout_width="0.0dp" android:layout_height="0.0dp" android:layout_marginLeft="4.0dp" android:layout_marginRight="4.0dp" android:src="@drawable/card_back" android:scaleType="centerCrop" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintDimensionRatio="H,1:1.4" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

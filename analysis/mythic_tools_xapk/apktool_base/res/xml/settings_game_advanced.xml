@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.studiolaganne.lengendarylens.CustomSwitchPreferenceCompat app:defaultValue="false" app:key="disable_win_lose_questions" app:title="@string/disable_win_lose_questions" />
+    <com.studiolaganne.lengendarylens.CustomSwitchPreferenceCompat app:defaultValue="false" app:key="disable_win_lose_animations" app:title="@string/disable_win_lose_animations" />
+    <com.studiolaganne.lengendarylens.CustomSwitchPreferenceCompat app:defaultValue="true" app:key="enable_uded_q" app:title="@string/enable_uded_q" />
+    <com.studiolaganne.lengendarylens.CustomSwitchPreferenceCompat app:defaultValue="true" app:key="enable_ko_messages" app:title="@string/enable_ko_messages" />
+    <PreferenceCategory android:layout="@layout/preference_category_layout" app:title="@string/low_life_settings">
+        <EditTextPreference app:defaultValue="10" app:key="low_life_threshold" app:title="@string/low_life_threshold" app:useSimpleSummaryProvider="true" />
+        <com.studiolaganne.lengendarylens.CustomSwitchPreferenceCompat app:defaultValue="true" app:key="enable_low_life_bkg" app:title="@string/enable_low_life_background_flash" />
+        <com.studiolaganne.lengendarylens.CustomSwitchPreferenceCompat app:defaultValue="true" app:key="enable_low_life_anim" app:title="@string/enable_low_life_animations" />
+        <ListPreference app:defaultValue="RANDOM" app:dependency="enable_low_life_anim" app:entries="@array/low_life_list" app:entryValues="@array/low_life_value_list" app:key="low_life_anim_default" app:title="@string/default_low_life_animation" app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    <PreferenceCategory android:layout="@layout/preference_category_layout" app:title="@string/commander_damage_settings">
+        <EditTextPreference app:defaultValue="15" app:key="high_cmd_damage_threshold" app:title="@string/high_cmd_damage_threshold" app:useSimpleSummaryProvider="true" />
+        <com.studiolaganne.lengendarylens.CustomSwitchPreferenceCompat app:defaultValue="true" app:key="enable_high_cmd_damage_anim" app:title="@string/enable_high_cmd_damage_animations" />
+    </PreferenceCategory>
+    <PreferenceCategory android:layout="@layout/preference_category_layout" app:title="@string/poison_counters_settings">
+        <EditTextPreference app:defaultValue="8" app:key="high_poison_threshold" app:title="@string/high_poison_counters_threshold" app:useSimpleSummaryProvider="true" />
+        <com.studiolaganne.lengendarylens.CustomSwitchPreferenceCompat app:defaultValue="true" app:key="enable_high_poison_counters_anim" app:title="@string/enable_high_poison_counters_animations" />
+    </PreferenceCategory>
+</PreferenceScreen>

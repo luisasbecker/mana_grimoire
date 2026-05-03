@@ -724,6 +724,12 @@ abstract class AppLocalizations {
   /// **'Ex.: Binder, Trade, Staples'**
   String get newCollectionNameHint;
 
+  /// No description provided for @newCollectionNameRequired.
+  ///
+  /// In pt, this message translates to:
+  /// **'O nome da coleção é obrigatório.'**
+  String get newCollectionNameRequired;
+
   /// No description provided for @collectionsEmptyTitle.
   ///
   /// In pt, this message translates to:

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:background="@color/darker_grey" android:padding="4.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="22.0sp" android:textStyle="bold" android:layout_gravity="center" android:id="@id/position_label" android:padding="4.0dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1." />
+    <TextView android:textSize="22.0sp" android:layout_gravity="center" android:id="@id/player_name_label" android:padding="4.0dp" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="Damien" android:layout_weight="1.0" />
+    <ImageView android:layout_gravity="center" android:id="@id/editPlayerImage" android:visibility="gone" android:layout_width="28.0dp" android:layout_height="28.0dp" android:layout_margin="8.0dp" android:src="@drawable/ic_edit" />
+    <com.google.android.material.button.MaterialButton android:textSize="14.0sp" android:textColor="@android:color/white" android:layout_gravity="center" android:id="@id/drop_button" android:background="@drawable/custom_life_button_background_small" android:padding="0.0dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="6.0dp" android:text="@string/drop_player" android:textAllCaps="true" android:paddingStart="10.0dp" android:paddingEnd="10.0dp" app:backgroundTint="@null" style="@style/SmallMaterialButton" />
+</LinearLayout>

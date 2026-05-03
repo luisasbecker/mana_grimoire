@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:background="@drawable/bottom_sheet_background" android:padding="20.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="24.0sp" android:textStyle="bold" android:textColor="@color/action_blue_lighter" android:id="@id/title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/disclaimer_title" android:textAlignment="textStart" app:layout_constraintTop_toTopOf="parent" />
+    <TextView android:textSize="20.0sp" android:textStyle="normal" android:textColor="@color/almost_white" android:id="@id/body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" android:text="@string/disclaimer_body" android:textAllCaps="false" android:justificationMode="inter_word" app:layout_constraintTop_toBottomOf="@id/title" />
+</androidx.constraintlayout.widget.ConstraintLayout>

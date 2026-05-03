@@ -337,6 +337,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get newCollectionNameHint => 'Ex.: Binder, Trade, Staples';
 
   @override
+  String get newCollectionNameRequired => 'O nome da coleção é obrigatório.';
+
+  @override
   String get collectionsEmptyTitle => 'Ainda não tens coleções';
 
   @override

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:padding="4.0dp" android:layout_width="wrap_content" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <Button android:textSize="@null" android:textColor="@color/white" android:id="@id/legalityButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="LEGAL" android:paddingStart="4.0dp" android:paddingEnd="4.0dp" />
+    <TextView android:textSize="@null" android:id="@id/formatTextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/format" android:layout_marginStart="8.0dp" />
+</LinearLayout>

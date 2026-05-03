@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:layout="@layout/preference_category_layout" android:title="@string/global_settings">
+        <ListPreference app:defaultValue="device" app:entries="@array/app_language_list" app:entryValues="@array/app_language_value_list" app:key="app_language" app:title="@string/app_language" app:useSimpleSummaryProvider="true" />
+        <Preference android:title="@string/about_mythic_tools" android:key="about_mythic_tools" />
+        <Preference android:title="@string/contact_support_settings" android:key="contact_support_email" />
+    </PreferenceCategory>
+    <PreferenceCategory android:layout="@layout/preference_category_layout" android:title="@string/game_settings_header">
+        <ListPreference app:defaultValue="default" app:entries="@array/default_theme_list" app:entryValues="@array/default_theme_value_list" app:key="creator_code" app:title="@string/default_theme_setting" app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat app:defaultValue="false" app:key="enable_poison_counters_by_default" app:title="@string/enable_poison_counters_by_default" />
+        <SwitchPreferenceCompat app:defaultValue="false" app:key="enable_commander_tax_by_default" app:title="@string/enable_commander_tax_by_default" />
+        <ListPreference app:defaultValue="playmat" app:entries="@array/default_background_list" app:entryValues="@array/default_background_value_list" app:key="default_background" app:title="@string/default_background" app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat android:summary="@string/display_game_events_subtitle" app:defaultValue="true" app:key="display_game_events" app:title="@string/display_game_events" />
+        <Preference android:title="@string/timer_game_settings" android:key="timer_game_settings" android:summary="@string/timer_game_settings_summary" android:widgetLayout="@layout/chevron_layout" />
+        <SwitchPreferenceCompat app:defaultValue="true" app:key="enable_player_toss" app:title="@string/enable_player_toss" />
+        <SwitchPreferenceCompat app:defaultValue="true" app:key="enable_fullscreen_mode" app:title="@string/enable_fullscreen_mode" />
+        <SwitchPreferenceCompat app:defaultValue="false" app:key="enable_streaming" app:title="@string/enable_streaming" />
+    </PreferenceCategory>
+    <PreferenceCategory android:layout="@layout/preference_category_layout" android:title="@string/game_custom_header">
+        <com.studiolaganne.lengendarylens.FontPreviewListPreference app:defaultValue="big_shoulders_semibold" app:entries="@array/font_list" app:entryValues="@array/font_value_list" app:key="game_font_default" app:title="@string/default_game_font" app:useSimpleSummaryProvider="true" />
+        <Preference android:title="@string/advanced_game_settings" android:key="advanced_game_settings" android:summary="@string/advanced_game_settings_summary" android:widgetLayout="@layout/chevron_layout" />
+    </PreferenceCategory>
+    <PreferenceCategory android:layout="@layout/preference_category_layout" android:title="@string/scanner_settings_header">
+        <SwitchPreferenceCompat android:summary="@string/enable_scan_beeps_summary" app:defaultValue="true" app:key="enable_scan_beeps" app:title="@string/enable_scan_beeps" />
+    </PreferenceCategory>
+    <PreferenceCategory android:layout="@layout/preference_category_layout" android:title="@string/event_settings_header">
+        <Preference android:title="@string/event_timer_settings" android:key="event_settings" android:summary="@string/default_duration_summary" android:widgetLayout="@layout/chevron_layout" />
+    </PreferenceCategory>
+    <PreferenceCategory android:layout="@layout/preference_category_layout" android:title="@string/general_settings_header">
+        <ListPreference app:defaultValue="GRID_2" app:entries="@array/preferred_card_layout_list" app:entryValues="@array/preferred_card_layout_value_list" app:key="preferred_card_layout" app:title="@string/preferred_card_layout" app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat android:summary="@string/condense_search_summary" app:defaultValue="true" app:key="condense_search" app:title="@string/condense_search" />
+        <SwitchPreferenceCompat android:summary="@string/save_sorting_grouping_settings_summary" app:defaultValue="true" app:key="save_sorting_grouping_settings" app:title="@string/save_sorting_grouping_settings" />
+        <SwitchPreferenceCompat android:summary="@string/save_deck_list_sorting_grouping_settings_summary" app:defaultValue="true" app:key="save_deck_list_sorting_grouping_settings" app:title="@string/save_deck_list_sorting_grouping_settings" />
+        <SwitchPreferenceCompat android:summary="@string/enable_battery_saving_prompts_summary" app:defaultValue="true" app:key="enable_battery_saving_prompts" app:title="@string/enable_battery_saving_prompts" />
+        <Preference android:title="@string/language_settings" android:key="language_settings" android:summary="@string/language_settings_summary" android:widgetLayout="@layout/chevron_layout" />
+        <ListPreference app:defaultValue="USD" app:entries="@array/preferred_currency_list" app:entryValues="@array/preferred_currency_value_list" app:key="preferred_currency_v2" app:title="@string/preferred_currency" app:useSimpleSummaryProvider="true" />
+        <com.studiolaganne.lengendarylens.MarketplaceIconListPreference app:defaultValue="mythictools" app:entries="@array/preferred_market_list" app:entryValues="@array/preferred_market_value_list" app:key="preferred_market" app:title="@string/preferred_market" app:useSimpleSummaryProvider="true" />
+        <Preference android:title="@string/rate_title" android:key="rate_app" android:summary="@string/rate_summary" />
+        <Preference android:title="@string/restore_purchases" android:key="restore_purchases" />
+        <Preference android:title="@string/refresh_mythic_subscription" android:key="refresh_mythic_subscription" />
+        <SwitchPreferenceCompat app:defaultValue="false" app:key="email_opt_in" app:title="@string/email_opt_in_setting" />
+        <Preference android:title="@string/disclaimer_title" android:key="disclaimer" />
+    </PreferenceCategory>
+</PreferenceScreen>

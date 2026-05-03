@@ -19,7 +19,7 @@ class ManaSurfaceCard extends StatelessWidget {
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
       side: BorderSide(
-          color: scheme.outlineVariant.withOpacity(0.25),
+        color: scheme.outlineVariant.withValues(alpha: 0.25),
       ),
     );
 

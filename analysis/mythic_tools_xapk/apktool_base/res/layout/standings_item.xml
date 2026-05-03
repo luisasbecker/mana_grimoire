@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:id="@id/root_layout" android:background="@color/darker_blue_2" android:padding="4.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="18.0sp" android:id="@id/position_label" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="1" android:layout_weight="0.1" />
+    <TextView android:textSize="16.0sp" android:id="@id/player_name_label" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="Damien" android:layout_weight="0.2" />
+    <TextView android:textSize="20.0sp" android:textStyle="bold" android:gravity="center" android:id="@id/player_points_label" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="3" android:layout_weight="0.15" />
+    <LinearLayout android:orientation="vertical" android:id="@id/details_layout" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="0.5">
+        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.ConstraintLayout android:background="@color/standings_color_bkg1" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                <TextView android:textSize="12.0sp" android:id="@id/wld_header" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="W-L-D" android:textAlignment="center" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                <TextView android:textSize="12.0sp" android:textStyle="bold" android:id="@id/wld_value" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0-0-0" android:textAlignment="center" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/wld_header" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout android:background="@color/standings_color_bkg2" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                <TextView android:textSize="12.0sp" android:id="@id/omw_header" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="OMW %" android:textAlignment="center" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                <TextView android:textSize="12.0sp" android:textStyle="bold" android:id="@id/omw_value" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="100%" android:textAlignment="center" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/omw_header" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+        <View android:layout_width="match_parent" android:layout_height="6.0dp" />
+        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.ConstraintLayout android:background="@color/standings_color_bkg2" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                <TextView android:textSize="12.0sp" android:id="@id/gw_header" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="GW %" android:textAlignment="center" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                <TextView android:textSize="12.0sp" android:textStyle="bold" android:id="@id/gw_value" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="33%" android:textAlignment="center" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/gw_header" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout android:background="@color/standings_color_bkg1" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                <TextView android:textSize="12.0sp" android:id="@id/ogw_header" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="OGW %" android:textAlignment="center" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                <TextView android:textSize="12.0sp" android:textStyle="bold" android:id="@id/ogw_value" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="66.6%" android:textAlignment="center" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/ogw_header" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

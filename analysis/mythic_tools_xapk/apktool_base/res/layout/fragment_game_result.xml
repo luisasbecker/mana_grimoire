@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.airbnb.lottie.LottieAnimationView android:layout_gravity="center" android:id="@id/loadingAnimationViewRecyclerView" android:layout_width="150.0dp" android:layout_height="150.0dp" app:lottie_autoPlay="true" app:lottie_loop="true" app:lottie_rawRes="@raw/loading" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerViewGameResult" android:paddingTop="12.0dp" android:scrollbars="vertical" android:clipChildren="false" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="match_parent" />
+</LinearLayout>

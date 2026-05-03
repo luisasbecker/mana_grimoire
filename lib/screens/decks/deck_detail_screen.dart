@@ -301,12 +301,16 @@ class _DeckEntriesList extends StatelessWidget {
             padding: const EdgeInsets.only(top: 6, bottom: 2),
             child: Row(
               children: [
-                Text(
-                  labelForCategory(it),
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleSmall
-                      ?.copyWith(fontWeight: FontWeight.w900),
+                Expanded(
+                  child: Text(
+                    labelForCategory(it),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall
+                        ?.copyWith(fontWeight: FontWeight.w900),
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Text(

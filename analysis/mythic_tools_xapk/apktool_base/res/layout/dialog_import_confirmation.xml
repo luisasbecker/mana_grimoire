@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:id="@id/dialog_root" android:background="@drawable/rounded_background_dialog_darker_with_line" android:padding="12.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="22.0sp" android:textStyle="bold" android:id="@id/title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/import_confirmation_title" />
+    <TextView android:textSize="14.0sp" android:id="@id/summary" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" />
+    <ScrollView android:id="@id/scroll_view" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" android:layout_marginBottom="12.0dp" android:maxHeight="300.0dp" android:fillViewport="false">
+        <LinearLayout android:orientation="vertical" android:id="@id/containers_layout" android:layout_width="match_parent" android:layout_height="wrap_content" />
+    </ScrollView>
+    <LinearLayout android:gravity="end" android:orientation="horizontal" android:id="@id/button_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp">
+        <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:id="@id/negative_button" android:background="@drawable/custom_button_background_blue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cancel" android:textAllCaps="false" android:layout_marginEnd="6.0dp" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/SmallMaterialButton" />
+        <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:id="@id/positive_button" android:background="@drawable/custom_button_background" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/import_action_button" android:textAllCaps="false" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/SmallMaterialButton" />
+    </LinearLayout>
+</LinearLayout>

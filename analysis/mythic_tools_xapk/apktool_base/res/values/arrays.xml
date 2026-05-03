@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="app_language_list">
+        <item>Follow Device Language</item>
+        <item>English</item>
+        <item>French</item>
+    </string-array>
+    <string-array name="app_language_value_list">
+        <item>device</item>
+        <item>en</item>
+        <item>fr</item>
+    </string-array>
+    <string-array name="assume_strong_biometrics_models">
+        <item>Pixel 4</item>
+        <item>Pixel 4 XL</item>
+    </string-array>
+    <array name="com_google_android_gms_fonts_certs">
+        <item>@array/com_google_android_gms_fonts_certs_dev</item>
+        <item>@array/com_google_android_gms_fonts_certs_prod</item>
+    </array>
+    <string-array name="com_google_android_gms_fonts_certs_dev">
+        <item>MIIEqDCCA5CgAwIBAgIJANWFuGx90071MA0GCSqGSIb3DQEBBAUAMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHQW5kcm9pZDEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDEiMCAGCSqGSIb3DQEJARYTYW5kcm9pZEBhbmRyb2lkLmNvbTAeFw0wODA0MTUyMzM2NTZaFw0zNTA5MDEyMzM2NTZaMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHQW5kcm9pZDEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDEiMCAGCSqGSIb3DQEJARYTYW5kcm9pZEBhbmRyb2lkLmNvbTCCASAwDQYJKoZIhvcNAQEBBQADggENADCCAQgCggEBANbOLggKv+IxTdGNs8/TGFy0PTP6DHThvbbR24kT9ixcOd9W+EaBPWW+wPPKQmsHxajtWjmQwWfna8mZuSeJS48LIgAZlKkpFeVyxW0qMBujb8X8ETrWy550NaFtI6t9+u7hZeTfHwqNvacKhp1RbE6dBRGWynwMVX8XW8N1+UjFaq6GCJukT4qmpN2afb8sCjUigq0GuMwYXrFVee74bQgLHWGJwPmvmLHC69EH6kWr22ijx4OKXlSIx2xT1AsSHee70w5iDBiK4aph27yH3TxkXy9V89TDdexAcKk/cVHYNnDBapcavl7y0RiQ4biu8ymM8Ga/nmzhRKya6G0cGw8CAQOjgfwwgfkwHQYDVR0OBBYEFI0cxb6VTEM8YYY6FbBMvAPyT+CyMIHJBgNVHSMEgcEwgb6AFI0cxb6VTEM8YYY6FbBMvAPyT+CyoYGapIGXMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHQW5kcm9pZDEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDEiMCAGCSqGSIb3DQEJARYTYW5kcm9pZEBhbmRyb2lkLmNvbYIJANWFuGx90071MAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEEBQADggEBABnTDPEF+3iSP0wNfdIjIz1AlnrPzgAIHVvXxunW7SBrDhEglQZBbKJEk5kT0mtKoOD1JMrSu1xuTKEBahWRbqHsXclaXjoBADb0kkjVEJu/Lh5hgYZnOjvlba8Ld7HCKePCVePoTJBdI4fvugnL8TsgK05aIskyY0hKI9L8KfqfGTl1lzOv2KoWD0KWwtAWPoGChZxmQ+nBli+gwYMzM1vAkP+aayLe0a1EQimlOalO762r0GXO0ks+UeXde2Z4e+8S/pf7pITEI/tP+MxJTALw9QUWEv9lKTk+jkbqxbsh8nfBUapfKqYn0eidpwq2AzVp3juYl7//fKnaPhJD9gs=</item>
+    </string-array>
+    <string-array name="com_google_android_gms_fonts_certs_prod">
+        <item>MIIEQzCCAyugAwIBAgIJAMLgh0ZkSjCNMA0GCSqGSIb3DQEBBAUAMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDAeFw0wODA4MjEyMzEzMzRaFw0zNjAxMDcyMzEzMzRaMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDCCASAwDQYJKoZIhvcNAQEBBQADggENADCCAQgCggEBAKtWLgDYO6IIrgqWbxJOKdoR8qtW0I9Y4sypEwPpt1TTcvZApxsdyxMJZ2JORland2qSGT2y5b+3JKkedxiLDmpHpDsz2WCbdxgxRczfey5YZnTJ4VZbH0xqWVW/8lGmPav5xVwnIiJS6HXk+BVKZF+JcWjAsb/GEuq/eFdpuzSqeYTcfi6idkyugwfYwXFU1+5fZKUaRKYCwkkFQVfcAs1fXA5V+++FGfvjJ/CxURaSxaBvGdGDhfXE28LWuT9ozCl5xw4Yq5OGazvV24mZVSoOO0yZ31j7kYvtwYK6NeADwbSxDdJEqO4k//0zOHKrUiGYXtqw/A0LFFtqoZKFjnkCAQOjgdkwgdYwHQYDVR0OBBYEFMd9jMIhF1Ylmn/Tgt9r45jk14alMIGmBgNVHSMEgZ4wgZuAFMd9jMIhF1Ylmn/Tgt9r45jk14aloXikdjB0MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLR29vZ2xlIEluYy4xEDAOBgNVBAsTB0FuZHJvaWQxEDAOBgNVBAMTB0FuZHJvaWSCCQDC4IdGZEowjTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBAUAA4IBAQBt0lLO74UwLDYKqs6Tm8/yzKkEu116FmH4rkaymUIE0P9KaMftGlMexFlaYjzmB2OxZyl6euNXEsQH8gjwyxCUKRJNexBiGcCEyj6z+a1fuHHvkiaai+KL8W1EyNmgjmyy8AW7P+LLlkR+ho5zEHatRbM/YAnqGcFh5iZBqpknHf1SKMXFh4dd239FJ1jWYfbMDMy3NS5CTMQ2XFI1MvcyUTdZPErjQfTbQe3aDQsQcafEQPD+nqActifKZ0Np0IS9L9kR/wbNvyz6ENwPiTrjV2KRkEjH78ZMcUQXg0L3BYHJ3lc69Vs5Ddf9uUGGMYldX3WfMBEmh/9iFBDAaTCK</item>
+    </string-array>
+    <string-array name="combos_max_cards_array">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5+</item>
+    </string-array>
+    <array name="crypto_fingerprint_fallback_prefixes" />
+    <string-array name="crypto_fingerprint_fallback_vendors">
+        <item>samsung</item>
+    </string-array>
+    <string-array name="default_background_list">
+        <item>Playmat</item>
+        <item>Plain Color</item>
+        <item>Black</item>
+    </string-array>
+    <string-array name="default_background_value_list">
+        <item>playmat</item>
+        <item>color</item>
+        <item>black</item>
+    </string-array>
+    <string-array name="default_theme_list">
+        <item>Default theme</item>
+    </string-array>
+    <string-array name="default_theme_value_list">
+        <item>default</item>
+    </string-array>
+    <string-array name="delay_showing_prompt_models">
+        <item>Pixel 4</item>
+        <item>Pixel 4 XL</item>
+    </string-array>
+    <string-array name="font_list">
+        <item>Acme</item>
+        <item>Anton</item>
+        <item>Beleren</item>
+        <item>Big Shoulders</item>
+        <item>Concert One</item>
+        <item>Francois One</item>
+        <item>Lilita One</item>
+        <item>Londrina Solid</item>
+        <item>Matrix</item>
+        <item>Outfit</item>
+        <item>Passion One</item>
+        <item>Permanent Marker</item>
+        <item>Ubuntu Mono</item>
+    </string-array>
+    <string-array name="font_value_list">
+        <item>acme_regular</item>
+        <item>anton_regular</item>
+        <item>beleren_bold</item>
+        <item>big_shoulders_semibold</item>
+        <item>concertone_regular</item>
+        <item>francoisone_regular</item>
+        <item>lilitaone_regular</item>
+        <item>londrina_solid_regular</item>
+        <item>matrix_bold</item>
+        <item>outfit</item>
+        <item>passionone_regular</item>
+        <item>permanent_marker_regular</item>
+        <item>ubuntu_mono_bold</item>
+    </string-array>
+    <string-array name="hide_fingerprint_instantly_prefixes">
+        <item>SM-A50</item>
+        <item>SM-G973</item>
+        <item>SM-G975</item>
+        <item>SM-G977</item>
+        <item>SM-G770</item>
+        <item>SM-N970</item>
+        <item>SM-N971</item>
+        <item>SM-N975</item>
+        <item>SM-N976</item>
+        <item>SM-N770</item>
+        <item>SC-03L</item>
+        <item>SC-04L</item>
+        <item>SC-05L</item>
+        <item>SC-01M</item>
+        <item>SCV41</item>
+        <item>SCV42</item>
+        <item>SCV45</item>
+    </string-array>
+    <string-array name="ko_msg_list">
+        <item>K.O.</item>
+        <item>R.I.P.</item>
+        <item>Exiled</item>
+        <item>Trampled</item>
+        <item>Later!</item>
+        <item>Buried</item>
+        <item>Tapped Out</item>
+        <item>Mul to 0</item>
+        <item>Bolted!</item>
+        <item>Fizzled</item>
+        <item>Not Today</item>
+        <item>I Win! Not.</item>
+        <item>GG!</item>
+        <item>Meh.</item>
+        <item>BRB</item>
+        <item>n00b</item>
+        <item>Game Over</item>
+        <item>Owned</item>
+        <item>"I'm Done Here"</item>
+        <item>So ded</item>
+        <item>Such gone</item>
+        <item>Much Fail</item>
+        <item>Yikes!</item>
+        <item>OK Bye.</item>
+        <item>Burned!</item>
+        <item>Bye-Bye</item>
+        <item>Defeated</item>
+        <item>Devoured</item>
+        <item>Misplay!</item>
+        <item>Next Time?</item>
+        <item>Overrun</item>
+        <item>Poof! Gone.</item>
+        <item>Out Of Gas</item>
+        <item>Vanquished</item>
+        <item>Board Wiped</item>
+        <item>Judge!</item>
+        <item>Topdeck Fail</item>
+        <item>No Blocks</item>
+        <item>Oof.</item>
+    </string-array>
+    <string-array name="low_life_list">
+        <item>Random</item>
+        <item>Magical Fire</item>
+        <item>Score Heartbeat</item>
+        <item>Skull</item>
+        <item>Ghost</item>
+        <item>Reaper</item>
+    </string-array>
+    <string-array name="low_life_value_list">
+        <item>RANDOM</item>
+        <item>FIRE</item>
+        <item>SCORE_HEARTBEAT</item>
+        <item>SKULL</item>
+        <item>GHOST</item>
+        <item>DEATH</item>
+    </string-array>
+    <string-array name="preferred_card_layout_list">
+        <item>Rows of 2</item>
+        <item>Rows of 3</item>
+        <item>Card list with full text</item>
+    </string-array>
+    <string-array name="preferred_card_layout_value_list">
+        <item>GRID_2</item>
+        <item>GRID_3</item>
+        <item>LIST</item>
+    </string-array>
+    <string-array name="preferred_currency_list">
+        <item>🇺🇸 US Dollar (USD) $</item>
+        <item>🇪🇺 Euro (EUR) €</item>
+        <item>🇯🇵 Japanese Yen (JPY) ¥</item>
+        <item>🇬🇧 British Pound (GBP) £</item>
+        <item>🇨🇦 Canadian Dollar (CAD) $</item>
+        <item>🇦🇺 Australian Dollar (AUD) $</item>
+        <item>🇨🇭 Swiss Franc (CHF) CHF</item>
+        <item>🇨🇳 Chinese Yuan (CNY) ¥</item>
+        <item>🇸🇪 Swedish Krona (SEK) kr</item>
+        <item>🇳🇴 Norwegian Krone (NOK) kr</item>
+        <item>🇩🇰 Danish Krone (DKK) kr</item>
+        <item>🇵🇱 Polish Zloty (PLN) zł</item>
+        <item>🇨🇿 Czech Koruna (CZK) Kč</item>
+        <item>🇭🇺 Hungarian Forint (HUF) Ft</item>
+        <item>🇷🇴 Romanian Leu (RON) lei</item>
+        <item>🇧🇬 Bulgarian Lev (BGN) лв</item>
+        <item>🇹🇷 Turkish Lira (TRY) ₺</item>
+        <item>🇷🇺 Russian Ruble (RUB) ₽</item>
+        <item>🇲🇽 Mexican Peso (MXN) $</item>
+        <item>🇧🇷 Brazilian Real (BRL) R$</item>
+        <item>🇦🇷 Argentine Peso (ARS) $</item>
+        <item>🇨🇱 Chilean Peso (CLP) $</item>
+        <item>🇨🇴 Colombian Peso (COP) $</item>
+        <item>🇿🇦 South African Rand (ZAR) R</item>
+        <item>🇮🇳 Indian Rupee (INR) ₹</item>
+        <item>🇮🇩 Indonesian Rupiah (IDR) Rp</item>
+        <item>🇲🇾 Malaysian Ringgit (MYR) RM</item>
+        <item>🇸🇬 Singapore Dollar (SGD) $</item>
+        <item>🇹🇭 Thai Baht (THB) ฿</item>
+        <item>🇵🇭 Philippine Peso (PHP) ₱</item>
+        <item>🇻🇳 Vietnamese Dong (VND) ₫</item>
+        <item>🇰🇷 South Korean Won (KRW) ₩</item>
+        <item>🇹🇼 New Taiwan Dollar (TWD) NT$</item>
+        <item>🇭🇰 Hong Kong Dollar (HKD) HK$</item>
+        <item>🇮🇱 Israeli Shekel (ILS) ₪</item>
+        <item>🇦🇪 UAE Dirham (AED) د.إ</item>
+        <item>🇸🇦 Saudi Riyal (SAR) ﷼</item>
+        <item>🇶🇦 Qatari Riyal (QAR) ﷼</item>
+        <item>🇰🇼 Kuwaiti Dinar (KWD) KD</item>
+        <item>🇧🇭 Bahraini Dinar (BHD) BD</item>
+        <item>🇳🇿 New Zealand Dollar (NZD) $</item>
+        <item>🇲🇦 Moroccan Dirham (MAD) DH</item>
+        <item>🇪🇬 Egyptian Pound (EGP) £</item>
+        <item>🇳🇬 Nigerian Naira (NGN) ₦</item>
+        <item>🇰🇪 Kenyan Shilling (KES) KSh</item>
+        <item>🇺🇦 Ukrainian Hryvnia (UAH) ₴</item>
+        <item>🇬🇪 Georgian Lari (GEL) ₾</item>
+        <item>🇵🇪 Peruvian Sol (PEN) S/.</item>
+        <item>🇺🇾 Uruguayan Peso (UYU) $U</item>
+        <item>🇧🇩 Bangladeshi Taka (BDT) ৳</item>
+    </string-array>
+    <string-array name="preferred_currency_value_list">
+        <item>USD</item>
+        <item>EUR</item>
+        <item>JPY</item>
+        <item>GBP</item>
+        <item>CAD</item>
+        <item>AUD</item>
+        <item>CHF</item>
+        <item>CNY</item>
+        <item>SEK</item>
+        <item>NOK</item>
+        <item>DKK</item>
+        <item>PLN</item>
+        <item>CZK</item>
+        <item>HUF</item>
+        <item>RON</item>
+        <item>BGN</item>
+        <item>TRY</item>
+        <item>RUB</item>
+        <item>MXN</item>
+        <item>BRL</item>
+        <item>ARS</item>
+        <item>CLP</item>
+        <item>COP</item>
+        <item>ZAR</item>
+        <item>INR</item>
+        <item>IDR</item>
+        <item>MYR</item>
+        <item>SGD</item>
+        <item>THB</item>
+        <item>PHP</item>
+        <item>VND</item>
+        <item>KRW</item>
+        <item>TWD</item>
+        <item>HKD</item>
+        <item>ILS</item>
+        <item>AED</item>
+        <item>SAR</item>
+        <item>QAR</item>
+        <item>KWD</item>
+        <item>BHD</item>
+        <item>NZD</item>
+        <item>MAD</item>
+        <item>EGP</item>
+        <item>NGN</item>
+        <item>KES</item>
+        <item>UAH</item>
+        <item>GEL</item>
+        <item>PEN</item>
+        <item>UYU</item>
+        <item>BDT</item>
+    </string-array>
+    <string-array name="preferred_market_list">
+        <item>@string/marketplace_mythictools</item>
+        <item>@string/marketplace_tcgplayer</item>
+        <item>@string/marketplace_cardmarket</item>
+        <item>@string/marketplace_cardkingdom</item>
+        <item>@string/marketplace_cardsphere</item>
+    </string-array>
+    <string-array name="preferred_market_value_list">
+        <item>mythictools</item>
+        <item>tcgplayer</item>
+        <item>cardmarket</item>
+        <item>cardkingdom</item>
+        <item>cardsphere</item>
+    </string-array>
+    <string-array name="turn_timer_display_list">
+        <item>Current Turn Time</item>
+        <item>Total Player Time</item>
+    </string-array>
+    <string-array name="turn_timer_display_value_list">
+        <item>current_turn</item>
+        <item>total_time</item>
+    </string-array>
+</resources>

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 /// AppBar mínimo para fluxos internos: voltar + título.
-class ManaInternalAppBar extends StatelessWidget implements PreferredSizeWidget {
+class ManaInternalAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   const ManaInternalAppBar({
     super.key,
     required this.title,
@@ -17,7 +18,11 @@ class ManaInternalAppBar extends StatelessWidget implements PreferredSizeWidget 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title),
+      title: Text(
+        title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       actions: actions,
     );
   }

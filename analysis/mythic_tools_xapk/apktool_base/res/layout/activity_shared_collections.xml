@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@id/root_layout" android:background="@color/background_color" android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.appcompat.widget.LinearLayoutCompat android:orientation="vertical" android:id="@id/linearLayout" android:layout_width="match_parent" android:layout_height="match_parent" app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/infoLayout" android:padding="20.0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/backLayout" android:layout_width="48.0dp" android:layout_height="48.0dp" android:layout_marginLeft="-12.0dp" android:layout_marginTop="-12.0dp" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent">
+                <ImageView android:id="@id/backArrow" android:layout_width="20.0dp" android:layout_height="20.0dp" android:src="@drawable/back_arrow" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/almost_white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView android:textSize="@dimen/title_size" android:textColor="@color/selected_color_new" android:id="@id/title" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_marginLeft="8.0dp" android:layout_marginTop="2.0dp" android:text="@string/share_collection_title" android:fontFamily="@font/baloo_da_2_bold" android:textAlignment="textStart" app:layout_constraintBottom_toBottomOf="@id/backLayout" app:layout_constraintLeft_toRightOf="@id/backLayout" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="@id/backLayout" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <View android:background="@color/text_color" android:layout_width="match_parent" android:layout_height="1.0dp" android:alpha="0.3" />
+        <ScrollView android:layout_width="match_parent" android:layout_height="0.0dp" android:fillViewport="true" android:layout_weight="1.0">
+            <LinearLayout android:orientation="vertical" android:padding="20.0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <LinearLayout android:orientation="vertical" android:id="@id/sharedCollectionsSection" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <TextView android:textSize="@dimen/title_size_small" android:textColor="@color/text_color" android:id="@id/sharedCollectionsHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12.0dp" android:text="@string/shared_collections_header" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                    <LinearLayout android:orientation="vertical" android:id="@id/sharedCollectionsContainer" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                    <TextView android:textSize="14.0sp" android:textColor="@color/text_color" android:id="@id/noSharedCollectionsText" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20.0dp" android:text="@string/no_shared_collections_yet" android:fontFamily="@font/be_vietnam_pro_regular" />
+                </LinearLayout>
+                <LinearLayout android:orientation="vertical" android:id="@id/pendingInvitesSection" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <TextView android:textSize="@dimen/title_size_small" android:textColor="@color/text_color" android:id="@id/pendingInvitesHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12.0dp" android:text="@string/pending_invites_header" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                    <androidx.recyclerview.widget.RecyclerView android:id="@id/pendingInvitesRecyclerView" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20.0dp" android:nestedScrollingEnabled="false" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+        <LinearLayout android:orientation="vertical" android:id="@id/bottomSection" android:padding="20.0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/warningPanel" android:background="@drawable/black_box_with_line" android:padding="16.0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <TextView android:textSize="32.0sp" android:textColor="@color/draw_orange" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:fontFamily="@font/fa6solid" android:layout_marginEnd="12.0dp" />
+                <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/text_color" android:id="@id/warningText" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/share_collection_warning" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_regular" android:justificationMode="inter_word" />
+            </LinearLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/inviteButtonLayout" android:background="@drawable/custom_button_background" android:paddingTop="6.0dp" android:paddingBottom="4.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16.0dp" android:paddingStart="12.0dp" android:paddingEnd="18.0dp">
+                <TextView android:textSize="@dimen/button_text_size" android:textColor="@color/almost_white" android:gravity="center" android:id="@id/inviteButtonText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="6.0dp" android:text="@string/invite_to_share" android:fontFamily="@font/be_vietnam_pro_semibold" android:textAlignment="center" android:layout_marginStart="6.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/overlay" android:background="@color/overlay_lighter" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent" android:elevation="100.0dp">
+        <com.airbnb.lottie.LottieAnimationView android:layout_gravity="center" android:id="@id/loadingAnimationView" android:layout_width="300.0dp" android:layout_height="300.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" app:lottie_autoPlay="true" app:lottie_loop="true" app:lottie_rawRes="@raw/loading" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

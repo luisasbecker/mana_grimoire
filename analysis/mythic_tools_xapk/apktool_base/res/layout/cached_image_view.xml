@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView android:id="@id/root" android:background="@android:color/transparent" android:layout_width="match_parent" android:layout_height="match_parent" app:cardBackgroundColor="@android:color/transparent" app:cardElevation="0.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.airbnb.lottie.LottieAnimationView android:layout_gravity="center" android:id="@id/animationView" android:background="@android:color/transparent" android:visibility="visible" android:layout_width="match_parent" android:layout_height="match_parent" app:lottie_autoPlay="true" app:lottie_loop="true" app:lottie_rawRes="@raw/loading" />
+    <ImageView android:id="@id/imageView" android:visibility="invisible" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" />
+</androidx.cardview.widget.CardView>

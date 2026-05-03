@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/root_layout" android:background="@android:color/transparent" android:padding="0.0dp" android:layout_width="wrap_content" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/profileLayout" android:background="@drawable/profile_circle_purple" android:padding="2.0dp" android:clipChildren="true" android:layout_width="48.0dp" android:layout_height="48.0dp">
+        <com.studiolaganne.lengendarylens.CachedImageView android:id="@id/profile_icon" android:visibility="invisible" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="1.0dp" android:elevation="0.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+        <ImageView android:id="@id/no_photo_icon" android:visibility="visible" android:layout_width="12.0dp" android:layout_height="12.0dp" android:src="@drawable/no_photo" android:elevation="1.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

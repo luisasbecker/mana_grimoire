@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@color/almost_black" android:padding="18.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <LinearLayout android:gravity="center" android:orientation="horizontal" android:background="@drawable/rounded_background_rulings_view" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <NumberPicker android:theme="@style/NumberPickerText" android:id="@id/hr_timepicker" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            <TextView android:textSize="20.0sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="8.0dp" android:text="h" android:textIsSelectable="true" />
+            <NumberPicker android:theme="@style/NumberPickerText" android:id="@id/min_timepicker" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            <TextView android:textSize="20.0sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="8.0dp" android:text="min" android:textIsSelectable="true" />
+        </LinearLayout>
+        <LinearLayout android:gravity="end" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10.0dp">
+            <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:id="@id/negative_button" android:background="@drawable/custom_restart_button_background" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cancel" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
+            <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:id="@id/positive_button" android:background="@drawable/custom_exit_button_background" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ok" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

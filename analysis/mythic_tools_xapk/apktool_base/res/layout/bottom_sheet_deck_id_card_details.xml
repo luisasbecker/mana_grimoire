@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@drawable/bottom_sheet_background" android:paddingTop="18.0dp" android:layout_width="match_parent" android:layout_height="match_parent" android:paddingStart="12.0dp" android:paddingEnd="12.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:layout_gravity="center_horizontal" android:id="@id/chevron_down" android:layout_width="28.0dp" android:layout_height="28.0dp" android:src="@drawable/down_chevron" />
+    <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/text_color_transparent" android:id="@id/tapHelp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:text="@string/tap_to_view_details" android:fontFamily="@font/be_vietnam_pro_regular" android:textAlignment="center" />
+    <LinearLayout android:orientation="horizontal" android:id="@id/sheetGaugeRow" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" android:layout_marginStart="16.0dp" android:layout_marginEnd="6.0dp">
+        <com.studiolaganne.lengendarylens.DeckIdCardArcGaugeView android:id="@id/sheetGaugeGlobal" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0" android:paddingStart="2.0dp" android:paddingEnd="2.0dp" />
+        <View android:background="@android:color/transparent" android:layout_width="12.0dp" android:layout_height="5.0dp" />
+        <com.studiolaganne.lengendarylens.DeckIdCardArcGaugeView android:id="@id/sheetGaugePower" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0" android:paddingStart="2.0dp" android:paddingEnd="2.0dp" />
+        <com.studiolaganne.lengendarylens.DeckIdCardArcGaugeView android:id="@id/sheetGaugeMana" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0" android:paddingStart="2.0dp" android:paddingEnd="2.0dp" />
+        <com.studiolaganne.lengendarylens.DeckIdCardArcGaugeView android:id="@id/sheetGaugeHealth" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0" android:paddingStart="2.0dp" android:paddingEnd="2.0dp" />
+    </LinearLayout>
+    <FrameLayout android:id="@id/detailFragmentContainer" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_marginTop="8.0dp" android:layout_weight="1.0" />
+</LinearLayout>

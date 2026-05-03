@@ -120,94 +120,95 @@ class _DeckImportSheetState extends State<DeckImportSheet> {
     final t = AppLocalizations.of(context)!;
     final scheme = Theme.of(context).colorScheme;
 
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 10,
-          bottom: 16 + MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              t.deckImportTitle,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
-                  ),
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.82,
+      minChildSize: 0.45,
+      maxChildSize: 0.95,
+      builder: (context, scrollController) {
+        return SafeArea(
+          top: false,
+          child: ListView(
+            controller: scrollController,
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 10,
+              bottom: 16 + MediaQuery.of(context).viewInsets.bottom,
             ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _controller,
-              minLines: 6,
-              maxLines: 10,
-              decoration: InputDecoration(
-                hintText: t.deckImportHint,
-              ),
-              enabled: !_importing,
-            ),
-            const SizedBox(height: 10),
-            if (_importing)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  LinearProgressIndicator(
-                    minHeight: 3,
-                    value:
-                        _total == 0 ? null : (_processed / _total).clamp(0, 1),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    t.deckImportProgress(_processed, _total),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            if (_failedLines.isNotEmpty) ...[
-              const SizedBox(height: 10),
+            children: [
               Text(
-                t.deckImportFailedLinesTitle,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                t.deckImportTitle,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w900,
                     ),
               ),
-              const SizedBox(height: 6),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: scheme.surfaceContainerHigh.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(14),
-                  border:
-                      Border.all(color: scheme.outlineVariant.withOpacity(0.6)),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _controller,
+                minLines: 6,
+                maxLines: 10,
+                decoration: InputDecoration(
+                  hintText: t.deckImportHint,
                 ),
-                child: Text(
-                  _failedLines.take(12).join('\n'),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
+                enabled: !_importing,
+              ),
+              const SizedBox(height: 10),
+              if (_importing)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    LinearProgressIndicator(
+                      minHeight: 3,
+                      value: _total == 0
+                          ? null
+                          : (_processed / _total).clamp(0, 1),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      t.deckImportProgress(_processed, _total),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              if (_failedLines.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Text(
+                  t.deckImportFailedLinesTitle,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w900,
                       ),
                 ),
-              ),
-            ],
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: scheme.surfaceContainerHigh.withValues(alpha: 0.7),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                        color: scheme.outlineVariant.withValues(alpha: 0.6)),
+                  ),
+                  child: Text(
+                    _failedLines.take(12).join('\n'),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 12),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final cancelButton = OutlinedButton(
                     onPressed:
                         _importing ? null : () => Navigator.of(context).pop(),
                     child: Text(t.cancel),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton(
+                  );
+                  final importButton = FilledButton(
                     onPressed: _importing ? null : _import,
                     child: _importing
                         ? const SizedBox(
@@ -216,13 +217,30 @@ class _DeckImportSheetState extends State<DeckImportSheet> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : Text(t.deckImportCta),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+                  );
+                  if (constraints.maxWidth < 340) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        cancelButton,
+                        const SizedBox(height: 8),
+                        importButton,
+                      ],
+                    );
+                  }
+                  return Row(
+                    children: [
+                      Expanded(child: cancelButton),
+                      const SizedBox(width: 12),
+                      Expanded(child: importButton),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

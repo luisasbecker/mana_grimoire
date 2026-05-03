@@ -41,11 +41,11 @@ class CachedCardThumbnail extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: scheme.outlineVariant.withOpacity(0.45),
+          color: scheme.outlineVariant.withValues(alpha: 0.45),
         ),
         boxShadow: [
           BoxShadow(
-            color: scheme.primary.withOpacity(0.08),
+            color: scheme.primary.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@drawable/rounded_background_dialog_darker_with_line" android:padding="14.0dp" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="@dimen/title_size_small" android:textStyle="bold" android:id="@id/title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/collection_status" />
+    <TextView android:textSize="@dimen/text_size" android:textColor="@color/selected_color_new" android:id="@id/progressHeader" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:text="Card 1 out of 4" android:fontFamily="@font/be_vietnam_pro_semibold" />
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:layout_below="@id/title">
+        <LinearLayout android:orientation="horizontal" android:id="@id/headerLayout" android:layout_width="match_parent" android:layout_height="wrap_content" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent">
+            <LinearLayout android:orientation="vertical" android:id="@id/currentCardLayout" android:layout_width="wrap_content" android:layout_height="wrap_content">
+                <com.studiolaganne.lengendarylens.LoadingImageView android:id="@id/currentCardImage" android:layout_width="96.0dp" android:layout_height="135.0dp" android:layout_marginTop="4.0dp" android:scaleType="fitCenter" />
+            </LinearLayout>
+            <LinearLayout android:orientation="vertical" android:id="@id/currentCardInfoLayout" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_marginLeft="12.0dp" android:layout_weight="1.0">
+                <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/almost_white" android:id="@id/instructionsText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="5.0dp" android:text="@string/collection_status_dialog_header" android:fontFamily="@font/be_vietnam_pro_semibold" android:justificationMode="inter_word" />
+                <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/text_color" android:id="@id/currentCardHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18.0dp" android:text="@string/current_card" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/almost_white" android:id="@id/cardName" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="0.0dp" android:text="Card Name" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_regular" />
+                <LinearLayout android:gravity="start" android:orientation="horizontal" android:id="@id/cardInfoLayout" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/almost_white" android:id="@id/setCodeTextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DMU" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                    <TextView android:textSize="@dimen/text_size_smaller" android:textStyle="italic" android:textColor="@color/text_color" android:id="@id/collectorNumberTextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="5.0dp" android:text="#123" android:fontFamily="@font/be_vietnam_pro_regular" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.core.widget.NestedScrollView android:id="@id/optionsScrollView" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0">
+        <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <ImageView android:id="@id/backImage" android:visibility="gone" android:layout_width="32.0dp" android:layout_height="32.0dp" android:layout_marginTop="8.0dp" android:src="@drawable/back_arrow" app:tint="@color/text_color" />
+            <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/addToCollectionLayout" android:background="@drawable/black_box_with_larger_line" android:padding="12.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" android:layout_below="@id/title">
+                <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <RadioButton android:id="@id/addToCollectionRadioButton" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                        <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                            <TextView android:textSize="@dimen/text_size" android:textColor="@color/almost_white" android:id="@id/addToCollectionTextView" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/collection_status_add_to_collection" />
+                            <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/text_color" android:id="@id/addToCollectionSubtitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/collection_status_add_to_collection_subtitle" />
+                        </LinearLayout>
+                        <ImageView android:id="@id/addToCollectionIcon" android:layout_width="28.0dp" android:layout_height="28.0dp" android:layout_marginLeft="8.0dp" android:layout_marginTop="2.0dp" android:src="@drawable/collection_icon" app:tint="@color/text_color" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/grabFromCollectionLayout" android:background="@drawable/black_box_with_larger_line" android:padding="12.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" android:layout_below="@id/title">
+                <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/answerLayout" android:layout_width="match_parent" android:layout_height="wrap_content" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent">
+                    <RadioButton android:id="@id/grabFromCollectionRadioButton" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                        <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                            <TextView android:textSize="@dimen/text_size" android:textColor="@color/almost_white" android:id="@id/grabFromCollectionTextView" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/collection_status_grab_from_collection" />
+                            <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/text_color" android:id="@id/grabFromCollectionSubtitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="There is 1 matching print in your collection." />
+                        </LinearLayout>
+                        <TextView android:textSize="24.0sp" android:id="@id/grabFromCollectionIcon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:fontFamily="@font/fa6solid" />
+                    </LinearLayout>
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView android:id="@id/matchesRecyclerView" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5.0dp" android:nestedScrollingEnabled="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/answerLayout" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/makeAProxyLayout" android:background="@drawable/black_box_with_larger_line" android:padding="12.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" android:layout_below="@id/title">
+                <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <RadioButton android:id="@id/makeAProxyRadioButton" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                        <TextView android:textSize="@dimen/text_size" android:textColor="@color/almost_white" android:id="@id/makeAProxyTextView" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/collection_status_add_proxy" android:layout_weight="1.0" />
+                        <TextView android:textSize="24.0sp" android:id="@id/makeAProxyIcon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:fontFamily="@font/fa6solid" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+    <LinearLayout android:gravity="end" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16.0dp">
+        <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:id="@id/previousButton" android:background="@drawable/custom_button_background_blue" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/previous" android:textAllCaps="false" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
+        <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:id="@id/cancelButton" android:background="@drawable/custom_button_background_blue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cancel" android:textAllCaps="false" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
+        <com.google.android.material.button.MaterialButton android:textColor="@color/text_color" android:id="@id/saveButton" android:background="@drawable/custom_button_background" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/save" android:textAllCaps="false" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
+    </LinearLayout>
+</LinearLayout>

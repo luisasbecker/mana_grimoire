@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:paddingTop="10.0dp" android:paddingBottom="6.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="8.0dp" android:paddingEnd="12.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <View android:id="@id/sectionStripe" android:background="#6c95d0" android:layout_width="3.0dp" android:layout_height="14.0dp" />
+    <TextView android:textSize="12.0sp" android:id="@id/sectionTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAllCaps="true" android:fontFamily="@font/be_vietnam_pro_semibold" android:layout_marginStart="8.0dp" />
+    <TextView android:textSize="11.0sp" android:textColor="#7dc7caca" android:id="@id/sectionCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/be_vietnam_pro_regular" android:layout_marginStart="6.0dp" />
+</LinearLayout>

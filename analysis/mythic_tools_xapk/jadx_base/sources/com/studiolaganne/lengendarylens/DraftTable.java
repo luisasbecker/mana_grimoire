@@ -1,0 +1,96 @@
+package com.studiolaganne.lengendarylens;
+
+import com.facebook.appevents.iap.InAppPurchaseConstants;
+import java.util.ArrayList;
+import java.util.List;
+import kotlin.Metadata;
+import kotlin.jvm.internal.DefaultConstructorMarker;
+import kotlin.jvm.internal.Intrinsics;
+
+/* JADX INFO: compiled from: DataStructs.kt */
+/* JADX INFO: loaded from: classes6.dex */
+@Metadata(d1 = {"\u0000,\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\u000e\n\u0000\n\u0002\u0010!\n\u0002\u0018\u0002\n\u0002\b\u000e\n\u0002\u0010\u000b\n\u0002\b\u0002\n\u0002\u0010\b\n\u0002\b\u0002\b\u0087\b\u0018\u00002\u00020\u0001B!\u0012\b\b\u0002\u0010\u0002\u001a\u00020\u0003\u0012\u000e\b\u0002\u0010\u0004\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005¢\u0006\u0004\b\u0007\u0010\bJ\t\u0010\u0011\u001a\u00020\u0003HÆ\u0003J\u000f\u0010\u0012\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005HÆ\u0003J#\u0010\u0013\u001a\u00020\u00002\b\b\u0002\u0010\u0002\u001a\u00020\u00032\u000e\b\u0002\u0010\u0004\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005HÆ\u0001J\u0013\u0010\u0014\u001a\u00020\u00152\b\u0010\u0016\u001a\u0004\u0018\u00010\u0001HÖ\u0003J\t\u0010\u0017\u001a\u00020\u0018HÖ\u0001J\t\u0010\u0019\u001a\u00020\u0003HÖ\u0001R\u001a\u0010\u0002\u001a\u00020\u0003X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b\t\u0010\n\"\u0004\b\u000b\u0010\fR \u0010\u0004\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b\r\u0010\u000e\"\u0004\b\u000f\u0010\u0010¨\u0006\u001a"}, d2 = {"Lcom/studiolaganne/lengendarylens/DraftTable;", "", "version", "", "players", "", "Lcom/studiolaganne/lengendarylens/TournamentPlayer;", "<init>", "(Ljava/lang/String;Ljava/util/List;)V", "getVersion", "()Ljava/lang/String;", "setVersion", "(Ljava/lang/String;)V", "getPlayers", "()Ljava/util/List;", "setPlayers", "(Ljava/util/List;)V", "component1", "component2", "copy", "equals", "", "other", "hashCode", "", InAppPurchaseConstants.METHOD_TO_STRING, "app_release"}, k = 1, mv = {2, 2, 0}, xi = 48)
+public final /* data */ class DraftTable {
+    public static final int $stable = 8;
+    private List<TournamentPlayer> players;
+    private String version;
+
+    /* JADX WARN: Multi-variable type inference failed */
+    public DraftTable() {
+        this(null, 0 == true ? 1 : 0, 3, 0 == true ? 1 : 0);
+    }
+
+    public DraftTable(String version, List<TournamentPlayer> players) {
+        Intrinsics.checkNotNullParameter(version, "version");
+        Intrinsics.checkNotNullParameter(players, "players");
+        this.version = version;
+        this.players = players;
+    }
+
+    public /* synthetic */ DraftTable(String str, ArrayList arrayList, int i, DefaultConstructorMarker defaultConstructorMarker) {
+        this((i & 1) != 0 ? "v1" : str, (i & 2) != 0 ? new ArrayList() : arrayList);
+    }
+
+    /* JADX WARN: Multi-variable type inference failed */
+    public static /* synthetic */ DraftTable copy$default(DraftTable draftTable, String str, List list, int i, Object obj) {
+        if ((i & 1) != 0) {
+            str = draftTable.version;
+        }
+        if ((i & 2) != 0) {
+            list = draftTable.players;
+        }
+        return draftTable.copy(str, list);
+    }
+
+    /* JADX INFO: renamed from: component1, reason: from getter */
+    public final String getVersion() {
+        return this.version;
+    }
+
+    public final List<TournamentPlayer> component2() {
+        return this.players;
+    }
+
+    public final DraftTable copy(String version, List<TournamentPlayer> players) {
+        Intrinsics.checkNotNullParameter(version, "version");
+        Intrinsics.checkNotNullParameter(players, "players");
+        return new DraftTable(version, players);
+    }
+
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof DraftTable)) {
+            return false;
+        }
+        DraftTable draftTable = (DraftTable) other;
+        return Intrinsics.areEqual(this.version, draftTable.version) && Intrinsics.areEqual(this.players, draftTable.players);
+    }
+
+    public final List<TournamentPlayer> getPlayers() {
+        return this.players;
+    }
+
+    public final String getVersion() {
+        return this.version;
+    }
+
+    public int hashCode() {
+        return (this.version.hashCode() * 31) + this.players.hashCode();
+    }
+
+    public final void setPlayers(List<TournamentPlayer> list) {
+        Intrinsics.checkNotNullParameter(list, "<set-?>");
+        this.players = list;
+    }
+
+    public final void setVersion(String str) {
+        Intrinsics.checkNotNullParameter(str, "<set-?>");
+        this.version = str;
+    }
+
+    public String toString() {
+        return "DraftTable(version=" + this.version + ", players=" + this.players + ")";
+    }
+}

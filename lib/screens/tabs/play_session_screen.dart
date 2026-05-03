@@ -1,95 +1,126 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mana_grimoire/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/router.dart';
-import 'play_session_cache.dart';
+import 'play_session_controller.dart';
 
 /// Tela de sessão de partida: full-screen (sem AppBar e sem bottom bar).
-class PlaySessionScreen extends StatefulWidget {
+class PlaySessionScreen extends ConsumerWidget {
   const PlaySessionScreen({super.key});
 
   @override
-  State<PlaySessionScreen> createState() => _PlaySessionScreenState();
-}
-
-class _PlaySessionScreenState extends State<PlaySessionScreen> {
-  final _cache = PlaySessionCache.instance;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final t = AppLocalizations.of(context)!;
+    final session = ref.watch(playSessionControllerProvider);
+    final controller = ref.read(playSessionControllerProvider.notifier);
+    final lifeBlocks = List<Widget>.generate(
+      session.players,
+      (index) => _LifeBlock(
+        label: _playerLabel(t, index),
+        value: session.lifeAt(index),
+        compact: session.players > 2,
+        onAdd: () => controller.incrementLife(index),
+        onSub: () => controller.decrementLife(index),
+      ),
+    );
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Column(
-            children: [
-              Expanded(
-                child: _LifeBlock(
-                  label: t.playPlayerOneLabel,
-                  value: _cache.lifeA,
-                  onAdd: () => setState(() => _cache.lifeA++),
-                  onSub: () => setState(() {
-                    if (_cache.lifeA > 0) _cache.lifeA--;
-                  }),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Center(
-                child: _GrimoireButton(
-                  onPressed: () async {
-                    await showModalBottomSheet<void>(
-                      context: context,
-                      showDragHandle: true,
-                      backgroundColor: scheme.surfaceContainerHigh,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(20)),
-                      ),
-                      builder: (ctx) => Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              t.playGrimoireTitle,
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.w800),
-                            ),
-                            const SizedBox(height: 14),
-                            FilledButton(
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                                context.goNamed(AppRoutes.homeHub);
-                              },
-                              child: Text(t.playGoHomeCta),
-                            ),
-                          ],
+          child: session.players <= 2
+              ? Column(
+                  children: [
+                    Expanded(child: lifeBlocks[0]),
+                    const SizedBox(height: 12),
+                    Center(
+                      child: _GrimoireButton(
+                        onPressed: () => _openGrimoireSheet(
+                          context: context,
+                          theme: theme,
+                          scheme: scheme,
+                          t: t,
                         ),
                       ),
-                    );
-                  },
+                    ),
+                    const SizedBox(height: 12),
+                    Expanded(child: lifeBlocks[1]),
+                  ],
+                )
+              : Column(
+                  children: [
+                    Expanded(
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        childAspectRatio: 1.05,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        children: lifeBlocks,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _GrimoireButton(
+                      onPressed: () => _openGrimoireSheet(
+                        context: context,
+                        theme: theme,
+                        scheme: scheme,
+                        t: t,
+                      ),
+                    ),
+                  ],
                 ),
+        ),
+      ),
+    );
+  }
+
+  String _playerLabel(AppLocalizations t, int index) {
+    return switch (index) {
+      0 => t.playPlayerOneLabel,
+      1 => t.playPlayerTwoLabel,
+      _ => 'Jogador ${index + 1}',
+    };
+  }
+
+  Future<void> _openGrimoireSheet({
+    required BuildContext context,
+    required ThemeData theme,
+    required ColorScheme scheme,
+    required AppLocalizations t,
+  }) {
+    return showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      backgroundColor: scheme.surfaceContainerHigh,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              t.playGrimoireTitle,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
               ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: _LifeBlock(
-                  label: t.playPlayerTwoLabel,
-                  value: _cache.lifeB,
-                  onAdd: () => setState(() => _cache.lifeB++),
-                  onSub: () => setState(() {
-                    if (_cache.lifeB > 0) _cache.lifeB--;
-                  }),
-                ),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 14),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                context.goNamed(AppRoutes.homeHub);
+              },
+              child: Text(t.playGoHomeCta),
+            ),
+          ],
         ),
       ),
     );
@@ -113,22 +144,22 @@ class _GrimoireButton extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              scheme.primaryContainer.withOpacity(0.85),
-              scheme.surfaceContainerHigh.withOpacity(0.95),
+              scheme.primaryContainer.withValues(alpha: 0.85),
+              scheme.surfaceContainerHigh.withValues(alpha: 0.95),
             ],
           ),
           border: Border.all(
-            color: scheme.primary.withOpacity(0.6),
+            color: scheme.primary.withValues(alpha: 0.6),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.35),
+              color: Colors.black.withValues(alpha: 0.35),
               blurRadius: 20,
               offset: const Offset(0, 12),
             ),
             BoxShadow(
-              color: scheme.primary.withOpacity(0.30),
+              color: scheme.primary.withValues(alpha: 0.30),
               blurRadius: 18,
               offset: const Offset(0, 0),
             ),
@@ -159,12 +190,14 @@ class _LifeBlock extends StatelessWidget {
     required this.value,
     required this.onAdd,
     required this.onSub,
+    this.compact = false,
   });
 
   final String label;
   final int value;
   final VoidCallback onAdd;
   final VoidCallback onSub;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -176,41 +209,53 @@ class _LifeBlock extends StatelessWidget {
         children: [
           Text(
             label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: theme.textTheme.titleSmall?.copyWith(
               color: scheme.onSurfaceVariant,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FilledButton.tonal(
-                onPressed: onSub,
-                style: FilledButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FilledButton.tonal(
+                  onPressed: onSub,
+                  style: FilledButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: compact ? 14 : 20,
+                      vertical: compact ? 12 : 16,
+                    ),
+                  ),
+                  child: Icon(Icons.remove, size: compact ? 24 : 28),
                 ),
-                child: const Icon(Icons.remove, size: 28),
-              ),
-              const SizedBox(width: 20),
-              Text(
-                '$value',
-                style: theme.textTheme.displayMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
+                SizedBox(width: compact ? 12 : 20),
+                Text(
+                  '$value',
+                  style: (compact
+                          ? theme.textTheme.displaySmall
+                          : theme.textTheme.displayMedium)
+                      ?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.2,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 20),
-              FilledButton.tonal(
-                onPressed: onAdd,
-                style: FilledButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                SizedBox(width: compact ? 12 : 20),
+                FilledButton.tonal(
+                  onPressed: onAdd,
+                  style: FilledButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: compact ? 14 : 20,
+                      vertical: compact ? 12 : 16,
+                    ),
+                  ),
+                  child: Icon(Icons.add, size: compact ? 24 : 28),
                 ),
-                child: const Icon(Icons.add, size: 28),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

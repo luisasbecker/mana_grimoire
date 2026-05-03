@@ -22,8 +22,7 @@ class CollectionDao extends DatabaseAccessor<AppDatabase>
   // ---- Collections ----
 
   Stream<List<Collection>> watchCollections({String? nameFilter}) {
-    final q = select(collections)
-      ..orderBy([(t) => OrderingTerm.asc(t.name)]);
+    final q = select(collections)..orderBy([(t) => OrderingTerm.asc(t.name)]);
     if (nameFilter != null && nameFilter.trim().isNotEmpty) {
       q.where((t) => t.name.like('%${nameFilter.trim()}%'));
     }
@@ -249,7 +248,8 @@ class CollectionDao extends DatabaseAccessor<AppDatabase>
           .getSingleOrNull();
 
       if (target == null) {
-        await (update(collectionItems)..where((t) => t.id.equals(itemId))).write(
+        await (update(collectionItems)..where((t) => t.id.equals(itemId)))
+            .write(
           CollectionItemsCompanion(
             quantity: Value(quantity),
             isFoil: Value(isFoil),
@@ -263,7 +263,8 @@ class CollectionDao extends DatabaseAccessor<AppDatabase>
       }
 
       final mergedQty = target.quantity + quantity;
-      await (update(collectionItems)..where((t) => t.id.equals(target.id))).write(
+      await (update(collectionItems)..where((t) => t.id.equals(target.id)))
+          .write(
         CollectionItemsCompanion(
           quantity: Value(mergedQty),
           notes: Value(target.notes),
@@ -306,7 +307,8 @@ class CollectionDao extends DatabaseAccessor<AppDatabase>
 
       if (target == null) {
         // Apenas atualiza este item
-        await (update(collectionItems)..where((t) => t.id.equals(itemId))).write(
+        await (update(collectionItems)..where((t) => t.id.equals(itemId)))
+            .write(
           CollectionItemsCompanion(
             isFoil: Value(isFoil),
             condition: Value(condition),
@@ -330,7 +332,8 @@ class CollectionDao extends DatabaseAccessor<AppDatabase>
         ),
       );
 
-      await (delete(collectionItems)..where((t) => t.id.equals(current.id))).go();
+      await (delete(collectionItems)..where((t) => t.id.equals(current.id)))
+          .go();
     });
   }
 
@@ -359,7 +362,8 @@ class CollectionDao extends DatabaseAccessor<AppDatabase>
           .getSingleOrNull();
 
       if (target == null) {
-        await (update(collectionItems)..where((t) => t.id.equals(itemId))).write(
+        await (update(collectionItems)..where((t) => t.id.equals(itemId)))
+            .write(
           CollectionItemsCompanion(
             printingId: Value(newPrintingId),
             updatedAt: Value(now),
@@ -379,7 +383,69 @@ class CollectionDao extends DatabaseAccessor<AppDatabase>
         ),
       );
 
-      await (delete(collectionItems)..where((t) => t.id.equals(current.id))).go();
+      await (delete(collectionItems)..where((t) => t.id.equals(current.id)))
+          .go();
+    });
+  }
+
+  /// Atualiza quantidade, atributos e printing em uma única transação, com merge
+  /// quando a combinação final já existe na coleção.
+  Future<void> updateItemAndPrintingMerge({
+    required String itemId,
+    required String newPrintingId,
+    required int quantity,
+    required bool isFoil,
+    required String condition,
+    required String language,
+    String? notes,
+    required DateTime now,
+  }) async {
+    await transaction(() async {
+      final current = await (select(collectionItems)
+            ..where((t) => t.id.equals(itemId)))
+          .getSingleOrNull();
+      if (current == null) return;
+
+      if (quantity <= 0) {
+        await (delete(collectionItems)..where((t) => t.id.equals(itemId))).go();
+        return;
+      }
+
+      final target = await (select(collectionItems)
+            ..where((t) =>
+                t.id.equals(itemId).not() &
+                t.collectionId.equals(current.collectionId) &
+                t.printingId.equals(newPrintingId) &
+                t.isFoil.equals(isFoil) &
+                t.condition.equals(condition) &
+                t.language.equals(language)))
+          .getSingleOrNull();
+
+      if (target == null) {
+        await (update(collectionItems)..where((t) => t.id.equals(itemId)))
+            .write(
+          CollectionItemsCompanion(
+            printingId: Value(newPrintingId),
+            quantity: Value(quantity),
+            isFoil: Value(isFoil),
+            condition: Value(condition),
+            language: Value(language),
+            notes: Value(notes),
+            updatedAt: Value(now),
+          ),
+        );
+        return;
+      }
+
+      await (update(collectionItems)..where((t) => t.id.equals(target.id)))
+          .write(
+        CollectionItemsCompanion(
+          quantity: Value(target.quantity + quantity),
+          notes: Value(target.notes),
+          updatedAt: Value(now),
+        ),
+      );
+      await (delete(collectionItems)..where((t) => t.id.equals(itemId))).go();
     });
   }
 

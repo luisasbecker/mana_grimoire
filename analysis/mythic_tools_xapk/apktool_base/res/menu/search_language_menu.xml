@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@id/lang_all" android:title="@string/all_languages" android:checkable="true" />
+        <item android:id="@id/lang_en" android:title="English" android:checkable="true" />
+        <item android:id="@id/lang_fr" android:title="Français" android:checkable="true" />
+        <item android:id="@id/lang_es" android:title="Español" android:checkable="true" />
+        <item android:id="@id/lang_de" android:title="Deutsch" android:checkable="true" />
+        <item android:id="@id/lang_it" android:title="Italiano" android:checkable="true" />
+        <item android:id="@id/lang_pt" android:title="Português" android:checkable="true" />
+        <item android:id="@id/lang_ja" android:title="日本語" android:checkable="true" />
+        <item android:id="@id/lang_ko" android:title="한국어" android:checkable="true" />
+        <item android:id="@id/lang_zht" android:title="繁體中文" android:checkable="true" />
+        <item android:id="@id/lang_zhs" android:title="简体中文" android:checkable="true" />
+        <item android:id="@id/lang_ru" android:title="Русский" android:checkable="true" />
+    </group>
+</menu>

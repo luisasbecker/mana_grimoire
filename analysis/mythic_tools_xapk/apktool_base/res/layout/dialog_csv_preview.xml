@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@drawable/rounded_background_dialog_darker_with_line" android:padding="12.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="22.0sp" android:textStyle="bold" android:id="@id/title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/csv_preview_title" />
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/formatRow" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp">
+        <TextView android:textSize="14.0sp" android:textColor="@color/text_color" android:id="@id/formatLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/csv_format_label" />
+        <TextView android:textSize="14.0sp" android:textStyle="bold" android:id="@id/formatValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4.0dp" />
+        <View android:layout_width="0.0dp" android:layout_height="1.0dp" android:layout_weight="1.0" />
+        <TextView android:textSize="12.0sp" android:textColor="@android:color/white" android:id="@id/confidenceBadge" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    </LinearLayout>
+    <TextView android:textSize="14.0sp" android:textColor="@color/text_color" android:id="@id/statsText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" />
+    <TextView android:textSize="14.0sp" android:textStyle="bold" android:textColor="@color/almost_white" android:id="@id/previewHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16.0dp" android:text="@string/csv_preview_section" />
+    <HorizontalScrollView android:id="@id/previewScrollView" android:background="@drawable/black_box_with_line" android:padding="8.0dp" android:scrollbars="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp">
+        <LinearLayout android:orientation="vertical" android:id="@id/previewTableContainer" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    </HorizontalScrollView>
+    <LinearLayout android:orientation="vertical" android:id="@id/mappingSection" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16.0dp">
+        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/mappingHeader" android:background="@drawable/black_box_with_line" android:padding="8.0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <ImageView android:id="@id/mappingExpandIcon" android:layout_width="20.0dp" android:layout_height="20.0dp" android:src="@drawable/ic_expand_more" app:tint="@color/text_color" />
+            <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginStart="8.0dp">
+                <TextView android:textSize="14.0sp" android:textStyle="bold" android:textColor="@color/almost_white" android:id="@id/mappingTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/csv_column_mapping" />
+                <TextView android:textSize="12.0sp" android:textColor="@color/text_color" android:id="@id/mappingSubtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/csv_column_mapping_hint" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:orientation="vertical" android:id="@id/mappingContent" android:background="@drawable/black_box_with_line" android:padding="12.0dp" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dp">
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/nameRow" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8.0dp">
+                <TextView android:textSize="13.0sp" android:textColor="@color/almost_white" android:layout_width="100.0dp" android:layout_height="wrap_content" android:text="@string/csv_field_name" />
+                <Spinner android:id="@id/nameSpinner" android:background="@drawable/spinner_background" android:layout_width="0.0dp" android:layout_height="40.0dp" android:layout_weight="1.0" />
+            </LinearLayout>
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/quantityRow" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8.0dp">
+                <TextView android:textSize="13.0sp" android:textColor="@color/almost_white" android:layout_width="100.0dp" android:layout_height="wrap_content" android:text="@string/csv_field_quantity" />
+                <Spinner android:id="@id/quantitySpinner" android:background="@drawable/spinner_background" android:layout_width="0.0dp" android:layout_height="40.0dp" android:layout_weight="1.0" />
+            </LinearLayout>
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/setCodeRow" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8.0dp">
+                <TextView android:textSize="13.0sp" android:textColor="@color/almost_white" android:layout_width="100.0dp" android:layout_height="wrap_content" android:text="@string/csv_field_set_code" />
+                <Spinner android:id="@id/setCodeSpinner" android:background="@drawable/spinner_background" android:layout_width="0.0dp" android:layout_height="40.0dp" android:layout_weight="1.0" />
+            </LinearLayout>
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/collectorNumberRow" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <TextView android:textSize="13.0sp" android:textColor="@color/almost_white" android:layout_width="100.0dp" android:layout_height="wrap_content" android:text="@string/csv_field_collector_number" />
+                <Spinner android:id="@id/collectorNumberSpinner" android:background="@drawable/spinner_background" android:layout_width="0.0dp" android:layout_height="40.0dp" android:layout_weight="1.0" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <TextView android:textSize="13.0sp" android:textColor="@color/warning_color" android:id="@id/warningText" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" />
+    <LinearLayout android:gravity="end" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16.0dp">
+        <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:id="@id/cancelButton" android:background="@drawable/custom_button_background_blue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cancel" android:textAllCaps="false" android:layout_marginEnd="8.0dp" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/SmallMaterialButton" />
+        <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:id="@id/continueButton" android:background="@drawable/custom_button_background" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/continue_button" android:textAllCaps="false" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/SmallMaterialButton" />
+    </LinearLayout>
+</LinearLayout>

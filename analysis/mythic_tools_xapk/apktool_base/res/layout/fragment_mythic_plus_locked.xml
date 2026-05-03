@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center" android:orientation="vertical" android:padding="32.0dp" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/lockedIcon" android:background="@drawable/dark_grey_box" android:padding="22.0dp" android:layout_width="96.0dp" android:layout_height="96.0dp" android:src="@drawable/mythic_plus_small" android:contentDescription="@string/mythic_recommendations" />
+    <TextView android:textSize="14.0sp" android:textColor="#aaaaaa" android:gravity="center" android:id="@id/lockedMessage" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20.0dp" android:lineSpacingExtra="4.0dp" android:fontFamily="@font/be_vietnam_pro_regular" android:paddingStart="16.0dp" android:paddingEnd="16.0dp" />
+    <TextView android:textSize="14.0sp" android:textColor="@color/white" android:ellipsize="none" android:gravity="center" android:id="@id/lockedButton" android:background="@drawable/floating_button_box_mythic" android:paddingTop="14.0dp" android:paddingBottom="14.0dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="28.0dp" android:maxWidth="300.0dp" android:maxLines="2" android:drawablePadding="8.0dp" android:fontFamily="@font/be_vietnam_pro_semibold" android:paddingStart="28.0dp" android:paddingEnd="28.0dp" />
+</LinearLayout>

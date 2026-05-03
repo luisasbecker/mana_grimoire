@@ -65,10 +65,11 @@ class DeckExportSheet extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: scheme.surfaceContainerHigh.withOpacity(0.7),
+                          color: scheme.surfaceContainerHigh
+                              .withValues(alpha: 0.7),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: scheme.outlineVariant.withOpacity(0.6),
+                            color: scheme.outlineVariant.withValues(alpha: 0.6),
                           ),
                         ),
                         child: SingleChildScrollView(
@@ -81,34 +82,45 @@ class DeckExportSheet extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text(t.cancel),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: FilledButton.icon(
-                            onPressed: text.isEmpty
-                                ? null
-                                : () async {
-                                    await Clipboard.setData(
-                                      ClipboardData(text: text),
-                                    );
-                                    if (!context.mounted) return;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(t.deckExportCopied)),
-                                    );
-                                  },
-                            icon: const Icon(Icons.copy_rounded),
-                            label: Text(t.deckExportCopyCta),
-                          ),
-                        ),
-                      ],
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final cancelButton = OutlinedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text(t.cancel),
+                        );
+                        final copyButton = FilledButton.icon(
+                          onPressed: text.isEmpty
+                              ? null
+                              : () async {
+                                  await Clipboard.setData(
+                                    ClipboardData(text: text),
+                                  );
+                                  if (!context.mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(t.deckExportCopied)),
+                                  );
+                                },
+                          icon: const Icon(Icons.copy_rounded),
+                          label: Text(t.deckExportCopyCta),
+                        );
+                        if (constraints.maxWidth < 340) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              cancelButton,
+                              const SizedBox(height: 8),
+                              copyButton,
+                            ],
+                          );
+                        }
+                        return Row(
+                          children: [
+                            Expanded(child: cancelButton),
+                            const SizedBox(width: 12),
+                            Expanded(child: copyButton),
+                          ],
+                        );
+                      },
                     ),
                   ],
                 );

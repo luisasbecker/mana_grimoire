@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:padding="16.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="@dimen/text_size_bigger" android:textColor="@color/almost_white" android:id="@id/challengeNameTextView" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_marginBottom="8.0dp" android:fontFamily="@font/baloo_da_2_bold" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
+    <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/text_color" android:id="@id/challengeEndDateTextView" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_marginBottom="16.0dp" android:fontFamily="@font/be_vietnam_pro_regular" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/challengeNameTextView" />
+    <LinearLayout android:orientation="vertical" android:id="@id/tasksContainer" android:layout_width="match_parent" android:layout_height="wrap_content" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/challengeEndDateTextView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

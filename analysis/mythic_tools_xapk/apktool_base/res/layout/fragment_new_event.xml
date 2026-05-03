@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center" android:orientation="vertical" android:padding="10.0dp" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView android:layout_gravity="end" android:layout_width="60.0dp" android:layout_height="60.0dp" android:src="@drawable/ic_trophy" />
+    <TextView android:textSize="20.0sp" android:textColor="@android:color/white" android:id="@id/event_type_header" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8.0dp" android:text="@string/event_type" android:textAlignment="textStart" />
+    <Spinner android:id="@id/event_type_spinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20.0dp" />
+    <TextView android:textSize="20.0sp" android:textColor="@android:color/white" android:id="@id/pairing_type_header" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8.0dp" android:text="@string/pairing_method" android:textAlignment="textStart" />
+    <Spinner android:id="@id/pairing_type_spinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20.0dp" />
+    <TextView android:textSize="20.0sp" android:textColor="@android:color/white" android:id="@id/match_type_header" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8.0dp" android:text="@string/match_type" android:textAlignment="textStart" />
+    <Spinner android:id="@id/match_type_spinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20.0dp" />
+    <View android:id="@id/spacer" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0" />
+    <com.google.android.material.button.MaterialButton android:textSize="20.0sp" android:textColor="@android:color/white" android:id="@id/next_button" android:background="@drawable/custom_life_button_background" android:padding="10.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:text="@string/next_button_event" android:paddingStart="20.0dp" android:paddingEnd="20.0dp" app:backgroundTint="@null" />
+</LinearLayout>

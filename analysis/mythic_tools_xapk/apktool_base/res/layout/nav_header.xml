@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:background="@color/darker_grey" android:padding="0.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="18.0sp" android:textStyle="bold" android:textColor="@color/almost_white" android:id="@id/tableOfContentsHeader" android:background="@color/secondary_color" android:padding="16.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/table_of_contents" android:textAlignment="textStart" />
+</LinearLayout>

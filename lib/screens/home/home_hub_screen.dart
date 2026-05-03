@@ -56,7 +56,8 @@ class HomeHubScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       CircleAvatar(
-                        backgroundColor: scheme.tertiary.withOpacity(0.25),
+                        backgroundColor:
+                            scheme.tertiary.withValues(alpha: 0.25),
                         child: Icon(Icons.person, color: scheme.tertiary),
                       ),
                       const SizedBox(width: 14),
@@ -66,21 +67,32 @@ class HomeHubScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Pedro quer trocar uma carta contigo',
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(
                                     fontWeight: FontWeight.w600,
                                   ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Propôs Rhystic Study (NM) · há 2 h',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
                                     color: scheme.onSurfaceVariant,
                                   ),
                             ),
                           ],
                         ),
                       ),
-                      Icon(Icons.chevron_right_rounded, color: scheme.onSurfaceVariant),
+                      Icon(Icons.chevron_right_rounded,
+                          color: scheme.onSurfaceVariant),
                     ],
                   ),
                 ),
@@ -90,8 +102,10 @@ class HomeHubScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       CircleAvatar(
-                        backgroundColor: scheme.secondary.withOpacity(0.22),
-                        child: Icon(Icons.forum_outlined, color: scheme.secondary),
+                        backgroundColor:
+                            scheme.secondary.withValues(alpha: 0.22),
+                        child:
+                            Icon(Icons.forum_outlined, color: scheme.secondary),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -100,21 +114,32 @@ class HomeHubScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Nova mensagem sobre Sol Ring',
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(
                                     fontWeight: FontWeight.w600,
                                   ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Grupo Commander SP · há 5 h',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
                                     color: scheme.onSurfaceVariant,
                                   ),
                             ),
                           ],
                         ),
                       ),
-                      Icon(Icons.chevron_right_rounded, color: scheme.onSurfaceVariant),
+                      Icon(Icons.chevron_right_rounded,
+                          color: scheme.onSurfaceVariant),
                     ],
                   ),
                 ),
@@ -165,8 +190,7 @@ class HomeHubScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
               sliver: SliverToBoxAdapter(
                 child: OutlinedButton.icon(
-                  onPressed: () =>
-                      context.pushNamed(AppRoutes.devScryfallTest),
+                  onPressed: () => context.pushNamed(AppRoutes.devScryfallTest),
                   icon: const Icon(Icons.science_outlined),
                   label: const Text('Dev: teste Scryfall + cache'),
                 ),
@@ -211,6 +235,8 @@ class _FeaturedCard extends StatelessWidget {
             const Spacer(),
             Text(
               title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),

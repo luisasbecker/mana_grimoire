@@ -149,35 +149,40 @@ class _DecksScreenState extends State<DecksScreen> {
                   ),
                   const SizedBox(height: 10),
                   Expanded(
-                    child: ListView(
-                      controller: controller,
-                      children: [
-                        RadioListTile<String?>(
-                          value: null,
-                          groupValue: activeId,
-                          title: Text(t.activeDeckNone),
-                          onChanged: (v) async {
-                            Navigator.of(sheetContext).pop();
-                            await appDb.decksDao.deactivateAllDecks();
-                          },
-                        ),
-                        const Divider(height: 1),
-                        for (final d in decks) ...[
+                    child: RadioGroup<String?>(
+                      groupValue: activeId,
+                      onChanged: (value) async {
+                        Navigator.of(sheetContext).pop();
+                        if (value == null) {
+                          await appDb.decksDao.deactivateAllDecks();
+                          return;
+                        }
+                        for (final d in decks) {
+                          if (d.id == value) {
+                            await _onToggleActive(d, true);
+                            return;
+                          }
+                        }
+                      },
+                      child: ListView(
+                        controller: controller,
+                        children: [
                           RadioListTile<String?>(
-                            value: d.id,
-                            groupValue: activeId,
-                            title: Text(d.name),
-                            subtitle: Text(d.format),
-                            onChanged: (completeByDeckId[d.id] ?? true)
-                                ? (v) async {
-                                    Navigator.of(sheetContext).pop();
-                                    await _onToggleActive(d, true);
-                                  }
-                                : null,
+                            value: null,
+                            title: Text(t.activeDeckNone),
                           ),
                           const Divider(height: 1),
+                          for (final d in decks) ...[
+                            RadioListTile<String?>(
+                              value: d.id,
+                              title: Text(d.name),
+                              subtitle: Text(d.format),
+                              enabled: completeByDeckId[d.id] ?? true,
+                            ),
+                            const Divider(height: 1),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ],
@@ -272,12 +277,14 @@ class _DecksScreenState extends State<DecksScreen> {
                           decoration: BoxDecoration(
                             color: (active
                                     ? scheme.primaryContainer
-                                    : scheme.primaryContainer.withOpacity(0.35))
-                                .withOpacity(active ? 0.55 : 1),
+                                    : scheme.primaryContainer
+                                        .withValues(alpha: 0.35))
+                                .withValues(alpha: active ? 0.55 : 1),
                             borderRadius: BorderRadius.circular(12),
                             border: active
                                 ? Border.all(
-                                    color: scheme.primary.withOpacity(0.55),
+                                    color:
+                                        scheme.primary.withValues(alpha: 0.55),
                                   )
                                 : null,
                           ),
@@ -317,14 +324,17 @@ class _DecksScreenState extends State<DecksScreen> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: scheme.secondaryContainer
-                                        .withOpacity(0.35),
+                                        .withValues(alpha: 0.35),
                                     borderRadius: BorderRadius.circular(999),
                                     border: Border.all(
-                                      color: scheme.secondary.withOpacity(0.35),
+                                      color: scheme.secondary
+                                          .withValues(alpha: 0.35),
                                     ),
                                   ),
                                   child: Text(
                                     d.format,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: Theme.of(context)
                                         .textTheme
                                         .labelSmall
@@ -353,11 +363,11 @@ class _DecksScreenState extends State<DecksScreen> {
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(18),
-                      border:
-                          Border.all(color: scheme.primary.withOpacity(0.55)),
+                      border: Border.all(
+                          color: scheme.primary.withValues(alpha: 0.55)),
                       boxShadow: [
                         BoxShadow(
-                          color: scheme.primary.withOpacity(0.18),
+                          color: scheme.primary.withValues(alpha: 0.18),
                           blurRadius: 22,
                           offset: const Offset(0, 10),
                         ),

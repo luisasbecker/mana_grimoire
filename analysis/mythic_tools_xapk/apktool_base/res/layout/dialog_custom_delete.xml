@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@drawable/rounded_background_dialog_darker_with_line" android:padding="18.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="22.0sp" android:textStyle="bold" android:id="@id/title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Title" />
+    <TextView android:textSize="16.0sp" android:id="@id/body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:text="Body text" android:layout_below="@id/title" />
+    <EditText android:theme="@style/LifeEditTextStyle" android:textColorHint="@color/middle_grey" android:id="@id/custom_life_edit_text" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="" android:inputType="text" android:imeOptions="actionDone" />
+    <CheckBox android:textColor="@color/text_color" android:id="@id/restoreCardsCheckBox" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:checked="true" android:text="@string/restore_cards_to_collection" />
+    <TextView android:textSize="@dimen/text_size_smaller" android:textStyle="italic" android:textColor="@color/selected_color_new" android:id="@id/warningText" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/no_restore_cards_warning" android:fontFamily="@font/be_vietnam_pro_regular" />
+    <LinearLayout android:gravity="end" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp">
+        <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:id="@id/negative_button" android:background="@drawable/custom_button_background_blue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cancel" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
+        <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:id="@id/positive_button" android:background="@drawable/custom_button_background" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/delete_playgroup_short" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
+    </LinearLayout>
+</LinearLayout>

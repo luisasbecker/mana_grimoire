@@ -338,6 +338,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newCollectionNameHint => 'Ex.: Binder, Trade, Staples';
 
   @override
+  String get newCollectionNameRequired => 'Collection name is required.';
+
+  @override
   String get collectionsEmptyTitle => 'You don\'t have any collections yet';
 
   @override

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@id/root_layout" android:padding="0.0dp" android:layout_width="260.0dp" android:layout_height="158.0dp" android:layout_marginEnd="8.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.studiolaganne.lengendarylens.CachedImageView android:id="@id/screenshotImage" android:layout_width="0.0dp" android:layout_height="0.0dp" android:scaleType="fitCenter" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

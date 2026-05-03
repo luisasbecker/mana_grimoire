@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:background="@color/background_color" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:id="@id/swipeRefreshLayout" android:layout_width="match_parent" android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView android:id="@id/listsRecyclerView" android:padding="12.0dp" android:layout_width="match_parent" android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/addButtonLayout" android:background="@drawable/floating_button_box" android:layout_width="80.0dp" android:layout_height="80.0dp" android:layout_margin="22.0dp" android:elevation="50.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent">
+        <ImageView android:id="@id/plusImageView" android:layout_width="24.0dp" android:layout_height="24.0dp" android:src="@drawable/plus_sign" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/black" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/overlay" android:background="@color/overlay_lighter" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent" android:elevation="100.0dp">
+        <com.airbnb.lottie.LottieAnimationView android:layout_gravity="center" android:id="@id/loadingAnimationView" android:layout_width="300.0dp" android:layout_height="300.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" app:lottie_autoPlay="true" app:lottie_loop="true" app:lottie_rawRes="@raw/loading" />
+        <TextView android:textSize="14.0sp" android:textColor="@color/text_color" android:id="@id/connectingTextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="30.0dp" android:text="@string/updating" android:fontFamily="@font/be_vietnam_pro_semibold" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/loadingAnimationView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

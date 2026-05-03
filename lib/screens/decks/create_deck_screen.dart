@@ -61,49 +61,46 @@ class _CreateDeckScreenState extends State<CreateDeckScreen> {
     final t = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: ManaInternalAppBar(title: t.createDeckTitle),
-      body: Padding(
+      body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _name,
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) => _saving ? null : _create(),
-              decoration: InputDecoration(
-                labelText: t.createDeckNameLabel,
-                hintText: t.createDeckNameHint,
-              ),
-              autofocus: true,
+        children: [
+          TextField(
+            controller: _name,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) => _saving ? null : _create(),
+            decoration: InputDecoration(
+              labelText: t.createDeckNameLabel,
+              hintText: t.createDeckNameHint,
             ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              value: _format,
-              decoration: InputDecoration(labelText: t.createDeckFormatLabel),
-              items: const [
-                DropdownMenuItem(value: 'Commander', child: Text('Commander')),
-                DropdownMenuItem(value: 'Standard', child: Text('Standard')),
-                DropdownMenuItem(value: 'Pauper', child: Text('Pauper')),
-                DropdownMenuItem(value: 'Modern', child: Text('Modern')),
-                DropdownMenuItem(value: 'Other', child: Text('Other')),
-              ],
-              onChanged: _saving
-                  ? null
-                  : (v) => setState(() => _format = v ?? 'Commander'),
-            ),
-            const Spacer(),
-            FilledButton(
-              onPressed: _saving ? null : _create,
-              child: _saving
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(t.createDeckCreateButton),
-            ),
-          ],
-        ),
+            autofocus: true,
+          ),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<String>(
+            initialValue: _format,
+            decoration: InputDecoration(labelText: t.createDeckFormatLabel),
+            items: const [
+              DropdownMenuItem(value: 'Commander', child: Text('Commander')),
+              DropdownMenuItem(value: 'Standard', child: Text('Standard')),
+              DropdownMenuItem(value: 'Pauper', child: Text('Pauper')),
+              DropdownMenuItem(value: 'Modern', child: Text('Modern')),
+              DropdownMenuItem(value: 'Other', child: Text('Other')),
+            ],
+            onChanged: _saving
+                ? null
+                : (v) => setState(() => _format = v ?? 'Commander'),
+          ),
+          const SizedBox(height: 32),
+          FilledButton(
+            onPressed: _saving ? null : _create,
+            child: _saving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(t.createDeckCreateButton),
+          ),
+        ],
       ),
     );
   }

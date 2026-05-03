@@ -253,4 +253,3 @@ class DecksDao extends DatabaseAccessor<AppDatabase> with _$DecksDaoMixin {
     await (delete(decks)..where((t) => t.id.equals(id))).go();
   }
 }
-
