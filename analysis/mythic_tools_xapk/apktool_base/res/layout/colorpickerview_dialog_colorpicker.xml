@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <FrameLayout android:id="@id/colorPickerViewFrame" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <com.skydoves.colorpickerview.ColorPickerView android:layout_gravity="center" android:id="@id/colorPickerView" android:layout_width="300.0dp" android:layout_height="300.0dp" android:layout_margin="20.0dp" app:selector="@drawable/colorpickerview_wheel" />
+        </FrameLayout>
+        <FrameLayout android:id="@id/alphaSlideBarFrame" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <com.skydoves.colorpickerview.sliders.AlphaSlideBar android:id="@id/alphaSlideBar" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="15.0dp" android:layout_marginTop="10.0dp" android:layout_marginRight="15.0dp" android:layout_marginBottom="10.0dp" app:selector_AlphaSlideBar="@drawable/colorpickerview_wheel" />
+        </FrameLayout>
+        <FrameLayout android:id="@id/brightnessSlideBarFrame" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <com.skydoves.colorpickerview.sliders.BrightnessSlideBar android:id="@id/brightnessSlideBar" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="15.0dp" android:layout_marginTop="10.0dp" android:layout_marginRight="15.0dp" android:layout_marginBottom="10.0dp" app:selector_BrightnessSlider="@drawable/colorpickerview_wheel" />
+        </FrameLayout>
+        <Space android:id="@id/space_bottom" android:layout_width="match_parent" android:layout_height="10.0dp" />
+    </LinearLayout>
+</ScrollView>

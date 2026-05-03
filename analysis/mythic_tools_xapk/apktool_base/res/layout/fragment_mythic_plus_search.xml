@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/tabStripContainer" android:paddingTop="4.0dp" android:paddingBottom="4.0dp" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="8.0dp" android:paddingEnd="4.0dp">
+        <HorizontalScrollView android:id="@id/tabStripScroll" android:scrollbars="none" android:layout_width="0.0dp" android:layout_height="wrap_content" android:fillViewport="false" android:layout_weight="1.0">
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/tabStripLayout" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        </HorizontalScrollView>
+        <TextView android:textSize="12.0sp" android:textColor="#aaaaaa" android:gravity="center" android:id="@id/addTabButton" android:background="?selectableItemBackgroundBorderless" android:layout_width="32.0dp" android:layout_height="32.0dp" android:text="" android:fontFamily="@font/fa6solid" android:layout_marginStart="4.0dp" />
+    </LinearLayout>
+    <View android:id="@id/tabStripDivider" android:background="#22ffffff" android:visibility="gone" android:layout_width="match_parent" android:layout_height="1.0dp" />
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:paddingTop="5.0dp" android:paddingBottom="4.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="8.0dp" android:paddingEnd="5.0dp">
+        <EditText android:textSize="13.0sp" android:textColor="@color/almost_white" android:textColorHint="#666666" android:id="@id/searchEditText" android:background="@drawable/background_box_mythic_with_line_small" android:layout_width="0.0dp" android:layout_height="38.0dp" android:hint="@string/mythic_search_hint" android:singleLine="true" android:drawablePadding="8.0dp" android:layout_weight="1.0" android:inputType="text" android:imeOptions="actionSearch" android:drawableStart="@drawable/search_icon" android:fontFamily="@font/be_vietnam_pro_regular" android:paddingStart="12.0dp" android:paddingEnd="12.0dp" />
+        <TextView android:textSize="13.0sp" android:textColor="@color/mythic_plus" android:gravity="center" android:id="@id/searchButton" android:layout_width="wrap_content" android:layout_height="38.0dp" android:text="@string/mythic_search_action" android:fontFamily="@font/be_vietnam_pro_semibold" android:paddingStart="12.0dp" android:paddingEnd="4.0dp" />
+    </LinearLayout>
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/filterPillsRow" android:paddingBottom="4.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2.0dp" android:paddingStart="8.0dp" android:paddingEnd="5.0dp">
+        <TextView android:textSize="16.0sp" android:textColor="@color/mythic_plus" android:gravity="center" android:id="@id/filterButton" android:background="@drawable/background_box_mythic_with_line_small" android:paddingTop="2.0dp" android:layout_width="36.0dp" android:layout_height="36.0dp" android:text="" android:fontFamily="@font/fa6solid" android:paddingStart="5.0dp" android:paddingEnd="5.0dp" />
+        <HorizontalScrollView android:id="@id/pillsScrollView" android:scrollbars="none" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginStart="6.0dp" android:layout_marginEnd="6.0dp">
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/pillsContainer" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        </HorizontalScrollView>
+        <CheckBox android:textSize="@dimen/text_size_smallest" android:id="@id/fromCollectionCheckBox" android:background="@drawable/box_with_line_small" android:layout_width="wrap_content" android:layout_height="32.0dp" android:text="@string/from_my_collection" android:paddingEnd="8.0dp" />
+    </LinearLayout>
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/resultsToolbar" android:paddingBottom="4.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="8.0dp" android:paddingEnd="3.0dp">
+        <TextView android:textSize="11.0sp" android:textColor="#888888" android:id="@id/numResultsText" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_regular" />
+        <TextView android:textSize="20.0sp" android:textColor="#aaaaaa" android:gravity="center" android:id="@id/sortButton" android:background="?selectableItemBackgroundBorderless" android:layout_width="wrap_content" android:layout_height="28.0dp" android:text="" android:fontFamily="@font/fa6solid" android:paddingStart="10.0dp" android:paddingEnd="10.0dp" />
+        <ImageView android:id="@id/gridToggle" android:background="?selectableItemBackgroundBorderless" android:layout_width="28.0dp" android:layout_height="28.0dp" android:src="@drawable/grid_2" android:scaleType="centerInside" android:layout_marginStart="4.0dp" />
+    </LinearLayout>
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0">
+        <androidx.recyclerview.widget.RecyclerView android:id="@id/resultsRecyclerView" android:paddingBottom="80.0dp" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="match_parent" />
+        <TextView android:textSize="14.0sp" android:textColor="#666666" android:layout_gravity="center" android:id="@id/emptyStateText" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/mythic_search_empty" android:fontFamily="@font/be_vietnam_pro_regular" />
+        <ProgressBar android:layout_gravity="center" android:id="@id/loadingIndicator" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:indeterminateTint="@color/mythic_plus" />
+    </FrameLayout>
+</LinearLayout>

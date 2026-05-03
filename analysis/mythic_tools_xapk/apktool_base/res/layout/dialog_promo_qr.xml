@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@id/promoQRLayout" android:background="@android:color/transparent" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.cardview.widget.CardView android:id="@id/cardView" android:padding="22.0dp" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_margin="20.0dp" app:cardBackgroundColor="@color/background_color" app:cardCornerRadius="22.0dp" app:layout_constraintDimensionRatio="H,1:1" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent">
+        <include android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="12.0dp" layout="@layout/custom_barcode_scanner" />
+    </androidx.cardview.widget.CardView>
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/cancelButtonLayout" android:background="@drawable/custom_button_background_blue" android:paddingTop="10.0dp" android:paddingBottom="10.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="16.0dp" android:layout_marginTop="12.0dp" android:layout_marginRight="16.0dp" android:layout_marginBottom="12.0dp" android:paddingStart="12.0dp" android:paddingEnd="18.0dp" android:layout_marginStart="42.0dp" android:layout_marginEnd="42.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/cardView">
+        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent">
+            <ImageView android:layout_width="20.0dp" android:layout_height="20.0dp" android:layout_marginRight="0.0dp" android:src="@drawable/ic_clear" />
+            <TextView android:textSize="@dimen/button_text_size" android:textColor="@color/almost_white" android:id="@id/cancelButtonText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="2.0dp" android:text="@string/cancel" android:fontFamily="@font/be_vietnam_pro_semibold" android:layout_marginStart="6.0dp" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

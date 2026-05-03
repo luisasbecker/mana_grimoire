@@ -118,6 +118,7 @@
   "newCollectionTitle": "New collection",
   "newCollectionNameLabel": "Name",
   "newCollectionNameHint": "Ex.: Binder, Trade, Staples",
+  "newCollectionNameRequired": "Collection name is required.",
   "collectionsEmptyTitle": "You don't have any collections yet",
   "collectionsEmptySubtitle": "Tap “New collection” to create your first one.",
   "retry": "Retry",
@@ -133,4 +134,3 @@
   "create": "Create",
   "deckToCollectionResult": "Added: {added} cards • Skipped: {skipped}"
 }
-

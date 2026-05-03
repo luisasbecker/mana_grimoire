@@ -5,6 +5,7 @@ import 'package:mana_grimoire/l10n/app_localizations.dart';
 
 import '../../app/router.dart';
 import '../../data/local/db/db_instance.dart';
+import '../../widgets/create_collection_dialog.dart';
 import '../../widgets/mana_internal_app_bar.dart';
 import '../../widgets/mana_empty_state.dart';
 import '../../widgets/mana_surface_card.dart';
@@ -20,43 +21,24 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
   final _uuid = const Uuid();
 
   Future<void> _createCollectionDialog() async {
-    final controller = TextEditingController();
-    final t = AppLocalizations.of(context)!;
-    final name = await showDialog<String?>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(t.newCollectionTitle),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            labelText: t.newCollectionNameLabel,
-            hintText: t.newCollectionNameHint,
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(null),
-            child: Text(t.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () =>
-                Navigator.of(dialogContext).pop(controller.text.trim()),
-            child: Text(t.create),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
-
+    final name = await showCreateCollectionDialog(context);
+    if (!mounted) return;
     if (name == null || name.isEmpty) return;
 
     final now = DateTime.now();
-    await appDb.collectionDao.createCollection(
-      id: _uuid.v4(),
-      name: name,
-      now: now,
-    );
+    try {
+      await appDb.collectionDao.createCollection(
+        id: _uuid.v4(),
+        name: name,
+        now: now,
+      );
+    } catch (error) {
+      if (!mounted) return;
+      final t = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${t.error}: $error')),
+      );
+    }
   }
 
   @override
@@ -102,7 +84,7 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
-                          color: scheme.tertiary.withOpacity(0.18),
+                          color: scheme.tertiary.withValues(alpha: 0.18),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(
@@ -162,7 +144,7 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: scheme.primary.withOpacity(0.18),
+                        color: scheme.primary.withValues(alpha: 0.18),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(

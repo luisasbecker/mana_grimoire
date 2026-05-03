@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/root_layout" android:background="@android:color/transparent" android:paddingTop="6.0dp" android:paddingBottom="6.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="4.0dp" android:paddingEnd="8.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <CheckBox android:id="@id/checkBox" android:layout_width="wrap_content" android:layout_height="wrap_content" android:buttonTint="@color/selected_color_new" />
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/profileLayout" android:background="@drawable/playgroup_circle" android:clipChildren="true" android:layout_width="40.0dp" android:layout_height="40.0dp" android:layout_marginStart="4.0dp">
+        <com.studiolaganne.lengendarylens.CachedImageView android:id="@id/profile_icon" android:visibility="invisible" android:layout_width="match_parent" android:layout_height="match_parent" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+        <ImageView android:id="@id/no_photo_icon" android:visibility="visible" android:layout_width="18.0dp" android:layout_height="18.0dp" android:src="@drawable/default_playgroup_icon" android:elevation="1.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginStart="10.0dp">
+        <TextView android:textSize="@dimen/text_size" android:textColor="@color/selected_color_new" android:id="@id/playgroupName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/baloo_da_2_bold" />
+        <TextView android:textSize="12.0sp" android:textColor="@color/text_color" android:ellipsize="end" android:id="@id/playgroupDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="-4.0dp" android:maxLines="1" android:fontFamily="@font/be_vietnam_pro_regular" />
+    </LinearLayout>
+</LinearLayout>

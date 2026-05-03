@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:orientation="vertical" android:id="@id/globalContentLayout" android:paddingTop="12.0dp" android:paddingBottom="24.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="6.0dp" android:paddingEnd="6.0dp">
+        <LinearLayout android:gravity="top" android:orientation="horizontal" android:id="@id/infoSection" android:background="@drawable/background_box_mythic_with_line" android:paddingLeft="16.0dp" android:paddingTop="10.0dp" android:paddingRight="16.0dp" android:paddingBottom="12.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="8.0dp" android:layout_marginRight="8.0dp" android:layout_marginBottom="22.0dp">
+            <TextView android:textSize="20.0sp" android:textColor="@color/link_color" android:id="@id/helpTextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:text="" android:fontFamily="@font/fa6solid" app:layout_constraintBottom_toBottomOf="@id/title" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="@id/title" />
+            <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/text_color" android:paddingBottom="5.0dp" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_marginLeft="16.0dp" android:text="@string/global_score_help" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_regular" />
+        </LinearLayout>
+        <LinearLayout android:orientation="vertical" android:id="@id/themesSection" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:padding="8.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16.0dp">
+                <TextView android:textSize="18.0sp" android:textColor="@color/text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:fontFamily="@font/fa6solid" android:layout_marginEnd="8.0dp" />
+                <TextView android:textSize="@dimen/text_size" android:textColor="@color/text_color" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/major_themes" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_semibold" />
+            </LinearLayout>
+            <com.google.android.flexbox.FlexboxLayout android:id="@id/themesFlexboxLayout" android:layout_width="match_parent" android:layout_height="wrap_content" app:alignItems="stretch" app:flexWrap="wrap" app:justifyContent="flex_start" />
+        </LinearLayout>
+        <LinearLayout android:orientation="vertical" android:id="@id/insightsSection" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18.0dp">
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:padding="8.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16.0dp">
+                <TextView android:textSize="18.0sp" android:textColor="@color/text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:fontFamily="@font/fa6solid" android:layout_marginEnd="8.0dp" />
+                <TextView android:textSize="@dimen/text_size" android:textColor="@color/text_color" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/analysis" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_semibold" />
+            </LinearLayout>
+            <com.google.android.flexbox.FlexboxLayout android:id="@id/insightsFlexboxLayout" android:layout_width="match_parent" android:layout_height="wrap_content" app:alignItems="flex_start" app:flexWrap="wrap" app:justifyContent="flex_start" />
+        </LinearLayout>
+        <LinearLayout android:orientation="vertical" android:id="@id/autoTagsSection" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18.0dp">
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:padding="8.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16.0dp">
+                <TextView android:textSize="18.0sp" android:textColor="@color/text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:fontFamily="@font/fa6solid" android:layout_marginEnd="8.0dp" />
+                <TextView android:textSize="@dimen/text_size" android:textColor="@color/text_color" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/auto_tags" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_semibold" />
+            </LinearLayout>
+            <LinearLayout android:orientation="vertical" android:id="@id/autoTagsBarLayout" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

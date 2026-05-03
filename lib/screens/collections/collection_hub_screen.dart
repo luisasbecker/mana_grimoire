@@ -29,7 +29,7 @@ class CollectionHubScreen extends StatelessWidget {
                 _HubIcon(
                   icon: Icons.collections_bookmark_rounded,
                   color: scheme.primary,
-                  bg: scheme.primaryContainer.withOpacity(0.35),
+                  bg: scheme.primaryContainer.withValues(alpha: 0.35),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -66,7 +66,7 @@ class CollectionHubScreen extends StatelessWidget {
                 _HubIcon(
                   icon: Icons.style_rounded,
                   color: scheme.secondary,
-                  bg: scheme.secondaryContainer.withOpacity(0.35),
+                  bg: scheme.secondaryContainer.withValues(alpha: 0.35),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -120,7 +120,7 @@ class _HubIcon extends StatelessWidget {
         color: bg,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: color.withOpacity(0.28),
+          color: color.withValues(alpha: 0.28),
         ),
       ),
       child: Icon(icon, color: color),

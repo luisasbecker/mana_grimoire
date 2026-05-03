@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@id/group_none" android:title="@string/group_none" android:checkable="true" />
+        <item android:id="@id/group_type" android:title="@string/group_type" android:checkable="true" />
+        <item android:id="@id/group_color" android:title="@string/group_color" android:checkable="true" />
+        <item android:id="@id/group_color_identity" android:title="@string/group_color_identity" android:checkable="true" />
+        <item android:id="@id/group_cmc" android:title="@string/group_cmc" android:checkable="true" />
+        <item android:id="@id/group_rarity" android:title="@string/group_rarity" android:checkable="true" />
+        <item android:id="@id/group_set" android:title="@string/group_set" android:checkable="true" />
+    </group>
+</menu>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.airbnb.lottie.LottieAnimationView android:layout_gravity="center" android:id="@id/loadingAnimationViewRecyclerView" android:layout_width="150.0dp" android:layout_height="150.0dp" app:lottie_autoPlay="true" app:lottie_loop="true" app:lottie_rawRes="@raw/loading" />
+    <TextView android:textSize="@dimen/text_size" android:textColor="@color/text_color" android:layout_gravity="center_horizontal" android:id="@id/noListsText" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="22.0dp" android:text="@string/no_lists_found_user" android:fontFamily="@font/be_vietnam_pro_regular" android:textAlignment="center" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@id/listsRecyclerView" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_marginLeft="12.0dp" android:layout_marginRight="12.0dp" android:layout_weight="1.0" />
+</LinearLayout>

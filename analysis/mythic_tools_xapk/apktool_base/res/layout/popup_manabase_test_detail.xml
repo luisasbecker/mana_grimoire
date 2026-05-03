@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:background="@drawable/black_box_with_line" android:clipChildren="true" android:layout_width="320.0dp" android:layout_height="wrap_content" android:layout_margin="8.0dp" android:clipToOutline="true"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent">
+        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:background="@color/theme_background_lighter" android:padding="12.0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <TextView android:textSize="14.0sp" android:textColor="@color/text_color" android:gravity="center" android:id="@id/popupScoreBadge" android:background="@drawable/manabase_gauge_background" android:paddingTop="6.0dp" android:paddingBottom="7.0dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="40.0dp" android:fontFamily="@font/be_vietnam_pro_semibold" android:paddingStart="6.0dp" android:paddingEnd="6.0dp" android:layout_marginEnd="10.0dp" />
+            <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                <TextView android:textSize="15.0sp" android:textColor="@color/text_color" android:id="@id/popupTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                <TextView android:textSize="11.0sp" android:textColor="@color/text_color_transparent" android:id="@id/popupSubtitle" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/be_vietnam_pro_regular" />
+            </LinearLayout>
+            <ImageView android:id="@id/popupCloseButton" android:background="?selectableItemBackgroundBorderless" android:padding="4.0dp" android:focusable="true" android:clickable="true" android:layout_width="32.0dp" android:layout_height="32.0dp" android:src="@drawable/close_small" app:tint="@color/text_color" />
+        </LinearLayout>
+        <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:orientation="vertical" android:id="@id/contentContainer" android:padding="12.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        </ScrollView>
+        <View android:id="@id/metricsSeparator" android:background="@color/separator_grey" android:visibility="gone" android:layout_width="match_parent" android:layout_height="1.0dp" android:layout_marginStart="12.0dp" android:layout_marginEnd="12.0dp" />
+        <LinearLayout android:orientation="horizontal" android:id="@id/metricsContainer" android:padding="12.0dp" android:paddingTop="8.0dp" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

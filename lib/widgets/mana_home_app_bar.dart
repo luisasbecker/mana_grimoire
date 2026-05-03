@@ -29,15 +29,19 @@ class ManaHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             scheme.onSurface,
             draculaPurple,
             draculaPink,
-            draculaCyan.withOpacity(0.95),
+            draculaCyan.withValues(alpha: 0.95),
           ],
           stops: const [0.0, 0.45, 0.8, 1.0],
         ).createShader(rect),
-        child: Text(
-          'Mana Grimoire',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.35,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            'Mana Grimoire',
+            maxLines: 1,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.35,
+            ),
           ),
         ),
       ),
@@ -45,7 +49,7 @@ class ManaHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         tooltip: 'Definições',
         icon: Icon(
           Icons.settings_outlined,
-          color: scheme.onSurface.withOpacity(0.9),
+          color: scheme.onSurface.withValues(alpha: 0.9),
         ),
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -58,7 +62,7 @@ class ManaHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: 10),
           child: Material(
-            color: scheme.primaryContainer.withOpacity(0.4),
+            color: scheme.primaryContainer.withValues(alpha: 0.4),
             shape: const CircleBorder(),
             child: InkWell(
               onTap: () {
@@ -71,7 +75,8 @@ class ManaHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 padding: const EdgeInsets.all(2),
                 child: CircleAvatar(
                   radius: 22,
-                  backgroundColor: scheme.primaryContainer.withOpacity(0.6),
+                  backgroundColor:
+                      scheme.primaryContainer.withValues(alpha: 0.6),
                   child: Text(
                     '?',
                     style: theme.textTheme.titleMedium?.copyWith(

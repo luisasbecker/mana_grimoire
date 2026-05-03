@@ -22,6 +22,7 @@
         "flutter_riverpod",
         "go_router",
         "google_mlkit_text_recognition",
+        "image",
         "intl",
         "path",
         "path_provider",
@@ -130,6 +131,15 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "image",
+      "version": "4.8.0",
+      "dependencies": [
+        "archive",
+        "meta",
+        "xml"
       ]
     },
     {
@@ -809,6 +819,23 @@
       ]
     },
     {
+      "name": "xml",
+      "version": "6.5.0",
+      "dependencies": [
+        "collection",
+        "meta",
+        "petitparser"
+      ]
+    },
+    {
+      "name": "archive",
+      "version": "4.0.9",
+      "dependencies": [
+        "path",
+        "posix"
+      ]
+    },
+    {
       "name": "fixnum",
       "version": "1.1.1",
       "dependencies": []
@@ -1209,6 +1236,22 @@
       ]
     },
     {
+      "name": "petitparser",
+      "version": "6.0.2",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
+      "name": "posix",
+      "version": "6.5.0",
+      "dependencies": [
+        "ffi",
+        "meta",
+        "path"
+      ]
+    },
+    {
       "name": "plugin_platform_interface",
       "version": "2.1.8",
       "dependencies": [
@@ -1331,25 +1374,9 @@
       ]
     },
     {
-      "name": "xml",
-      "version": "6.5.0",
-      "dependencies": [
-        "collection",
-        "meta",
-        "petitparser"
-      ]
-    },
-    {
       "name": "synchronized",
       "version": "3.3.0+3",
       "dependencies": []
-    },
-    {
-      "name": "petitparser",
-      "version": "6.0.2",
-      "dependencies": [
-        "meta"
-      ]
     }
   ],
   "configVersion": 1

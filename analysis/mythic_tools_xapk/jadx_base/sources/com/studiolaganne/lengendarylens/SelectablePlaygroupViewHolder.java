@@ -1,0 +1,80 @@
+package com.studiolaganne.lengendarylens;
+
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
+import kotlin.Metadata;
+import kotlin.jvm.internal.Intrinsics;
+
+/* JADX INFO: compiled from: CircleMemberAdapters.kt */
+/* JADX INFO: loaded from: classes6.dex */
+@Metadata(d1 = {"\u0000B\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\b\u0005\b\u0007\u0018\u00002\u00020\u0001B\u000f\u0012\u0006\u0010\u0002\u001a\u00020\u0003¢\u0006\u0004\b\u0004\u0010\u0005R\u0011\u0010\u0006\u001a\u00020\u0007¢\u0006\b\n\u0000\u001a\u0004\b\b\u0010\tR\u0011\u0010\n\u001a\u00020\u000b¢\u0006\b\n\u0000\u001a\u0004\b\f\u0010\rR\u0011\u0010\u000e\u001a\u00020\u000f¢\u0006\b\n\u0000\u001a\u0004\b\u0010\u0010\u0011R\u0011\u0010\u0012\u001a\u00020\u0013¢\u0006\b\n\u0000\u001a\u0004\b\u0014\u0010\u0015R\u0011\u0010\u0016\u001a\u00020\u0017¢\u0006\b\n\u0000\u001a\u0004\b\u0018\u0010\u0019R\u0011\u0010\u001a\u001a\u00020\u001b¢\u0006\b\n\u0000\u001a\u0004\b\u001c\u0010\u001dR\u0011\u0010\u001e\u001a\u00020\u001b¢\u0006\b\n\u0000\u001a\u0004\b\u001f\u0010\u001d¨\u0006 "}, d2 = {"Lcom/studiolaganne/lengendarylens/SelectablePlaygroupViewHolder;", "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;", "itemView", "Landroid/view/View;", "<init>", "(Landroid/view/View;)V", "rootLayout", "Landroid/widget/LinearLayout;", "getRootLayout", "()Landroid/widget/LinearLayout;", "checkBox", "Landroid/widget/CheckBox;", "getCheckBox", "()Landroid/widget/CheckBox;", "profileLayout", "Landroidx/constraintlayout/widget/ConstraintLayout;", "getProfileLayout", "()Landroidx/constraintlayout/widget/ConstraintLayout;", "profileIcon", "Lcom/studiolaganne/lengendarylens/CachedImageView;", "getProfileIcon", "()Lcom/studiolaganne/lengendarylens/CachedImageView;", "noPhotoIcon", "Landroid/widget/ImageView;", "getNoPhotoIcon", "()Landroid/widget/ImageView;", "playgroupName", "Landroid/widget/TextView;", "getPlaygroupName", "()Landroid/widget/TextView;", "playgroupDescription", "getPlaygroupDescription", "app_release"}, k = 1, mv = {2, 2, 0}, xi = 48)
+public final class SelectablePlaygroupViewHolder extends RecyclerView.ViewHolder {
+    public static final int $stable = 8;
+    private final CheckBox checkBox;
+    private final ImageView noPhotoIcon;
+    private final TextView playgroupDescription;
+    private final TextView playgroupName;
+    private final CachedImageView profileIcon;
+    private final ConstraintLayout profileLayout;
+    private final LinearLayout rootLayout;
+
+    /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+    public SelectablePlaygroupViewHolder(View itemView) {
+        super(itemView);
+        Intrinsics.checkNotNullParameter(itemView, "itemView");
+        View viewFindViewById = itemView.findViewById(R.id.root_layout);
+        Intrinsics.checkNotNullExpressionValue(viewFindViewById, "findViewById(...)");
+        this.rootLayout = (LinearLayout) viewFindViewById;
+        View viewFindViewById2 = itemView.findViewById(R.id.checkBox);
+        Intrinsics.checkNotNullExpressionValue(viewFindViewById2, "findViewById(...)");
+        this.checkBox = (CheckBox) viewFindViewById2;
+        View viewFindViewById3 = itemView.findViewById(R.id.profileLayout);
+        Intrinsics.checkNotNullExpressionValue(viewFindViewById3, "findViewById(...)");
+        this.profileLayout = (ConstraintLayout) viewFindViewById3;
+        View viewFindViewById4 = itemView.findViewById(R.id.profile_icon);
+        Intrinsics.checkNotNullExpressionValue(viewFindViewById4, "findViewById(...)");
+        this.profileIcon = (CachedImageView) viewFindViewById4;
+        View viewFindViewById5 = itemView.findViewById(R.id.no_photo_icon);
+        Intrinsics.checkNotNullExpressionValue(viewFindViewById5, "findViewById(...)");
+        this.noPhotoIcon = (ImageView) viewFindViewById5;
+        View viewFindViewById6 = itemView.findViewById(R.id.playgroupName);
+        Intrinsics.checkNotNullExpressionValue(viewFindViewById6, "findViewById(...)");
+        this.playgroupName = (TextView) viewFindViewById6;
+        View viewFindViewById7 = itemView.findViewById(R.id.playgroupDescription);
+        Intrinsics.checkNotNullExpressionValue(viewFindViewById7, "findViewById(...)");
+        this.playgroupDescription = (TextView) viewFindViewById7;
+    }
+
+    public final CheckBox getCheckBox() {
+        return this.checkBox;
+    }
+
+    public final ImageView getNoPhotoIcon() {
+        return this.noPhotoIcon;
+    }
+
+    public final TextView getPlaygroupDescription() {
+        return this.playgroupDescription;
+    }
+
+    public final TextView getPlaygroupName() {
+        return this.playgroupName;
+    }
+
+    public final CachedImageView getProfileIcon() {
+        return this.profileIcon;
+    }
+
+    public final ConstraintLayout getProfileLayout() {
+        return this.profileLayout;
+    }
+
+    public final LinearLayout getRootLayout() {
+        return this.rootLayout;
+    }
+}

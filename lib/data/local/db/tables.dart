@@ -34,7 +34,7 @@ class ScryfallPrintings extends Table {
 
 /// Snapshots de preço (múltiplas fontes e moedas)
 class PriceSnapshots extends Table {
-  TextColumn get id => text()();         // UUID
+  TextColumn get id => text()(); // UUID
   TextColumn get printingId => text()();
 
   /// Ex.: "scryfall_usd" (futuro: "ligamagic_brl")
@@ -87,7 +87,6 @@ class CollectionItems extends Table {
 
   @override
   Set<Column> get primaryKey => {id};
-
 }
 
 /// Decks (persistência mínima; cards do deck virão depois via DeckEntries).
@@ -132,7 +131,8 @@ class DeckEntries extends Table {
   TextColumn get section => text().withDefault(const Constant('main'))();
 
   /// owned | notOwned | linkedToCollection
-  TextColumn get ownedStatus => text().withDefault(const Constant('notOwned'))();
+  TextColumn get ownedStatus =>
+      text().withDefault(const Constant('notOwned'))();
 
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:background="@drawable/custom_filter_type_background" android:paddingLeft="8.0dp" android:paddingTop="4.0dp" android:paddingRight="8.0dp" android:paddingBottom="4.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="6.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="@dimen/text_size" android:layout_gravity="center" android:id="@id/filterNameTextView" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="5.0dp" android:text="Card Name" android:fontFamily="@font/be_vietnam_pro_regular" />
+</LinearLayout>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@id/sort_name" android:title="@string/sort_name" android:checkable="true" />
+        <item android:id="@id/sort_set" android:title="@string/sort_set_code" android:checkable="true" />
+        <item android:id="@id/sort_cmc" android:title="@string/sort_mana_value" android:checkable="true" />
+        <item android:id="@id/sort_rarity" android:title="@string/sort_rarity" android:checkable="true" />
+        <item android:id="@id/sort_price" android:title="@string/sort_price" android:checkable="true" />
+    </group>
+    <item android:enabled="false" android:title="─────────────" />
+    <group android:checkableBehavior="single">
+        <item android:id="@id/sort_ascending" android:title="@string/sort_ascending" android:checkable="true" />
+        <item android:id="@id/sort_descending" android:title="@string/sort_descending" android:checkable="true" />
+    </group>
+</menu>

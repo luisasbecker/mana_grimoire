@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@id/deckSelectionItemRoot" android:background="@drawable/background_box" android:padding="5.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="2.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="@dimen/text_size" android:textColor="@color/almost_white" android:ellipsize="end" android:id="@id/deckNameTextView" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_marginLeft="8.0dp" android:maxLines="1" android:fontFamily="@font/be_vietnam_pro_semibold" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/deckRadioButton" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+    <RadioButton android:id="@id/deckRadioButton" android:layout_width="32.0dp" android:layout_height="32.0dp" android:buttonTint="@color/selected_color_new" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

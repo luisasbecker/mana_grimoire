@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/insightItemRoot" android:background="@drawable/insight_capsule_strength" android:paddingTop="6.0dp" android:paddingBottom="6.0dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="6.0dp" android:paddingStart="10.0dp" android:paddingEnd="12.0dp" android:layout_marginEnd="6.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="16.0sp" android:textColor="@color/white" android:id="@id/insightIcon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/fa6solid" android:layout_marginEnd="6.0dp" />
+    <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/white" android:id="@id/insightLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/be_vietnam_pro_semibold" />
+</LinearLayout>

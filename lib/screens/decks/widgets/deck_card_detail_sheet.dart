@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
 import '../../../data/local/db/daos/deck_entries_dao.dart';
+import '../../../data/local/db/app_database.dart';
 import '../../../data/local/db/db_instance.dart';
 import '../../../data/remote/scryfall/scryfall_cache_service.dart';
 import '../../../data/remote/scryfall/scryfall_client.dart';
@@ -32,6 +33,8 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
   bool _changingPrinting = false;
   Map<String, dynamic>? _cardJson;
   String? _cardError;
+  ScryfallPrinting? _selectedPrinting;
+  String? _preferredPrintingId;
 
   late int _qty;
   bool _savingQty = false;
@@ -40,11 +43,13 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
   void initState() {
     super.initState();
     _qty = widget.row.entry.quantity;
+    _selectedPrinting = widget.row.printing;
+    _preferredPrintingId = widget.row.entry.preferredPrintingId;
     _loadCard();
   }
 
   Future<void> _loadCard() async {
-    final printingId = widget.row.entry.preferredPrintingId;
+    final printingId = _preferredPrintingId;
     if (printingId == null || printingId.isEmpty) return;
     setState(() {
       _loadingCard = true;
@@ -281,7 +286,7 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
   Future<void> _openAddToCollectionSheet(String collectionId) async {
     final t = AppLocalizations.of(context)!;
     final entry = widget.row.entry;
-    final printingId = entry.preferredPrintingId;
+    final printingId = _preferredPrintingId;
     if (printingId == null || printingId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(t.pickEditionFirst)),
@@ -308,7 +313,7 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
   Future<void> _changePrinting() async {
     if (_changingPrinting) return;
     final entry = widget.row.entry;
-    final selected = entry.preferredPrintingId;
+    final selected = _preferredPrintingId;
     final rootCtx = rootNavigatorKey.currentContext;
     final navCtx = rootCtx ?? context;
 
@@ -321,12 +326,14 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
     );
     final picked = result;
     if (picked == null || picked.isEmpty) return;
+    if (!mounted) return;
 
     // Cache the picked printing so the deck list can render it.
     setState(() => _changingPrinting = true);
     try {
       final card = await _client.getCardById(picked);
       await _cacheService.cacheSingleScryfallCard(card);
+      final printing = await _printingById(picked);
 
       final now = DateTime.now();
       await appDb.deckEntriesDao.setPreferredPrinting(
@@ -337,6 +344,8 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
 
       if (!mounted) return;
       setState(() {
+        _preferredPrintingId = picked;
+        _selectedPrinting = printing;
         _cardJson = card;
         _cardError = null;
       });
@@ -350,12 +359,18 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
     }
   }
 
+  Future<ScryfallPrinting?> _printingById(String printingId) {
+    return (appDb.select(appDb.scryfallPrintings)
+          ..where((table) => table.printingId.equals(printingId)))
+        .getSingleOrNull();
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final scheme = Theme.of(context).colorScheme;
 
-    final p = widget.row.printing;
+    final p = _selectedPrinting ?? widget.row.printing;
     final name = p?.name ?? widget.row.entry.oracleId;
     final typeLine = _typeLineFromCard(_cardJson) ?? p?.typeLine;
     final manaCost = _manaCostFromCard(_cardJson) ?? p?.manaCost;
@@ -404,13 +419,13 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
                       onPressed: _openConnectSheet,
                       style: IconButton.styleFrom(
                         backgroundColor:
-                            scheme.primaryContainer.withOpacity(0.65),
+                            scheme.primaryContainer.withValues(alpha: 0.65),
                         foregroundColor: scheme.onPrimaryContainer,
                         side: BorderSide(
-                          color: scheme.primary.withOpacity(0.45),
+                          color: scheme.primary.withValues(alpha: 0.45),
                         ),
                         elevation: 2,
-                        shadowColor: scheme.primary.withOpacity(0.25),
+                        shadowColor: scheme.primary.withValues(alpha: 0.25),
                       ),
                       icon: const Icon(Icons.add_rounded),
                     ),
@@ -505,10 +520,10 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: scheme.surfaceContainerHigh.withOpacity(0.7),
+                      color: scheme.surfaceContainerHigh.withValues(alpha: 0.7),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: scheme.outlineVariant.withOpacity(0.6),
+                        color: scheme.outlineVariant.withValues(alpha: 0.6),
                       ),
                     ),
                     child: Text(
@@ -522,10 +537,10 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
-                    color: scheme.surfaceContainerHigh.withOpacity(0.7),
+                    color: scheme.surfaceContainerHigh.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                        color: scheme.outlineVariant.withOpacity(0.6)),
+                        color: scheme.outlineVariant.withValues(alpha: 0.6)),
                   ),
                   child: Row(
                     children: [
@@ -564,34 +579,53 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _changingPrinting ? null : _changePrinting,
-                        icon: const Icon(Icons.layers_rounded),
-                        label: _changingPrinting
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child:
-                                    CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : Text(t.changePrinting),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final changeButton = OutlinedButton.icon(
+                      onPressed: _changingPrinting ? null : _changePrinting,
+                      icon: const Icon(Icons.layers_rounded),
+                      label: _changingPrinting
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(
+                              t.changePrinting,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                    );
+                    final removeButton = OutlinedButton.icon(
+                      onPressed: _confirmRemove,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: scheme.error,
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _confirmRemove,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: scheme.error,
-                        ),
-                        icon: const Icon(Icons.delete_outline_rounded),
-                        label: Text(t.remove),
+                      icon: const Icon(Icons.delete_outline_rounded),
+                      label: Text(
+                        t.remove,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    );
+                    if (constraints.maxWidth < 340) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          changeButton,
+                          const SizedBox(height: 8),
+                          removeButton,
+                        ],
+                      );
+                    }
+                    return Row(
+                      children: [
+                        Expanded(child: changeButton),
+                        const SizedBox(width: 10),
+                        Expanded(child: removeButton),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(height: 6),
               ],

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@drawable/rounded_background_dialog_darker_with_line" android:padding="18.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <TextView android:textSize="@dimen/title_size" android:textStyle="bold" android:id="@id/titleTextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/privacy_settings_title" android:layout_centerVertical="true" />
+        <TextView android:textSize="20.0sp" android:textColor="@color/text_color" android:id="@id/closeButton" android:background="?android:selectableItemBackground" android:padding="4.0dp" android:focusable="true" android:clickable="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:layout_centerVertical="true" android:fontFamily="@font/fa6solid" android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+    <ScrollView android:layout_width="match_parent" android:layout_height="0.0dp" android:fillViewport="true" android:layout_weight="1.0">
+        <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <TextView android:textSize="14.0sp" android:textColor="@color/text_color" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16.0dp" android:text="@string/privacy_type_label" />
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/privacySelectorContainer" android:background="@drawable/privacy_selector_background_public" android:paddingTop="10.0dp" android:paddingBottom="10.0dp" android:focusable="true" android:clickable="true" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:paddingStart="14.0dp" android:paddingEnd="14.0dp">
+                <TextView android:textSize="16.0sp" android:textColor="@color/almost_white" android:id="@id/privacyLabel" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/privacy_public" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                <ImageView android:id="@id/privacyChevron" android:layout_width="20.0dp" android:layout_height="20.0dp" android:src="@drawable/chevron_down" android:contentDescription="@null" />
+            </LinearLayout>
+            <TextView android:textSize="13.0sp" android:textColor="@color/text_color" android:id="@id/privacyDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6.0dp" android:text="@string/privacy_public_description" />
+            <View android:id="@id/circlesSeparator" android:background="@color/text_color_very_transparent" android:visibility="gone" android:layout_width="match_parent" android:layout_height="1.0dp" android:layout_marginTop="16.0dp" />
+            <LinearLayout android:orientation="vertical" android:id="@id/circlesSection" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14.0dp">
+                    <TextView android:textSize="14.0sp" android:textColor="@color/text_color" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/circles_label" android:layout_weight="1.0" />
+                    <TextView android:textSize="14.0sp" android:textColor="@color/selected_color_new" android:id="@id/createCircleButton" android:background="?android:selectableItemBackground" android:padding="4.0dp" android:focusable="true" android:clickable="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/create_circle_plus" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                </LinearLayout>
+                <LinearLayout android:orientation="vertical" android:id="@id/circlesContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" />
+            </LinearLayout>
+            <View android:id="@id/deckOptionsSeparator" android:background="@color/text_color_very_transparent" android:visibility="gone" android:layout_width="match_parent" android:layout_height="1.0dp" android:layout_marginTop="8.0dp" />
+            <LinearLayout android:orientation="vertical" android:id="@id/deckOptionsSection" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <TextView android:textSize="14.0sp" android:textColor="@color/text_color" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:text="@string/deck_options_label" />
+                <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dp">
+                    <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                        <TextView android:textSize="15.0sp" android:textColor="@color/almost_white" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/share_stats_title" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                        <TextView android:textSize="12.0sp" android:textColor="@color/text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2.0dp" android:text="@string/share_stats_subtitle" />
+                    </LinearLayout>
+                    <androidx.appcompat.widget.SwitchCompat android:id="@id/shareStatsSwitch" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12.0dp" />
+                </LinearLayout>
+                <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dp">
+                    <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0">
+                        <TextView android:textSize="15.0sp" android:textColor="@color/almost_white" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/share_games_title" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                        <TextView android:textSize="12.0sp" android:textColor="@color/text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2.0dp" android:text="@string/share_games_subtitle" />
+                    </LinearLayout>
+                    <androidx.appcompat.widget.SwitchCompat android:id="@id/shareGamesSwitch" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12.0dp" />
+                </LinearLayout>
+            </LinearLayout>
+            <View android:id="@id/profileOptionsSeparator" android:background="@color/text_color_very_transparent" android:visibility="gone" android:layout_width="match_parent" android:layout_height="1.0dp" android:layout_marginTop="8.0dp" />
+            <LinearLayout android:orientation="vertical" android:id="@id/profileOptionsSection" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <TextView android:textSize="14.0sp" android:textColor="@color/text_color" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:text="@string/profile_options_label" />
+                <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dp">
+                    <TextView android:textSize="15.0sp" android:textColor="@color/almost_white" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/share_stats_title" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                    <androidx.appcompat.widget.SwitchCompat android:id="@id/shareProfileStatsSwitch" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12.0dp" />
+                </LinearLayout>
+                <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dp">
+                    <TextView android:textSize="15.0sp" android:textColor="@color/almost_white" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/share_games_title" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                    <androidx.appcompat.widget.SwitchCompat android:id="@id/shareProfileGamesSwitch" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12.0dp" />
+                </LinearLayout>
+                <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dp">
+                    <TextView android:textSize="15.0sp" android:textColor="@color/almost_white" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/share_friend_code_title" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                    <androidx.appcompat.widget.SwitchCompat android:id="@id/shareProfileFriendCodeSwitch" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12.0dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout android:gravity="end" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16.0dp">
+        <com.google.android.material.button.MaterialButton android:textColor="@color/almost_white" android:id="@id/cancelButton" android:background="@drawable/custom_button_background_blue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cancel" android:textAllCaps="false" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
+        <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:id="@id/saveButton" android:background="@drawable/custom_button_background" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/save" android:textAllCaps="false" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,27 @@
+package com.revenuecat.purchases.ui.revenuecatui;
+
+import com.revenuecat.purchases.ui.revenuecatui.data.PaywallViewModel;
+import kotlin.Metadata;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.internal.AdaptedFunctionReference;
+
+/* JADX INFO: compiled from: InternalPaywall.kt */
+/* JADX INFO: loaded from: classes6.dex */
+@Metadata(k = 3, mv = {1, 8, 0}, xi = 48)
+/* synthetic */ class InternalPaywallKt$LoadedPaywall$3$2$1 extends AdaptedFunctionReference implements Function0<Unit> {
+    InternalPaywallKt$LoadedPaywall$3$2$1(Object obj) {
+        super(0, obj, PaywallViewModel.class, "closePaywall", "closePaywall(Lcom/revenuecat/purchases/ui/revenuecatui/activity/PaywallResult;)V", 0);
+    }
+
+    @Override // kotlin.jvm.functions.Function0
+    public /* bridge */ /* synthetic */ Unit invoke() {
+        invoke2();
+        return Unit.INSTANCE;
+    }
+
+    /* JADX INFO: renamed from: invoke, reason: avoid collision after fix types in other method */
+    public final void invoke2() {
+        PaywallViewModel.DefaultImpls.closePaywall$default((PaywallViewModel) this.receiver, null, 1, null);
+    }
+}

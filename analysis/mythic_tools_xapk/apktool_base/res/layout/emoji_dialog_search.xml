@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:id="@id/root" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <EditText android:id="@id/editText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="16.0dp" android:hint="@string/emoji_search" android:maxLines="1" android:inputType="textCapWords" android:imeOptions="actionDone" />
+    <com.vanniktech.emoji.internal.MaxHeightSearchRecyclerView android:id="@id/recyclerView" android:scrollbars="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+</LinearLayout>

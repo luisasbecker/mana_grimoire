@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center" android:orientation="horizontal" android:background="@color/background_color" android:padding="4.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="13.0sp" android:textColor="@color/winner_green" android:id="@id/conditionTextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2.0dp" android:text="" android:fontFamily="@font/fa6solid" android:layout_marginStart="4.0dp" />
+    <TextView android:textSize="@dimen/text_size" android:textColor="@color/text_color" android:id="@id/title_textview" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/condition_mint" android:layout_weight="1.0" android:paddingStart="6.0dp" android:paddingEnd="12.0dp" />
+</LinearLayout>

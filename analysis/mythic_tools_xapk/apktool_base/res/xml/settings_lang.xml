@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:layout="@layout/preference_category_layout" app:title="@string/enable_disable_languages">
+        <com.studiolaganne.lengendarylens.ProgressBarPreference android:layout="@layout/preference_with_progressbar" android:selectable="false" android:key="download_preference" />
+        <SwitchPreferenceCompat android:icon="@drawable/flag_fr" app:defaultValue="false" app:key="fr" app:title="@string/french" />
+        <SwitchPreferenceCompat android:icon="@drawable/flag_de" app:defaultValue="false" app:key="de" app:title="@string/german" />
+        <SwitchPreferenceCompat android:icon="@drawable/flag_it" app:defaultValue="false" app:key="it" app:title="@string/italian" />
+        <SwitchPreferenceCompat android:icon="@drawable/flag_es" app:defaultValue="false" app:key="es" app:title="@string/spanish" />
+        <SwitchPreferenceCompat android:icon="@drawable/flag_pt" app:defaultValue="false" app:key="pt" app:title="@string/portuguese" />
+        <SwitchPreferenceCompat android:icon="@drawable/flag_ja" app:defaultValue="false" app:key="ja" app:title="@string/japanese" />
+        <SwitchPreferenceCompat android:icon="@drawable/flag_ko" app:defaultValue="false" app:key="ko" app:title="@string/korean" />
+        <SwitchPreferenceCompat android:icon="@drawable/flag_ru" app:defaultValue="false" app:key="ru" app:title="@string/russian" />
+        <SwitchPreferenceCompat android:icon="@drawable/flag_zhs" app:defaultValue="false" app:key="zhs" app:title="@string/chinese_zhs" />
+        <SwitchPreferenceCompat android:icon="@drawable/flag_zht" app:defaultValue="false" app:key="zht" app:title="@string/chinese_zht" />
+    </PreferenceCategory>
+</PreferenceScreen>

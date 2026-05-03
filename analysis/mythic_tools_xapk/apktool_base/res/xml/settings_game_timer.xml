@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:layout="@layout/preference_category_layout" android:title="@string/global_timer_header">
+        <SwitchPreferenceCompat app:defaultValue="true" app:key="enable_timer_by_default" app:title="@string/enable_timer_by_default_setting" />
+        <SwitchPreferenceCompat app:defaultValue="true" app:key="auto_start_timer" app:title="@string/auto_start_timer_setting" />
+        <EditTextPreference app:defaultValue="90" app:key="default_timer_time" app:title="@string/timer_time_tetting" app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat app:defaultValue="true" app:key="always_show_timer" app:title="@string/timer_always_show_setting" />
+        <SwitchPreferenceCompat app:defaultValue="false" app:key="timer_show_seconds" app:title="@string/timer_show_seconds" />
+    </PreferenceCategory>
+    <PreferenceCategory android:layout="@layout/preference_category_layout" android:title="@string/turn_timer_header">
+        <SwitchPreferenceCompat app:defaultValue="false" app:key="auto_enable_turn_timer" app:title="@string/auto_enable_turn_timer" />
+        <ListPreference app:defaultValue="current_turn" app:entries="@array/turn_timer_display_list" app:entryValues="@array/turn_timer_display_value_list" app:key="turn_timer_display" app:title="@string/turn_timer_display_mode" app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+</PreferenceScreen>

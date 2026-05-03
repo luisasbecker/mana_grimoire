@@ -207,147 +207,152 @@ class _EditDeckScreenState extends State<EditDeckScreen> {
 
     return Scaffold(
       appBar: ManaInternalAppBar(title: t.editDeckTitle),
-      body: Padding(
+      body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _name,
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) => _saving ? null : _save(),
-              decoration: InputDecoration(
-                labelText: t.createDeckNameLabel,
-                hintText: t.createDeckNameHint,
-              ),
+        children: [
+          TextField(
+            controller: _name,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) => _saving ? null : _save(),
+            decoration: InputDecoration(
+              labelText: t.createDeckNameLabel,
+              hintText: t.createDeckNameHint,
             ),
+          ),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<String>(
+            initialValue: _format,
+            decoration: InputDecoration(labelText: t.createDeckFormatLabel),
+            items: const [
+              DropdownMenuItem(value: 'Commander', child: Text('Commander')),
+              DropdownMenuItem(value: 'Standard', child: Text('Standard')),
+              DropdownMenuItem(value: 'Pauper', child: Text('Pauper')),
+              DropdownMenuItem(value: 'Modern', child: Text('Modern')),
+              DropdownMenuItem(value: 'Other', child: Text('Other')),
+            ],
+            onChanged: _saving
+                ? null
+                : (v) => setState(() => _format = v ?? 'Commander'),
+          ),
+          if (_format == 'Commander') ...[
             const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              value: _format,
-              decoration: InputDecoration(labelText: t.createDeckFormatLabel),
-              items: const [
-                DropdownMenuItem(value: 'Commander', child: Text('Commander')),
-                DropdownMenuItem(value: 'Standard', child: Text('Standard')),
-                DropdownMenuItem(value: 'Pauper', child: Text('Pauper')),
-                DropdownMenuItem(value: 'Modern', child: Text('Modern')),
-                DropdownMenuItem(value: 'Other', child: Text('Other')),
-              ],
-              onChanged: _saving
-                  ? null
-                  : (v) => setState(() => _format = v ?? 'Commander'),
-            ),
-            if (_format == 'Commander') ...[
-              const SizedBox(height: 12),
-              StreamBuilder(
-                stream: appDb.deckEntriesDao.watchDeckEntriesForSection(
-                  deckId: widget.deckId,
-                  section: 'commander',
-                ),
-                builder: (context, snap) {
-                  final commanders = snap.data ?? const [];
-                  return Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
+            StreamBuilder(
+              stream: appDb.deckEntriesDao.watchDeckEntriesForSection(
+                deckId: widget.deckId,
+                section: 'commander',
+              ),
+              builder: (context, snap) {
+                final commanders = snap.data ?? const [];
+                return Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .surfaceContainerHigh
+                        .withValues(alpha: 0.65),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
                       color: Theme.of(context)
                           .colorScheme
-                          .surfaceContainerHigh
-                          .withOpacity(0.65),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .outlineVariant
-                            .withOpacity(0.55),
-                      ),
+                          .outlineVariant
+                          .withValues(alpha: 0.55),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                t.commandersTitle,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall
-                                    ?.copyWith(fontWeight: FontWeight.w900),
-                              ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              t.commandersTitle,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(fontWeight: FontWeight.w900),
                             ),
-                            TextButton.icon(
+                          ),
+                          TextButton.icon(
+                            onPressed: (_saving || _deleting)
+                                ? null
+                                : () => _addCommanderFlow(commanders),
+                            icon: const Icon(Icons.add_rounded),
+                            label: Text(
+                              t.setCommanderCta,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      if (commanders.isEmpty)
+                        Text(
+                          t.noCommanderSelected,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                        )
+                      else
+                        ...commanders.map((c) {
+                          final name = c.printing?.name ?? c.entry.oracleId;
+                          return ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            trailing: IconButton(
+                              tooltip: t.remove,
                               onPressed: (_saving || _deleting)
                                   ? null
-                                  : () => _addCommanderFlow(commanders),
-                              icon: const Icon(Icons.add_rounded),
-                              label: Text(t.setCommanderCta),
+                                  : () => appDb.deckEntriesDao.setQuantity(
+                                        entryId: c.entry.id,
+                                        quantity: 0,
+                                        now: DateTime.now(),
+                                      ),
+                              icon: const Icon(Icons.close_rounded),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        if (commanders.isEmpty)
-                          Text(
-                            t.noCommanderSelected,
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant,
-                                    ),
-                          )
-                        else
-                          ...commanders.map((c) {
-                            final name = c.printing?.name ?? c.entry.oracleId;
-                            return ListTile(
-                              dense: true,
-                              contentPadding: EdgeInsets.zero,
-                              title: Text(name),
-                              trailing: IconButton(
-                                tooltip: t.remove,
-                                onPressed: (_saving || _deleting)
-                                    ? null
-                                    : () => appDb.deckEntriesDao.setQuantity(
-                                          entryId: c.entry.id,
-                                          quantity: 0,
-                                          now: DateTime.now(),
-                                        ),
-                                icon: const Icon(Icons.close_rounded),
-                              ),
-                            );
-                          }),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
-            const Spacer(),
-            OutlinedButton.icon(
-              onPressed: (_saving || _deleting) ? null : _deleteDeck,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.error,
-              ),
-              icon: _deleting
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.delete_outline_rounded),
-              label: Text(t.deleteDeckCta),
-            ),
-            const SizedBox(height: 10),
-            FilledButton(
-              onPressed: (_saving || _deleting) ? null : _save,
-              child: _saving
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(t.deckSaveCta),
+                          );
+                        }),
+                    ],
+                  ),
+                );
+              },
             ),
           ],
-        ),
+          const SizedBox(height: 32),
+          OutlinedButton.icon(
+            onPressed: (_saving || _deleting) ? null : _deleteDeck,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            icon: _deleting
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.delete_outline_rounded),
+            label: Text(t.deleteDeckCta),
+          ),
+          const SizedBox(height: 10),
+          FilledButton(
+            onPressed: (_saving || _deleting) ? null : _save,
+            child: _saving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(t.deckSaveCta),
+          ),
+        ],
       ),
     );
   }

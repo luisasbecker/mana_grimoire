@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:background="@color/darker_grey4" android:padding="8.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView android:id="@id/set_icon" android:padding="2.0dp" android:layout_width="32.0dp" android:layout_height="32.0dp" android:src="@drawable/set_rvr" app:tint="@color/almost_white" />
+    <LinearLayout android:orientation="vertical" android:id="@id/details_layout" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="0.5" android:layout_marginEnd="4.0dp">
+        <TextView android:textSize="18.0sp" android:textStyle="bold" android:textColor="@color/almost_white" android:id="@id/set_name_text" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Ravnica Remastered" android:textAlignment="textStart" android:layout_marginStart="8.0dp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+        <TextView android:textSize="12.0sp" android:textColor="@color/light_grey" android:id="@id/card_count_text" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="467 cards" android:textAlignment="textStart" android:layout_marginStart="8.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/wld_header" />
+    </LinearLayout>
+    <TextView android:textSize="14.0sp" android:textStyle="italic" android:textColor="@color/light_grey" android:id="@id/released_at_label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2023-10-01" android:layout_marginStart="4.0dp" />
+</LinearLayout>

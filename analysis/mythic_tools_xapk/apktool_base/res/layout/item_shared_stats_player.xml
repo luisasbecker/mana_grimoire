@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:paddingTop="8.0dp" android:paddingBottom="8.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/profileLayout" android:background="@drawable/profile_circle" android:clipChildren="true" android:layout_width="36.0dp" android:layout_height="36.0dp">
+        <com.studiolaganne.lengendarylens.CachedImageView android:id="@id/profileIcon" android:visibility="invisible" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="1.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+        <ImageView android:id="@id/noPhotoIcon" android:visibility="visible" android:layout_width="14.0dp" android:layout_height="14.0dp" android:src="@drawable/no_photo" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_marginLeft="8.0dp" android:layout_weight="1.0">
+        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView android:textSize="@dimen/text_size" android:textColor="@color/almost_white" android:ellipsize="end" android:id="@id/firstname" android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxLines="1" android:fontFamily="@font/be_vietnam_pro_semibold" />
+            <TextView android:textSize="@dimen/text_size_smallest" android:textColor="@color/text_color" android:ellipsize="end" android:id="@id/username" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="6.0dp" android:maxLines="1" android:fontFamily="@font/be_vietnam_pro_regular" />
+        </LinearLayout>
+        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="-2.0dp">
+            <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/winner_green" android:id="@id/winrate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/be_vietnam_pro_semibold" />
+            <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/winner_green" android:id="@id/winsValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="8.0dp" android:fontFamily="@font/be_vietnam_pro_semibold" />
+            <TextView android:textSize="@dimen/text_size_smallest" android:textColor="@color/text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="3.0dp" android:text="-" android:fontFamily="@font/be_vietnam_pro_semibold" />
+            <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/loser_red" android:id="@id/lossesValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="3.0dp" android:fontFamily="@font/be_vietnam_pro_semibold" />
+            <TextView android:textSize="@dimen/text_size_smallest" android:textColor="@color/text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="3.0dp" android:text="-" android:fontFamily="@font/be_vietnam_pro_semibold" />
+            <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/draw_orange" android:id="@id/drawsValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="3.0dp" android:fontFamily="@font/be_vietnam_pro_semibold" />
+            <TextView android:textSize="@dimen/text_size_smallest" android:textColor="@color/text_color" android:id="@id/gamesCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="8.0dp" android:fontFamily="@font/be_vietnam_pro_regular" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

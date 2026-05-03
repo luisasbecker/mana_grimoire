@@ -25,7 +25,7 @@ abstract final class ManaTheme {
       surfaceContainerLow: _bg,
       surfaceContainer: _selection,
       surfaceContainerHigh: _selection,
-      surfaceContainerHighest: _currentLine.withOpacity(0.35),
+      surfaceContainerHighest: _currentLine.withValues(alpha: 0.35),
       secondary: _cyan,
       tertiary: _purple,
     );
@@ -36,24 +36,24 @@ abstract final class ManaTheme {
       colorScheme: base.copyWith(
         primary: _purple,
         onPrimary: _bg,
-        primaryContainer: _currentLine.withOpacity(0.55),
+        primaryContainer: _currentLine.withValues(alpha: 0.55),
         onPrimaryContainer: _fg,
         secondary: _cyan,
         onSecondary: _bg,
-        secondaryContainer: _cyan.withOpacity(0.18),
+        secondaryContainer: _cyan.withValues(alpha: 0.18),
         onSecondaryContainer: _fg,
         tertiary: _pink,
         onTertiary: _bg,
-        tertiaryContainer: _pink.withOpacity(0.18),
+        tertiaryContainer: _pink.withValues(alpha: 0.18),
         onTertiaryContainer: _fg,
         surface: _bg,
         onSurface: _fg,
         onSurfaceVariant: _comment,
-        outline: _currentLine.withOpacity(0.9),
-        outlineVariant: _selection.withOpacity(0.9),
+        outline: _currentLine.withValues(alpha: 0.9),
+        outlineVariant: _selection.withValues(alpha: 0.9),
         error: _red,
         onError: _bg,
-        errorContainer: _red.withOpacity(0.2),
+        errorContainer: _red.withValues(alpha: 0.2),
         onErrorContainer: _fg,
       ),
       scaffoldBackgroundColor: _bg,
@@ -74,7 +74,7 @@ abstract final class ManaTheme {
         elevation: 0,
         height: 72,
         backgroundColor: _selection,
-        indicatorColor: _purple.withOpacity(0.22),
+        indicatorColor: _purple.withValues(alpha: 0.22),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
@@ -96,14 +96,14 @@ abstract final class ManaTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: _selection.withOpacity(0.75),
+        fillColor: _selection.withValues(alpha: 0.75),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: _currentLine.withOpacity(0.45)),
+          borderSide: BorderSide(color: _currentLine.withValues(alpha: 0.45)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
@@ -116,7 +116,7 @@ abstract final class ManaTheme {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         side: BorderSide.none,
-        backgroundColor: _selection.withOpacity(0.75),
+        backgroundColor: _selection.withValues(alpha: 0.75),
         labelStyle: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,

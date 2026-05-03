@@ -1,89 +1,161 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
+import '../local/db/app_database.dart';
 import '../remote/scryfall/scryfall_cache_service.dart';
 import '../remote/scryfall/scryfall_client.dart';
+import 'catalog_scan_index.dart';
+import 'scan_models.dart';
+import 'visual_fingerprint_service.dart';
 
-class ScanRecognitionCandidate {
-  const ScanRecognitionCandidate({
-    required this.cardJson,
-    required this.score,
-    required this.matchReason,
-  });
+class MlKitOcrEngine {
+  MlKitOcrEngine({TextRecognizer? recognizer})
+      : _recognizer = recognizer ?? TextRecognizer();
 
-  final Map<String, dynamic> cardJson;
-  final double score;
-  final String matchReason;
+  final TextRecognizer _recognizer;
 
-  String get printingId => _readString(cardJson['id']);
-  String get oracleId => _readString(cardJson['oracle_id']);
-  String get name => _readString(cardJson['name'], fallback: 'Unknown');
-  String get typeLine => _readString(cardJson['type_line']);
-  String get setCode => _readString(cardJson['set']);
-  String get setName => _readString(cardJson['set_name']);
-  String get collectorNumber => _readString(cardJson['collector_number']);
-  String? get imageSmall => ScryfallClient.extractImageSmall(cardJson);
-  String? get imageNormal => ScryfallClient.extractImageNormal(cardJson);
-
-  String get editionLabel =>
-      '${setCode.toUpperCase()} #$collectorNumber'.trim();
-
-  static String _readString(Object? value, {String fallback = ''}) {
-    final out = value?.toString().trim();
-    return out == null || out.isEmpty ? fallback : out;
+  Future<OcrTextResult> recognizeInputImageDetailed(
+    InputImage inputImage,
+  ) async {
+    final recognizedText = await _recognizer.processImage(inputImage);
+    final lines = recognizedText.blocks
+        .expand((block) => block.lines)
+        .map(
+          (line) => OcrLine(
+            text: line.text,
+            boundingBox: line.boundingBox,
+            confidence: line.confidence,
+          ),
+        )
+        .toList()
+      ..sort(
+        (left, right) => left.boundingBox.top.compareTo(right.boundingBox.top),
+      );
+    return OcrTextResult(text: recognizedText.text.trim(), lines: lines);
   }
-}
 
-class ScanRecognitionResult {
-  const ScanRecognitionResult({
-    required this.rawText,
-    required this.candidates,
-  });
+  Future<String> recognizeImagePath(String imagePath) async {
+    final inputImage = InputImage.fromFilePath(imagePath);
+    final result = await recognizeInputImageDetailed(inputImage);
+    return result.text.trim();
+  }
 
-  final String rawText;
-  final List<ScanRecognitionCandidate> candidates;
-
-  ScanRecognitionCandidate? get primary =>
-      candidates.isEmpty ? null : candidates.first;
+  Future<void> dispose() => _recognizer.close();
 }
 
 class ManaScanRecognitionService {
   ManaScanRecognitionService({
+    required AppDatabase db,
+    required CatalogScanIndex scanIndex,
     ScryfallClient? client,
     ScryfallCacheService? cacheService,
-    TextRecognizer? recognizer,
-  })  : _client = client ?? ScryfallClient(),
-        _cacheService = cacheService ?? ScryfallCacheService(),
-        _recognizer = recognizer ?? TextRecognizer();
+    MlKitOcrEngine? ocrEngine,
+    AverageHashVisualFingerprintService? visualFingerprintService,
+  })  : _scanIndex = scanIndex,
+        _client = client ?? ScryfallClient(),
+        _cacheService = cacheService ?? ScryfallCacheService(db: db),
+        _ocrEngine = ocrEngine ?? MlKitOcrEngine(),
+        _visualFingerprintService =
+            visualFingerprintService ?? AverageHashVisualFingerprintService();
 
+  final CatalogScanIndex _scanIndex;
   final ScryfallClient _client;
   final ScryfallCacheService _cacheService;
-  final TextRecognizer _recognizer;
+  final MlKitOcrEngine _ocrEngine;
+  final AverageHashVisualFingerprintService _visualFingerprintService;
+
+  MlKitOcrEngine get ocrEngine => _ocrEngine;
+  AverageHashVisualFingerprintService get visualFingerprintService =>
+      _visualFingerprintService;
 
   Future<ScanRecognitionResult> recognizeImagePath(String imagePath) async {
-    final image = InputImage.fromFilePath(imagePath);
-    final recognized = await _recognizer.processImage(image);
-    return recognizeRawText(recognized.text.trim());
+    final rawText = await _ocrEngine.recognizeImagePath(imagePath);
+    final result =
+        await recognizeRawText(rawText: rawText, imagePath: imagePath);
+    return _rerankWithVisualFingerprint(imagePath: imagePath, result: result);
   }
 
-  Future<ScanRecognitionResult> recognizeRawText(
-    String rawText, {
-    int maxQueryHints = 3,
+  Future<ScanRecognitionResult> recognizeRawText({
+    required String rawText,
+    String? imagePath,
+    ScanRecognitionOptions options = const ScanRecognitionOptions(),
   }) async {
     final cleanedText = rawText.trim();
     if (cleanedText.isEmpty) {
-      return const ScanRecognitionResult(rawText: '', candidates: []);
+      throw const ScanRecognitionException(
+        'Nenhum texto legível foi encontrado na imagem.',
+      );
     }
 
-    final queryHints = _extractQueryHints(cleanedText);
-    if (queryHints.isEmpty) {
-      return ScanRecognitionResult(rawText: cleanedText, candidates: const []);
+    if (options.liveMode) {
+      final localCandidates = await _scanIndex.search(rawText: cleanedText);
+      if (localCandidates.isNotEmpty) {
+        return ScanRecognitionResult(
+          rawText: cleanedText,
+          candidates: localCandidates,
+        );
+      }
+      if (!options.allowRemoteCatalog) {
+        throw const ScanRecognitionException(
+          'Nenhuma carta correspondente foi encontrada no catálogo local.',
+        );
+      }
     }
 
-    final normalizedRawText = _normalize(cleanedText);
-    final collectorNumber = _extractCollectorNumber(cleanedText);
-    final setCode = _extractSetCode(cleanedText);
+    final localCandidates = await _scanIndex.search(rawText: cleanedText);
+    if (localCandidates.isNotEmpty) {
+      return ScanRecognitionResult(
+        rawText: cleanedText,
+        candidates: localCandidates,
+      );
+    }
+
+    if (!options.allowRemoteCatalog) {
+      throw const ScanRecognitionException(
+        'Nenhuma carta correspondente foi encontrada no catálogo local.',
+      );
+    }
+
+    final remoteCandidates = await _recognizeViaScryfall(
+      cleanedText,
+      maxQueryHints: options.maxQueryHints,
+    );
+    if (remoteCandidates.isEmpty) {
+      throw const ScanRecognitionException(
+        'Nenhuma carta correspondente foi encontrada.',
+      );
+    }
+
+    return ScanRecognitionResult(
+      rawText: cleanedText,
+      candidates: remoteCandidates,
+    );
+  }
+
+  Future<void> cacheCandidate(ScanRecognitionCandidate candidate) async {
+    final card = await _client.getCardById(candidate.printingId);
+    await _cacheService.cacheSingleScryfallCard(card);
+    unawaited(_scanIndex.ensureLoaded(force: true));
+  }
+
+  Future<void> indexVisualCards(List<ScanCatalogCard> cards) {
+    return _visualFingerprintService.indexCatalogCards(cards);
+  }
+
+  Future<void> dispose() => _ocrEngine.dispose();
+
+  Future<List<ScanRecognitionCandidate>> _recognizeViaScryfall(
+    String rawText, {
+    required int maxQueryHints,
+  }) async {
+    final queryHints = _extractQueryHints(rawText);
+    if (queryHints.isEmpty) return const <ScanRecognitionCandidate>[];
+
+    final normalizedRawText = _normalize(rawText);
+    final collectorNumber = _extractCollectorNumber(rawText);
+    final setCode = _extractSetCode(rawText);
     final candidatesById = <String, ScanRecognitionCandidate>{};
 
     for (final query in queryHints.take(maxQueryHints)) {
@@ -92,13 +164,9 @@ class ManaScanRecognitionService {
       if (fuzzy != null) cards.add(fuzzy);
       cards.addAll((await _client.searchCardsOrEmpty(query)).take(8));
 
-      for (final card in cards) {
-        final id = card['id']?.toString();
-        final oracleId = card['oracle_id']?.toString();
-        if (id == null || id.isEmpty || oracleId == null || oracleId.isEmpty) {
-          continue;
-        }
-
+      for (final json in cards) {
+        final card = _scanCatalogCardFromJson(json);
+        if (card.id.isEmpty || card.oracleId.isEmpty) continue;
         final score = _scoreCard(
           card: card,
           normalizedRawText: normalizedRawText,
@@ -106,41 +174,91 @@ class ManaScanRecognitionService {
           collectorNumber: collectorNumber,
           setCode: setCode,
         );
-        final reason = collectorNumber != null || setCode != null
-            ? 'OCR name and edition cue'
-            : 'OCR name heuristic';
         final candidate = ScanRecognitionCandidate(
-          cardJson: card,
+          card: card,
           score: score,
-          matchReason: reason,
+          matchReason: collectorNumber != null || setCode != null
+              ? 'OCR name and edition cue'
+              : 'OCR name heuristic',
         );
-        final existing = candidatesById[id];
+        final existing = candidatesById[card.id];
         if (existing == null || candidate.score > existing.score) {
-          candidatesById[id] = candidate;
+          candidatesById[card.id] = candidate;
         }
       }
+      await _cacheService.cacheScryfallCards(cards);
     }
 
     final candidates = candidatesById.values.toList()
       ..sort((a, b) => b.score.compareTo(a.score));
-    final topCandidates = candidates.take(8).toList();
-    if (topCandidates.isNotEmpty) {
-      await _cacheService.cacheScryfallCards(
-        topCandidates.map((candidate) => candidate.cardJson).toList(),
+    if (candidates.isNotEmpty) {
+      unawaited(_scanIndex.ensureLoaded(force: true));
+    }
+    return candidates.take(8).toList();
+  }
+
+  Future<ScanRecognitionResult> _rerankWithVisualFingerprint({
+    required String imagePath,
+    required ScanRecognitionResult result,
+  }) async {
+    await _visualFingerprintService.indexCatalogCards(
+      result.candidates.map((candidate) => candidate.card).toList(),
+    );
+    if (result.candidates.length < 2) return result;
+
+    final reranked = <ScanRecognitionCandidate>[];
+    for (final candidate in result.candidates.take(8)) {
+      final visualScore =
+          await _visualFingerprintService.compareWithCatalogCard(
+        imagePath: imagePath,
+        card: candidate.card,
+      );
+      if (visualScore == null) {
+        reranked.add(candidate);
+        continue;
+      }
+      final blendedScore = ((candidate.score * 0.68) + (visualScore * 0.32))
+          .clamp(0, 1)
+          .toDouble();
+      reranked.add(
+        ScanRecognitionCandidate(
+          card: candidate.card,
+          score: blendedScore,
+          matchReason:
+              '${candidate.matchReason}; visual fingerprint ${(visualScore * 100).toStringAsFixed(0)}%',
+        ),
       );
     }
+    reranked.sort((a, b) => b.score.compareTo(a.score));
+    return ScanRecognitionResult(rawText: result.rawText, candidates: reranked);
+  }
 
-    return ScanRecognitionResult(
-      rawText: cleanedText,
-      candidates: topCandidates,
+  ScanCatalogCard _scanCatalogCardFromJson(Map<String, dynamic> json) {
+    final faces = (json['card_faces'] as List<dynamic>? ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .toList();
+    final primaryFace = faces.isEmpty ? null : faces.first;
+    final imageSmall = ScryfallClient.extractImageSmall(json);
+    final imageNormal = ScryfallClient.extractImageNormal(json);
+    final imagePng = ScryfallClient.extractImagePng(json);
+    return ScanCatalogCard(
+      id: json['id']?.toString() ?? '',
+      oracleId: json['oracle_id']?.toString() ?? '',
+      name: json['name']?.toString() ?? primaryFace?['name']?.toString() ?? '',
+      setCode: json['set']?.toString() ?? '',
+      setName: json['set_name']?.toString() ?? '',
+      collectorNumber: json['collector_number']?.toString() ?? '',
+      rarity: json['rarity']?.toString() ?? '',
+      typeLine: json['type_line']?.toString() ??
+          primaryFace?['type_line']?.toString() ??
+          '',
+      manaCost: json['mana_cost']?.toString() ??
+          primaryFace?['mana_cost']?.toString(),
+      imageUrlSmall: imageSmall,
+      imageUrlNormal: imageNormal,
+      imageUrlPng: imagePng,
     );
   }
-
-  Future<void> cacheCandidate(ScanRecognitionCandidate candidate) {
-    return _cacheService.cacheSingleScryfallCard(candidate.cardJson);
-  }
-
-  Future<void> dispose() => _recognizer.close();
 
   List<String> _extractQueryHints(String rawText) {
     final lines = rawText
@@ -156,21 +274,15 @@ class ManaScanRecognitionService {
       if (_looksLikeNameLine(line)) {
         hints.add(line);
         final words = line.split(' ');
-        if (words.length >= 2) {
-          hints.add(words.take(4).join(' '));
-        }
+        if (words.length >= 2) hints.add(words.take(4).join(' '));
       }
       if (index + 1 < lines.length) {
         final combined = '${lines[index]} ${lines[index + 1]}';
-        if (_looksLikeNameLine(combined)) {
-          hints.add(combined);
-        }
+        if (_looksLikeNameLine(combined)) hints.add(combined);
       }
     }
 
-    if (hints.isEmpty && lines.isNotEmpty) {
-      hints.add(lines.take(3).join(' '));
-    }
+    if (hints.isEmpty && lines.isNotEmpty) hints.add(lines.take(3).join(' '));
     return hints.toList();
   }
 
@@ -180,24 +292,20 @@ class ManaScanRecognitionService {
         .replaceAll(RegExp(r'[^a-z0-9 ]'), ' ')
         .replaceAll(RegExp(r'\s+'), ' ')
         .trim();
-    if (normalized.length < 3 || normalized.length > 48) {
-      return false;
-    }
-    if (RegExp(r'^\d+[a-z]?$').hasMatch(normalized)) {
-      return false;
-    }
+    if (normalized.length < 3 || normalized.length > 48) return false;
+    if (RegExp(r'^\d+[a-z]?$').hasMatch(normalized)) return false;
     return normalized.split(' ').length <= 7;
   }
 
   double _scoreCard({
-    required Map<String, dynamic> card,
+    required ScanCatalogCard card,
     required String normalizedRawText,
     required String query,
     required String? collectorNumber,
     required String? setCode,
   }) {
     final normalizedQuery = _normalize(query);
-    final aliases = _aliasesForName(card['name']?.toString() ?? '');
+    final aliases = _aliasesForName(card.name);
     var score = 0.0;
 
     for (final alias in aliases) {
@@ -220,15 +328,11 @@ class ManaScanRecognitionService {
       }
     }
 
-    final normalizedCollector = _normalize(
-      card['collector_number']?.toString() ?? '',
-    );
+    final normalizedCollector = _normalize(card.collectorNumber);
     if (collectorNumber != null && normalizedCollector == collectorNumber) {
       score += 0.22;
     }
-
-    final normalizedSetCode = _normalize(card['set']?.toString() ?? '');
-    if (setCode != null && normalizedSetCode == setCode) {
+    if (setCode != null && card.setCode.toLowerCase() == setCode) {
       score += 0.12;
     }
 
@@ -254,15 +358,11 @@ class ManaScanRecognitionService {
   }
 
   String? _extractSetCode(String rawText) {
-    final matches = RegExp(
-      r'\b[A-Z0-9]{3,5}\b',
-      caseSensitive: false,
-    ).allMatches(rawText);
+    final matches =
+        RegExp(r'\b[A-Z0-9]{3,5}\b', caseSensitive: false).allMatches(rawText);
     for (final match in matches) {
       final value = match.group(0)!.toLowerCase();
-      if (!RegExp(r'^\d+$').hasMatch(value)) {
-        return _normalize(value);
-      }
+      if (!RegExp(r'^\d+$').hasMatch(value)) return _normalize(value);
     }
     return null;
   }
@@ -286,9 +386,7 @@ class ManaScanRecognitionService {
   }
 
   double _similarity(String left, String right) {
-    if (left.isEmpty || right.isEmpty) {
-      return 0;
-    }
+    if (left.isEmpty || right.isEmpty) return 0;
     final distance = _boundedLevenshtein(left, right);
     final maxLength = math.max(left.length, right.length);
     return 1 - (distance / maxLength.clamp(1, 9999));

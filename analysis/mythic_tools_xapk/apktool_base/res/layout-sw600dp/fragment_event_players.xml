@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.Guideline android:orientation="vertical" android:id="@id/guideline_start" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintGuide_percent="0.15" />
+    <androidx.constraintlayout.widget.Guideline android:orientation="vertical" android:id="@id/guideline_end" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintGuide_percent="0.85" />
+    <androidx.constraintlayout.widget.Guideline android:orientation="horizontal" android:id="@id/top_guideline" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintGuide_percent="0.05" />
+    <androidx.constraintlayout.widget.Guideline android:orientation="horizontal" android:id="@id/bottom_guideline" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintGuide_percent="0.95" />
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:padding="10.0dp" android:layout_width="0.0dp" android:layout_height="0.0dp" app:layout_constraintBottom_toBottomOf="@id/bottom_guideline" app:layout_constraintEnd_toEndOf="@id/guideline_end" app:layout_constraintStart_toStartOf="@id/guideline_start" app:layout_constraintTop_toTopOf="@id/top_guideline">
+        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="22.0dp" app:cardBackgroundColor="@color/darker_blue" app:cardCornerRadius="12.0dp">
+            <LinearLayout android:orientation="horizontal" android:padding="8.0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <ImageView android:layout_gravity="start" android:layout_width="60.0dp" android:layout_height="60.0dp" android:src="@drawable/ic_trophy" />
+                <View android:layout_width="0.0dp" android:layout_height="match_parent" android:layout_weight="1.0" />
+                <LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <TextView android:textSize="13.0sp" android:textColor="@android:color/white" android:id="@id/event_type_text_view" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Constructed" android:textAlignment="textEnd" />
+                    <TextView android:textSize="13.0sp" android:textColor="@android:color/white" android:id="@id/pairing_type_text_view" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Swiss Rounds" android:textAlignment="textEnd" />
+                    <TextView android:textSize="13.0sp" android:textColor="@android:color/white" android:id="@id/match_type_text_view" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Best of 3" android:textAlignment="textEnd" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+        <TextView android:textSize="20.0sp" android:textColor="@android:color/white" android:id="@id/players_header" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="10.0dp" android:text="@string/add_players" android:textAlignment="textStart" />
+        <androidx.recyclerview.widget.RecyclerView android:orientation="vertical" android:id="@id/players_recycler_view" android:background="@drawable/custom_pairing_background_default" android:padding="10.0dp" android:scrollbars="vertical" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_marginBottom="10.0dp" android:layout_weight="1.0" android:fadeScrollbars="false" />
+        <com.google.android.material.button.MaterialButton android:textSize="20.0sp" android:textColor="@android:color/white" android:id="@id/next_button" android:background="@drawable/custom_life_button_background" android:padding="10.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20.0dp" android:text="@string/next_button_event" android:paddingStart="20.0dp" android:paddingEnd="20.0dp" app:backgroundTint="@null" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center" android:orientation="vertical" android:padding="0.0dp" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="@null" android:textColor="@color/gold" android:id="@id/header" android:padding="12.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/final_standings" android:textAlignment="center" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@id/standings_recycler_view" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_margin="8.0dp" android:layout_weight="1.0" />
+    <com.google.android.material.button.MaterialButton android:textSize="20.0sp" android:textColor="@android:color/white" android:id="@id/create_button" android:background="@drawable/custom_life_button_background" android:padding="10.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="20.0dp" android:layout_marginTop="8.0dp" android:layout_marginRight="20.0dp" android:layout_marginBottom="8.0dp" android:text="@string/create_finals" android:paddingStart="20.0dp" android:paddingEnd="20.0dp" app:backgroundTint="@null" />
+</LinearLayout>

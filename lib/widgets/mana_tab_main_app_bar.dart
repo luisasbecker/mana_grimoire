@@ -9,12 +9,12 @@ class ManaTabMainAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   final String title;
+
   /// Altura extra da linha gradiente sob o título.
   final double bottomHeight;
 
   @override
-  Size get preferredSize =>
-      Size.fromHeight(kToolbarHeight + bottomHeight + 2);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight + bottomHeight + 2);
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +27,8 @@ class ManaTabMainAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       title: Text(
         title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: theme.textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.w700,
           letterSpacing: 0.35,
@@ -45,14 +47,14 @@ class ManaTabMainAppBar extends StatelessWidget implements PreferredSizeWidget {
                 borderRadius: BorderRadius.circular(2),
                 gradient: LinearGradient(
                   colors: [
-                    scheme.primary.withOpacity(0.2),
+                    scheme.primary.withValues(alpha: 0.2),
                     scheme.primary,
-                    scheme.tertiary.withOpacity(0.75),
+                    scheme.tertiary.withValues(alpha: 0.75),
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: scheme.primary.withOpacity(0.25),
+                    color: scheme.primary.withValues(alpha: 0.25),
                     blurRadius: 8,
                     offset: const Offset(0, 1),
                   ),

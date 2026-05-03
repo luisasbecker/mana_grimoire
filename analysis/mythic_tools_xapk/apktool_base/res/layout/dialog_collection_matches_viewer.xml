@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@drawable/rounded_background_dialog_darker_with_line" android:padding="18.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <TextView android:textSize="@dimen/title_size" android:textColor="@color/almost_white" android:id="@id/titleTextView" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/collection_matches_title" android:layout_weight="1.0" android:fontFamily="@font/be_vietnam_pro_semibold" />
+        <ImageView android:id="@id/closeImage" android:layout_width="28.0dp" android:layout_height="28.0dp" android:src="@drawable/close_icon" android:contentDescription="Close" android:rotation="45.0" app:tint="@color/text_color" />
+    </LinearLayout>
+    <TextView android:textSize="@dimen/text_size" android:textColor="@color/almost_white" android:ellipsize="end" android:id="@id/cardNameTextView" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" android:maxLines="2" android:fontFamily="@font/be_vietnam_pro_semibold" />
+    <LinearLayout android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2.0dp">
+        <TextView android:textSize="@dimen/text_size_smaller" android:textColor="@color/almost_white" android:id="@id/setCodeTextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/be_vietnam_pro_semibold" />
+        <TextView android:textSize="@dimen/text_size_smaller" android:textStyle="italic" android:textColor="@color/text_color" android:id="@id/collectorNumberTextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/be_vietnam_pro_regular" android:layout_marginStart="5.0dp" />
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView android:id="@id/matchesRecyclerView" android:layout_width="match_parent" android:layout_height="280.0dp" android:layout_marginTop="12.0dp" />
+    <com.google.android.material.button.MaterialButton android:textColor="@android:color/white" android:layout_gravity="end" android:id="@id/closeButton" android:background="@drawable/custom_button_background_blue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" android:text="@string/close" android:textAllCaps="false" app:backgroundTint="@null" app:cornerRadius="8.0dp" style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
+</LinearLayout>

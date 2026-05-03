@@ -1,0 +1,9 @@
+package com.google.android.gms.internal.mlkit_vision_internal_vkp;
+
+/* JADX INFO: compiled from: com.google.mlkit:vision-internal-vkp@@18.2.3 */
+/* JADX INFO: loaded from: classes4.dex */
+interface zzbfq {
+    zzbfp zzb(Class cls);
+
+    boolean zzc(Class cls);
+}

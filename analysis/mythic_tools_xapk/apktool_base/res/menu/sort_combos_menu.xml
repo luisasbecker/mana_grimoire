@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@id/sort_combos_popularity" android:title="@string/sort_popularity" android:checkable="true" />
+        <item android:id="@id/sort_combos_missing_cards" android:title="@string/sort_missing_cards" android:checkable="true" />
+        <item android:id="@id/sort_combos_total_cards" android:title="@string/sort_total_cards" android:checkable="true" />
+    </group>
+    <item android:enabled="false" android:title="─────────────" />
+    <group android:checkableBehavior="single">
+        <item android:id="@id/sort_combos_ascending" android:title="@string/sort_ascending" android:checkable="true" />
+        <item android:id="@id/sort_combos_descending" android:title="@string/sort_descending" android:checkable="true" />
+    </group>
+</menu>

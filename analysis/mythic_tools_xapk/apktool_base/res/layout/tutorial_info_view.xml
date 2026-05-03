@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:background="@android:color/transparent" android:paddingBottom="16.0dp" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.appcompat.widget.LinearLayoutCompat android:id="@id/text_layout" android:background="@drawable/custom_tutorial_background" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8.0dp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent">
+        <TextView android:textSize="@dimen/tutorial_text_size" android:textColor="@color/light_grey" android:id="@id/tutorial_text" android:padding="22.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/string_tutorial_text_1" android:textAlignment="center" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.appcompat.widget.LinearLayoutCompat android:gravity="center" android:orientation="vertical" android:id="@id/next_layout" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/text_layout">
+        <ImageView android:id="@id/next_image" android:layout_width="64.0dp" android:layout_height="64.0dp" android:src="@drawable/arrow_down" />
+        <TextView android:textSize="@dimen/tutorial_text_size" android:textStyle="bold" android:textColor="@color/almost_white" android:id="@id/next_label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/next" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.constraintlayout.widget.ConstraintLayout>

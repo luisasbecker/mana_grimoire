@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:icon="@drawable/home_icon" android:id="@id/navigation_home" android:title="@string/home_menu" />
+    <item android:icon="@drawable/camera_icon" android:id="@id/navigation_scan" android:title="@string/scan" />
+    <item android:icon="@drawable/cards_icon" android:id="@id/navigation_game" android:title="@string/game" />
+    <item android:icon="@drawable/search_icon" android:id="@id/navigation_search" android:title="@string/search_menu" />
+    <item android:icon="@drawable/collection_icon" android:id="@id/navigation_collection" android:title="@string/collection" />
+</menu>

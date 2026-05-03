@@ -108,11 +108,11 @@ class _DeckCardPreviewViewerState extends State<DeckCardPreviewViewer> {
                             decoration: BoxDecoration(
                               color: const Color(0xFF101214),
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.12),
+                                color: Colors.white.withValues(alpha: 0.12),
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.65),
+                                  color: Colors.black.withValues(alpha: 0.65),
                                   blurRadius: 30,
                                   offset: const Offset(0, 18),
                                 ),
@@ -194,7 +194,7 @@ class _CollapsedActionPanel extends StatelessWidget {
     final qty = r?.entry.quantity ?? 0;
 
     return Material(
-      color: scheme.surfaceContainerHigh.withOpacity(0.82),
+      color: scheme.surfaceContainerHigh.withValues(alpha: 0.82),
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         onTap: r == null ? null : onTap,
@@ -207,7 +207,7 @@ class _CollapsedActionPanel extends StatelessWidget {
                 width: 44,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: scheme.onSurface.withOpacity(0.22),
+                  color: scheme.onSurface.withValues(alpha: 0.22),
                   borderRadius: BorderRadius.circular(99),
                 ),
               ),

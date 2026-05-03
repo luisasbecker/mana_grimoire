@@ -159,8 +159,13 @@ class _CollectionDetailScreenState extends State<CollectionDetailScreen> {
                                 const SizedBox(height: 4),
                                 Text(
                                   'Editar',
-                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                        color: Theme.of(context).colorScheme.primary,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                         fontWeight: FontWeight.w600,
                                       ),
                                 ),

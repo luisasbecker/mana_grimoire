@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@id/root_layout" android:background="@color/background_color" android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.appcompat.widget.LinearLayoutCompat android:orientation="vertical" android:id="@id/linearLayout" android:layout_width="match_parent" android:layout_height="match_parent" app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/infoLayout" android:padding="20.0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/backLayout" android:layout_width="48.0dp" android:layout_height="48.0dp" android:layout_marginLeft="-12.0dp" android:layout_marginTop="-12.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent">
+                <ImageView android:id="@id/backArrow" android:layout_width="20.0dp" android:layout_height="20.0dp" android:src="@drawable/back_arrow" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/almost_white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView android:id="@id/basketImage" android:layout_width="24.0dp" android:layout_height="24.0dp" android:layout_marginLeft="6.0dp" android:src="@drawable/basket" app:layout_constraintBottom_toBottomOf="@id/backLayout" app:layout_constraintLeft_toRightOf="@id/backLayout" app:layout_constraintTop_toTopOf="@id/backLayout" />
+            <TextView android:textSize="@dimen/title_size" android:textColor="@color/text_color" android:id="@id/title" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_marginLeft="12.0dp" android:layout_marginTop="2.0dp" android:text="@string/mythic_store" android:fontFamily="@font/baloo_da_2_bold" android:textAlignment="textStart" app:layout_constraintBottom_toBottomOf="@id/backLayout" app:layout_constraintLeft_toRightOf="@id/basketImage" app:layout_constraintTop_toTopOf="@id/backLayout" />
+            <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/codeLayout" android:layout_width="54.0dp" android:layout_height="54.0dp" android:layout_marginTop="-12.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent">
+                <ImageView android:id="@id/codeImage" android:layout_width="24.0dp" android:layout_height="24.0dp" android:src="@drawable/ic_by_code" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/almost_white" />
+                <TextView android:textSize="@dimen/text_size_smallest" android:textColor="@color/text_color" android:id="@id/codeText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/by_code" android:textAlignment="center" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <View android:background="@color/text_color" android:layout_width="match_parent" android:layout_height="1.0dp" android:alpha="0.3" />
+        <com.google.android.material.tabs.TabLayout android:id="@id/storeTabLayout" android:background="@color/background_color" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" app:tabGravity="fill" app:tabIndicatorColor="@color/selected_color_new" app:tabMode="fixed" app:tabSelectedTextColor="@color/selected_color_new" app:tabTextAppearance="@style/CustomTabTextAppearance" app:tabTextColor="@color/text_color" />
+        <FrameLayout android:id="@id/storeContentFrame" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0">
+            <androidx.core.widget.NestedScrollView android:id="@id/spotlightContainer" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+                <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <include android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dp" android:layout_marginStart="0.0dp" android:layout_marginEnd="0.0dp" layout="@layout/view_store_mythic_plus_spotlight" />
+                    <androidx.recyclerview.widget.RecyclerView android:id="@id/spotlightRecyclerView" android:padding="8.0dp" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+            <LinearLayout android:orientation="vertical" android:id="@id/themesContainer" android:layout_width="match_parent" android:layout_height="match_parent">
+                <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/themesHeaderLayout" android:padding="18.0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <LinearLayout android:orientation="vertical" android:id="@id/themesLayout" android:layout_width="match_parent" android:layout_height="match_parent">
+                        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/themesTopLayout" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginBottom="8.0dp">
+                            <ImageView android:id="@id/themesImage" android:layout_width="28.0dp" android:layout_height="28.0dp" android:layout_marginTop="2.0dp" android:src="@drawable/theme" />
+                            <TextView android:textSize="@dimen/title_size_small" android:textColor="@color/text_color" android:id="@id/themesHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="8.0dp" android:text="@string/themes_header" android:fontFamily="@font/be_vietnam_pro_semibold" />
+                        </LinearLayout>
+                        <TextView android:textSize="@dimen/text_size" android:textColor="@color/text_color" android:id="@id/themesDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/themes_description" android:fontFamily="@font/be_vietnam_pro_regular" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                <HorizontalScrollView android:id="@id/themeCategoriesScrollView" android:paddingBottom="4.0dp" android:visibility="gone" android:scrollbars="none" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="16.0dp" android:paddingEnd="16.0dp">
+                    <com.google.android.material.chip.ChipGroup android:id="@id/themeCategoriesChipGroup" android:layout_width="wrap_content" android:layout_height="wrap_content" app:selectionRequired="true" app:singleLine="true" app:singleSelection="true" />
+                </HorizontalScrollView>
+                <TextView android:textSize="@dimen/text_size" android:textColor="@color/text_color" android:id="@id/nothingToSeeLabel" android:padding="16.0dp" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/nothing_to_see" android:fontFamily="@font/be_vietnam_pro_regular" android:textAlignment="center" />
+                <androidx.recyclerview.widget.RecyclerView android:id="@id/storeItemsRecyclerView" android:padding="8.0dp" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="match_parent" />
+            </LinearLayout>
+        </FrameLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/overlay" android:background="@color/overlay_lighter" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent" android:elevation="100.0dp">
+        <com.airbnb.lottie.LottieAnimationView android:layout_gravity="center" android:id="@id/loadingAnimationView" android:layout_width="300.0dp" android:layout_height="300.0dp" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" app:lottie_autoPlay="true" app:lottie_loop="true" app:lottie_rawRes="@raw/loading" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <FrameLayout android:id="@id/fullScreenOverlay" android:layout_width="match_parent" android:layout_height="match_parent" android:elevation="200.0dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

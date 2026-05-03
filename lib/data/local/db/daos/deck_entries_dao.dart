@@ -59,8 +59,7 @@ class DeckEntriesDao extends DatabaseAccessor<AppDatabase>
     final joinQ = entriesQ.join([
       leftOuterJoin(
         scryfallPrintings,
-        scryfallPrintings.printingId
-            .equalsExp(deckEntries.preferredPrintingId),
+        scryfallPrintings.printingId.equalsExp(deckEntries.preferredPrintingId),
       ),
     ]);
 
@@ -84,8 +83,7 @@ class DeckEntriesDao extends DatabaseAccessor<AppDatabase>
     final joinQ = entriesQ.join([
       leftOuterJoin(
         scryfallPrintings,
-        scryfallPrintings.printingId
-            .equalsExp(deckEntries.preferredPrintingId),
+        scryfallPrintings.printingId.equalsExp(deckEntries.preferredPrintingId),
       ),
     ]);
 
@@ -129,7 +127,8 @@ class DeckEntriesDao extends DatabaseAccessor<AppDatabase>
               .go();
           return;
         }
-        await (update(deckEntries)..where((t) => t.id.equals(existing.id))).write(
+        await (update(deckEntries)..where((t) => t.id.equals(existing.id)))
+            .write(
           DeckEntriesCompanion(
             quantity: Value(newQty),
             updatedAt: Value(now),
@@ -191,4 +190,3 @@ class DeckEntriesDao extends DatabaseAccessor<AppDatabase>
     await (delete(deckEntries)..where((t) => t.deckId.equals(deckId))).go();
   }
 }
-

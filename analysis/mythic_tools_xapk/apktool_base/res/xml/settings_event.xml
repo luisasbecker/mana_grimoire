@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:layout="@layout/preference_category_layout" app:title="@string/event_timer_settings">
+        <EditTextPreference app:defaultValue="45" app:key="default_draft_duration" app:title="@string/default_draft_duration_setting" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:defaultValue="45" app:key="default_deck_duration" app:title="@string/default_deck_duration_setting" app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+</PreferenceScreen>

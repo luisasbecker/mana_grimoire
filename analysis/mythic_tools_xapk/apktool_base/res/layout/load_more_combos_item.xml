@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView android:textSize="@dimen/text_size" android:textColor="@color/selected_color_new" android:gravity="center" android:id="@id/loadMoreCombosText" android:background="?android:selectableItemBackground" android:paddingTop="16.0dp" android:paddingBottom="16.0dp" android:focusable="true" android:clickable="true" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/load_more" android:fontFamily="@font/be_vietnam_pro_regular"
+  xmlns:android="http://schemas.android.com/apk/res/android" />

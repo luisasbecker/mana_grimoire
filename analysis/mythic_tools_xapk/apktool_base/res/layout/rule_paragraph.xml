@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="top" android:orientation="horizontal" android:background="@android:color/transparent" android:padding="4.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2.0dp" android:layout_marginBottom="2.0dp" android:layout_marginStart="4.0dp" android:layout_marginEnd="4.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="18.0sp" android:id="@id/offset_label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="2.0dp" android:text="" android:paddingStart="20.0dp" />
+    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginEnd="12.0dp">
+        <TextView android:textSize="20.0sp" android:textStyle="bold" android:id="@id/section_number_label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="100.1" />
+        <TextView android:textSize="18.0sp" android:textColor="@color/almost_white" android:id="@id/paragraph_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="..." android:textAlignment="textStart" android:justificationMode="inter_word" />
+    </LinearLayout>
+</LinearLayout>

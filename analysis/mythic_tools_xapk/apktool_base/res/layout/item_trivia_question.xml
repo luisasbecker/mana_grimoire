@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:padding="16.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="24.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textSize="@dimen/text_size_bigger" android:textColor="@color/almost_white" android:id="@id/questionTextView" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_marginBottom="12.0dp" android:fontFamily="@font/be_vietnam_pro_semibold" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
+    <RadioGroup android:orientation="vertical" android:id="@id/answersRadioGroup" android:layout_width="0.0dp" android:layout_height="wrap_content" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/questionTextView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

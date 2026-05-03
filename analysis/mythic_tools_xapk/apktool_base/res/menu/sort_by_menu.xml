@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@id/sort_quantity" android:title="@string/sort_quantity" android:checkable="true" />
+        <item android:id="@id/sort_cmc" android:title="@string/sort_mana_value" android:checkable="true" />
+        <item android:id="@id/sort_rarity" android:title="@string/sort_rarity" android:checkable="true" />
+        <item android:id="@id/sort_foil" android:title="@string/sort_foil_status" android:checkable="true" />
+        <item android:id="@id/sort_name" android:title="@string/sort_name" android:checkable="true" />
+        <item android:id="@id/sort_set" android:title="@string/sort_set_code" android:checkable="true" />
+        <item android:id="@id/sort_number" android:title="@string/sort_collector_number" android:checkable="true" />
+        <item android:id="@id/sort_condition" android:title="@string/sort_condition" android:checkable="true" />
+        <item android:id="@id/sort_language" android:title="@string/sort_language" android:checkable="true" />
+        <item android:id="@id/sort_price" android:title="@string/sort_price" android:checkable="true" />
+        <item android:id="@id/sort_total_price" android:title="@string/sort_total_price" android:checkable="true" />
+        <item android:id="@id/sort_altered" android:title="@string/sort_altered" android:checkable="true" />
+        <item android:id="@id/sort_signed" android:title="@string/sort_signed" android:checkable="true" />
+        <item android:id="@id/sort_printing_error" android:title="@string/sort_misprint" android:checkable="true" />
+        <item android:id="@id/sort_proxy" android:title="@string/sort_proxy" android:checkable="true" />
+    </group>
+    <item android:enabled="false" android:title="─────────────" />
+    <group android:checkableBehavior="single">
+        <item android:id="@id/sort_ascending" android:title="@string/sort_ascending" android:checkable="true" />
+        <item android:id="@id/sort_descending" android:title="@string/sort_descending" android:checkable="true" />
+    </group>
+</menu>

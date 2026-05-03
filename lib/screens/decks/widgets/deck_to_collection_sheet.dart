@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../data/local/db/app_database.dart';
 import '../../../data/local/db/db_instance.dart';
+import '../../../widgets/create_collection_dialog.dart';
 
 class DeckToCollectionSheet extends StatefulWidget {
   const DeckToCollectionSheet({
@@ -25,41 +26,21 @@ class _DeckToCollectionSheetState extends State<DeckToCollectionSheet> {
   String? _error;
 
   Future<void> _createCollectionDialog() async {
-    final t = AppLocalizations.of(context)!;
-    final controller = TextEditingController();
-    final name = await showDialog<String?>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(t.newCollectionTitle),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            labelText: t.newCollectionNameLabel,
-            hintText: t.newCollectionNameHint,
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(null),
-            child: Text(t.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () =>
-                Navigator.of(dialogContext).pop(controller.text.trim()),
-            child: Text(t.create),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
+    final name = await showCreateCollectionDialog(context);
+    if (!mounted) return;
     if (name == null || name.isEmpty) return;
     final now = DateTime.now();
-    await appDb.collectionDao.createCollection(
-      id: _uuid.v4(),
-      name: name,
-      now: now,
-    );
+    try {
+      await appDb.collectionDao.createCollection(
+        id: _uuid.v4(),
+        name: name,
+        now: now,
+      );
+    } catch (error) {
+      if (!mounted) return;
+      final t = AppLocalizations.of(context)!;
+      setState(() => _error = '${t.error}: $error');
+    }
   }
 
   Future<void> _addDeckToCollection(Collection c) async {
@@ -165,7 +146,11 @@ class _DeckToCollectionSheetState extends State<DeckToCollectionSheet> {
                       child: OutlinedButton.icon(
                         onPressed: _adding ? null : _createCollectionDialog,
                         icon: const Icon(Icons.create_new_folder_outlined),
-                        label: Text(t.newCollectionCta),
+                        label: Text(
+                          t.newCollectionCta,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],
