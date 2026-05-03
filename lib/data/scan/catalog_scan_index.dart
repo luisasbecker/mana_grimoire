@@ -154,13 +154,17 @@ class CatalogScanIndex {
   }
 
   Set<String> _aliasesFor(ScanCatalogCard card) {
-    final aliases = <String>{
-      _normalize(card.name),
-      _ocrFriendlyNormalize(card.name),
-    };
-    for (final separator in const ['//', '/', '(']) {
-      if (card.name.contains(separator)) {
-        aliases.add(_normalize(card.name.split(separator).first));
+    final aliases = <String>{};
+    for (final name in [card.name, card.printedName]) {
+      if (name == null || name.trim().isEmpty) continue;
+      aliases.add(_normalize(name));
+      aliases.add(_ocrFriendlyNormalize(name));
+      for (final separator in const ['//', '/', '(']) {
+        if (name.contains(separator)) {
+          final firstPart = name.split(separator).first;
+          aliases.add(_normalize(firstPart));
+          aliases.add(_ocrFriendlyNormalize(firstPart));
+        }
       }
     }
     return aliases.where((alias) => alias.length >= 2).toSet();
@@ -311,7 +315,27 @@ class CatalogScanIndex {
   }
 
   String _normalize(String value) {
-    return value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+    return _foldDiacritics(value.toLowerCase())
+        .replaceAll(RegExp(r'[^a-z0-9]'), '');
+  }
+
+  String _foldDiacritics(String value) {
+    return value
+        .replaceAll(RegExp('[áàâãäåāăą]'), 'a')
+        .replaceAll(RegExp('[çćč]'), 'c')
+        .replaceAll(RegExp('[ďđ]'), 'd')
+        .replaceAll(RegExp('[éèêëēėęě]'), 'e')
+        .replaceAll(RegExp('[íìîïīįı]'), 'i')
+        .replaceAll(RegExp('[ñń]'), 'n')
+        .replaceAll(RegExp('[óòôõöøōő]'), 'o')
+        .replaceAll(RegExp('[ŕř]'), 'r')
+        .replaceAll(RegExp('[śš]'), 's')
+        .replaceAll(RegExp('[ť]'), 't')
+        .replaceAll(RegExp('[úùûüūůűų]'), 'u')
+        .replaceAll(RegExp('[ýÿ]'), 'y')
+        .replaceAll(RegExp('[žźż]'), 'z')
+        .replaceAll('æ', 'ae')
+        .replaceAll('œ', 'oe');
   }
 
   String _ocrFriendlyNormalize(String value) {
@@ -361,6 +385,8 @@ ScanCatalogCard scanCatalogCardFromPrinting(ScryfallPrinting printing) {
     id: printing.printingId,
     oracleId: printing.oracleId,
     name: printing.name,
+    printedName: printing.printedName,
+    printedLanguage: printing.language,
     setCode: printing.setCode,
     setName: printing.setName,
     collectorNumber: printing.collectorNumber,

@@ -6,6 +6,8 @@ class ScryfallPrintings extends Table {
   TextColumn get oracleId => text()();
 
   TextColumn get name => text()();
+  TextColumn get printedName => text().nullable()();
+  TextColumn get language => text().nullable()();
   TextColumn get typeLine => text()();
 
   TextColumn get setCode => text()();

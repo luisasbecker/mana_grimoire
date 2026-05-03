@@ -26,6 +26,8 @@ class ScryfallMapper {
     if (printingId == null || oracleId == null) return null;
 
     final name = (card['name'] as String?) ?? 'Unknown';
+    final printedName = card['printed_name'] as String?;
+    final language = card['lang'] as String?;
     final typeLine = (card['type_line'] as String?) ?? '';
     final setCode = (card['set'] as String?) ?? '';
     final setName = (card['set_name'] as String?) ?? '';
@@ -43,6 +45,8 @@ class ScryfallMapper {
       printingId: printingId,
       oracleId: oracleId,
       name: name,
+      printedName: drift.Value(printedName),
+      language: drift.Value(language),
       typeLine: typeLine,
       setCode: setCode,
       setName: setName,

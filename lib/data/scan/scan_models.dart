@@ -10,6 +10,8 @@ class ScanCatalogCard {
     required this.collectorNumber,
     required this.rarity,
     required this.typeLine,
+    this.printedName,
+    this.printedLanguage,
     this.manaCost,
     this.imageUrlSmall,
     this.imageUrlNormal,
@@ -24,6 +26,8 @@ class ScanCatalogCard {
   final String collectorNumber;
   final String rarity;
   final String typeLine;
+  final String? printedName;
+  final String? printedLanguage;
   final String? manaCost;
   final String? imageUrlSmall;
   final String? imageUrlNormal;

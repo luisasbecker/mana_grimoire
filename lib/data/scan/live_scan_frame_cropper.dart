@@ -37,10 +37,66 @@ class LiveScanCrop {
   final int bytesPerRow;
 }
 
+class LiveScanGuideRect {
+  const LiveScanGuideRect({
+    required this.left,
+    required this.top,
+    required this.width,
+    required this.height,
+  });
+
+  final double left;
+  final double top;
+  final double width;
+  final double height;
+
+  double get right => left + width;
+  double get bottom => top + height;
+
+  _DoubleRect get _rect => _DoubleRect(
+        left: left,
+        top: top,
+        width: width,
+        height: height,
+      );
+}
+
 class LiveScanFrameCropper {
   const LiveScanFrameCropper();
 
-  static const double _cardAspectRatio = 0.716;
+  static const double cardAspectRatio = 2.5 / 3.5;
+  static const double _cardMaxWidthFactor = 0.72;
+  static const double _cardMaxHeightFactor = 0.72;
+  static const double _cardVerticalCenterFactor = 0.47;
+  static const double _cardVerticalMarginFactor = 0.05;
+
+  static LiveScanGuideRect cardGuideForUprightFrame({
+    required double width,
+    required double height,
+  }) {
+    var cardWidth = width * _cardMaxWidthFactor;
+    var cardHeight = cardWidth / cardAspectRatio;
+    final maxHeight = height * _cardMaxHeightFactor;
+    if (cardHeight > maxHeight) {
+      cardHeight = maxHeight;
+      cardWidth = cardHeight * cardAspectRatio;
+    }
+
+    final cardLeft = (width - cardWidth) / 2;
+    final cardTop = ((height * _cardVerticalCenterFactor) - (cardHeight / 2))
+        .clamp(
+          height * _cardVerticalMarginFactor,
+          height - cardHeight - (height * _cardVerticalMarginFactor),
+        )
+        .toDouble();
+
+    return LiveScanGuideRect(
+      left: cardLeft,
+      top: cardTop,
+      width: cardWidth,
+      height: cardHeight,
+    );
+  }
 
   List<LiveScanRoiRequest> roiRequests({
     required int imageWidth,
@@ -55,26 +111,10 @@ class LiveScanFrameCropper {
         ? imageWidth
         : imageHeight;
 
-    var cardWidth = uprightWidth * 0.72;
-    var cardHeight = cardWidth / _cardAspectRatio;
-    final maxHeight = uprightHeight * 0.72;
-    if (cardHeight > maxHeight) {
-      cardHeight = maxHeight;
-      cardWidth = cardHeight * _cardAspectRatio;
-    }
-
-    final cardLeft = (uprightWidth - cardWidth) / 2;
-    final cardTop = ((uprightHeight * 0.43) - (cardHeight / 2)).clamp(
-      uprightHeight * 0.05,
-      uprightHeight - cardHeight - (uprightHeight * 0.05),
-    );
-
-    final uprightCard = _DoubleRect(
-      left: cardLeft,
-      top: cardTop.toDouble(),
-      width: cardWidth,
-      height: cardHeight,
-    );
+    final uprightCard = cardGuideForUprightFrame(
+      width: uprightWidth.toDouble(),
+      height: uprightHeight.toDouble(),
+    )._rect;
     final nameBand =
         uprightCard.inflateHorizontal(-0.06).relative(top: 0.07, height: 0.17);
     final collectorBand =

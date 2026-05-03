@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:drift/drift.dart';
 
 import '../local/db/app_database.dart';
 
@@ -61,11 +62,15 @@ class ScanCatalogSyncService {
   }
 
   static const String _datasetType = 'default_cards';
+  static const int minimumViableCardCount = 50000;
+  static const int minimumLocalizedPrintedNameCount = 25000;
+  static const List<String> localizedScanLanguages = ['pt'];
   static const int _batchSize = 500;
   static const int _progressUpdateInterval = 1000;
   static const int _downloadProgressUpdateBytes = 8 * 1024 * 1024;
   static const Duration _downloadProgressUpdateInterval =
       Duration(milliseconds: 700);
+  static const Duration _localizedPageDelay = Duration(milliseconds: 90);
 
   final AppDatabase _database;
   final Dio _dio;
@@ -113,6 +118,10 @@ class ScanCatalogSyncService {
       definition: 'INTEGER NOT NULL DEFAULT 0',
     );
     await _ensureSyncColumn(name: 'total_bytes', definition: 'INTEGER NULL');
+    await _database.customStatement('''
+      CREATE INDEX IF NOT EXISTS idx_scryfall_printings_language_printed_name
+      ON scryfall_printings(language, printed_name);
+    ''');
     _schemaReady = true;
   }
 
@@ -140,14 +149,55 @@ class ScanCatalogSyncService {
         .getSingleOrNull();
     if (row == null) {
       final count = await countCachedCards();
+      final hasLocalizedCoverage = await hasLocalizedScanCoverage();
       return ScanCatalogSyncSnapshot(
-        phase: count > 0
+        phase: _isCatalogReady(
+          cardCount: count,
+          hasLocalizedCoverage: hasLocalizedCoverage,
+        )
             ? ScanCatalogSyncPhase.completed
             : ScanCatalogSyncPhase.idle,
         cardCount: count,
+        progress: _isCatalogReady(
+          cardCount: count,
+          hasLocalizedCoverage: hasLocalizedCoverage,
+        )
+            ? 1
+            : null,
+        lastError: _isCatalogReady(
+          cardCount: count,
+          hasLocalizedCoverage: hasLocalizedCoverage,
+        )
+            ? null
+            : _incompleteCatalogMessage,
       );
     }
-    return _snapshotFromRow(row.data);
+    final snapshot = _snapshotFromRow(row.data);
+    if (snapshot.isRunning) return snapshot;
+    final actualCount = await countCachedCards();
+    final hasLocalizedCoverage = await hasLocalizedScanCoverage();
+    final isReady = _isCatalogReady(
+      cardCount: actualCount,
+      hasLocalizedCoverage: hasLocalizedCoverage,
+    );
+    if (actualCount == snapshot.cardCount &&
+        snapshot.phase == ScanCatalogSyncPhase.completed &&
+        isReady) {
+      return snapshot;
+    }
+    return ScanCatalogSyncSnapshot(
+      phase:
+          isReady ? ScanCatalogSyncPhase.completed : ScanCatalogSyncPhase.idle,
+      cardCount: actualCount,
+      bulkUpdatedAt: snapshot.bulkUpdatedAt,
+      startedAt: snapshot.startedAt,
+      completedAt: snapshot.completedAt,
+      progress: isReady ? 1 : null,
+      lastError: isReady ? null : _incompleteCatalogMessage,
+      downloadUri: snapshot.downloadUri,
+      downloadedBytes: snapshot.downloadedBytes,
+      totalBytes: snapshot.totalBytes,
+    );
   }
 
   Future<int> countCachedCards() async {
@@ -157,13 +207,48 @@ class ScanCatalogSyncService {
     return _intFrom(row.data['count']);
   }
 
+  Future<int> countLocalizedPrintedNames() async {
+    await ensureSchema();
+    final placeholders =
+        List.filled(localizedScanLanguages.length, '?').join(', ');
+    final row = await _database.customSelect(
+      '''
+      SELECT COUNT(*) AS count
+      FROM scryfall_printings
+      WHERE language IN ($placeholders)
+        AND printed_name IS NOT NULL
+        AND printed_name <> ''
+      ''',
+      variables: localizedScanLanguages.map(Variable<String>.new).toList(),
+    ).getSingle();
+    return _intFrom(row.data['count']);
+  }
+
+  Future<bool> hasLocalizedScanCoverage() async {
+    return await countLocalizedPrintedNames() >=
+        minimumLocalizedPrintedNameCount;
+  }
+
   Future<bool> hasSyncedCatalog() async {
     final status = await currentStatus();
     if (status.phase == ScanCatalogSyncPhase.completed &&
-        status.cardCount > 0) {
+        status.cardCount >= minimumViableCardCount &&
+        await hasLocalizedScanCoverage()) {
       return true;
     }
-    return await countCachedCards() > 0;
+    return await countCachedCards() >= minimumViableCardCount &&
+        await hasLocalizedScanCoverage();
+  }
+
+  bool _isCatalogReady({
+    required int cardCount,
+    required bool hasLocalizedCoverage,
+  }) {
+    return cardCount >= minimumViableCardCount && hasLocalizedCoverage;
+  }
+
+  String get _incompleteCatalogMessage {
+    return 'Catálogo local incompleto. Atualize para baixar nomes PT-BR antes de escanear.';
   }
 
   void cancelSync() {
@@ -215,10 +300,11 @@ class ScanCatalogSyncService {
       final bulkInfo = await _fetchBulkInfo();
       final current = await currentStatus();
       final localCardCount = await countCachedCards();
-      if (!force &&
-          localCardCount > 0 &&
+      final hasLocalizedCoverage = await hasLocalizedScanCoverage();
+      final defaultBulkUpToDate = localCardCount >= minimumViableCardCount &&
           current.bulkUpdatedAt != null &&
-          !bulkInfo.updatedAt.isAfter(current.bulkUpdatedAt!)) {
+          !bulkInfo.updatedAt.isAfter(current.bulkUpdatedAt!);
+      if (!force && defaultBulkUpToDate && hasLocalizedCoverage) {
         final completed = await _writeStatus(
           phase: ScanCatalogSyncPhase.completed,
           bulkUpdatedAt: bulkInfo.updatedAt,
@@ -247,13 +333,25 @@ class ScanCatalogSyncService {
       );
       onProgress?.call(importing);
 
-      final importedCount = await _importBulkCards(
-        bulkInfo.downloadUri,
+      var importedCount = localCardCount;
+      final shouldImportDefaultBulk = force || !defaultBulkUpToDate;
+      if (shouldImportDefaultBulk) {
+        importedCount = await _importBulkCards(
+          bulkInfo.downloadUri,
+          startedAt: startedAt,
+          totalBytes: bulkInfo.size,
+          onProgress: onProgress,
+        );
+      }
+      importedCount = await _importLocalizedScanPrintings(
         startedAt: startedAt,
-        totalBytes: bulkInfo.size,
+        baseImportedCount: importedCount,
+        bulkInfo: bulkInfo,
         onProgress: onProgress,
       );
-      await _deleteCardsNotRefreshedSince(startedAt);
+      if (shouldImportDefaultBulk) {
+        await _deleteCardsNotRefreshedSince(startedAt);
+      }
       final cardCount = await countCachedCards();
       final completed = await _writeStatus(
         phase: ScanCatalogSyncPhase.completed,
@@ -280,6 +378,116 @@ class ScanCatalogSyncService {
       onProgress?.call(failed);
       return failed;
     }
+  }
+
+  Future<int> _importLocalizedScanPrintings({
+    required DateTime startedAt,
+    required int baseImportedCount,
+    required _BulkInfo bulkInfo,
+    ValueChanged<ScanCatalogSyncSnapshot>? onProgress,
+  }) async {
+    var imported = baseImportedCount;
+    for (final language in localizedScanLanguages) {
+      imported = await _importLocalizedLanguagePrintings(
+        language: language,
+        startedAt: startedAt,
+        baseImportedCount: imported,
+        bulkInfo: bulkInfo,
+        onProgress: onProgress,
+      );
+    }
+    return imported;
+  }
+
+  Future<int> _importLocalizedLanguagePrintings({
+    required String language,
+    required DateTime startedAt,
+    required int baseImportedCount,
+    required _BulkInfo bulkInfo,
+    ValueChanged<ScanCatalogSyncSnapshot>? onProgress,
+  }) async {
+    var imported = baseImportedCount;
+    var pageImported = 0;
+    var totalCards = 0;
+    String? nextPageUrl;
+    final printings = <_BulkPrintingRow>[];
+    final refreshedAt = DateTime.now().toUtc();
+
+    do {
+      if (_cancelRequested) throw const _CatalogSyncCancelled();
+      final response = nextPageUrl == null
+          ? await _dio.get<Map<String, dynamic>>(
+              '/cards/search',
+              queryParameters: {
+                'q': 'lang:$language',
+                'unique': 'prints',
+                'include_multilingual': true,
+                'include_extras': false,
+                'include_variations': false,
+                'order': 'name',
+              },
+            )
+          : await _dio.getUri<Map<String, dynamic>>(Uri.parse(nextPageUrl));
+
+      final payload = response.data;
+      if (payload == null || payload['object'] == 'error') {
+        throw FormatException(
+          'Invalid Scryfall localized search response for $language.',
+        );
+      }
+
+      totalCards = _intFrom(payload['total_cards']);
+      final data = payload['data'];
+      if (data is! List<dynamic>) {
+        throw FormatException(
+          'Scryfall localized search page for $language is incomplete.',
+        );
+      }
+
+      for (final json in data.whereType<Map<String, dynamic>>()) {
+        final printing = _mapBulkPrinting(json, refreshedAt: refreshedAt);
+        if (printing == null) continue;
+        printings.add(printing);
+        if (printings.length >= _batchSize) {
+          await _writeBatch(printings);
+          imported += printings.length;
+          pageImported += printings.length;
+          printings.clear();
+        }
+      }
+
+      if (printings.isNotEmpty) {
+        await _writeBatch(printings);
+        imported += printings.length;
+        pageImported += printings.length;
+        printings.clear();
+      }
+
+      final localizedProgress = totalCards <= 0
+          ? 0.0
+          : (pageImported / totalCards).clamp(0, 1).toDouble();
+      final progress = bulkInfo.size == null
+          ? null
+          : (0.90 + (localizedProgress * 0.09)).clamp(0, 0.99).toDouble();
+      final snapshot = await _writeStatus(
+        phase: ScanCatalogSyncPhase.importing,
+        startedAt: startedAt,
+        cardCount: imported,
+        progress: progress,
+        downloadUri: bulkInfo.downloadUri.toString(),
+        downloadedBytes: bulkInfo.size,
+        totalBytes: bulkInfo.size,
+      );
+      onProgress?.call(snapshot);
+
+      final hasMore = payload['has_more'] == true;
+      nextPageUrl = hasMore ? payload['next_page']?.toString() : null;
+      if (nextPageUrl != null) {
+        await Future<void>.delayed(_localizedPageDelay);
+      }
+    } while (nextPageUrl != null);
+
+    return imported;
   }
 
   Future<_BulkInfo> _fetchBulkInfo() async {
@@ -423,7 +631,8 @@ class ScanCatalogSyncService {
 
   Future<void> _writeBatch(List<_BulkPrintingRow> printings) async {
     if (printings.isEmpty) return;
-    const valuePlaceholder = '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const valuePlaceholder =
+        '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     final valuesSql = List.filled(printings.length, valuePlaceholder).join(',');
     final variables = <Object?>[];
     for (final printing in printings) {
@@ -435,6 +644,8 @@ class ScanCatalogSyncService {
         printing_id,
         oracle_id,
         name,
+        printed_name,
+        language,
         type_line,
         set_code,
         set_name,
@@ -453,6 +664,8 @@ class ScanCatalogSyncService {
       ON CONFLICT(printing_id) DO UPDATE SET
         oracle_id = excluded.oracle_id,
         name = excluded.name,
+        printed_name = excluded.printed_name,
+        language = excluded.language,
         type_line = excluded.type_line,
         set_code = excluded.set_code,
         set_name = excluded.set_name,
@@ -512,6 +725,9 @@ class ScanCatalogSyncService {
       printingId: printingId,
       oracleId: oracleId,
       name: name,
+      printedName: json['printed_name']?.toString() ??
+          primaryFace?['printed_name']?.toString(),
+      language: json['lang']?.toString(),
       typeLine: typeLine ?? '',
       setCode: json['set']?.toString() ?? '',
       setName: json['set_name']?.toString() ?? '',
@@ -742,6 +958,8 @@ class _BulkPrintingRow {
     required this.printingId,
     required this.oracleId,
     required this.name,
+    this.printedName,
+    this.language,
     required this.typeLine,
     required this.setCode,
     required this.setName,
@@ -759,6 +977,8 @@ class _BulkPrintingRow {
   final String printingId;
   final String oracleId;
   final String name;
+  final String? printedName;
+  final String? language;
   final String typeLine;
   final String setCode;
   final String setName;
@@ -777,6 +997,8 @@ class _BulkPrintingRow {
       printingId,
       oracleId,
       name,
+      printedName,
+      language,
       typeLine,
       setCode,
       setName,
