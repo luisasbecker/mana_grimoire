@@ -1075,24 +1075,24 @@ class _ScanScreenState extends State<ScanScreen> {
     }
 
     return Scaffold(
-      appBar: const ManaTabMainAppBar(title: 'Live Scan'),
+      appBar: const ManaTabMainAppBar(title: 'Scan contínuo'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final contentWidth = constraints.maxWidth - 32;
           final idealCameraHeight =
               contentWidth / LiveScanFrameCropper.cardAspectRatio;
-          final cameraHeight = idealCameraHeight.clamp(520.0, 760.0).toDouble();
+          final cameraHeight = idealCameraHeight.clamp(430.0, 640.0).toDouble();
           return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 112),
             children: [
               SizedBox(height: cameraHeight, child: _buildCameraPanel(context)),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               _buildCatalogStatusCard(context),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               _buildControlsCard(context),
-              const SizedBox(height: 10),
+              const SizedBox(height: 14),
               SizedBox(
-                height: (constraints.maxHeight * 0.22).clamp(180.0, 260.0),
+                height: (constraints.maxHeight * 0.24).clamp(188.0, 270.0),
                 child: _buildBufferPanel(context),
               ),
             ],
@@ -1132,8 +1132,11 @@ class _ScanScreenState extends State<ScanScreen> {
         ScanCatalogSyncService.minimumViableCardCount;
     final ready = _catalogStatus.phase == ScanCatalogSyncPhase.completed &&
         hasLocalCatalog;
+    final statusColor =
+        hasLocalCatalog ? const Color(0xFF50FA7B) : scheme.secondary;
     return ManaSurfaceCard(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
+      borderColor: statusColor.withValues(alpha: 0.24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -1143,7 +1146,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 hasLocalCatalog
                     ? Icons.offline_pin_outlined
                     : Icons.cloud_download_outlined,
-                color: hasLocalCatalog ? scheme.primary : scheme.secondary,
+                color: statusColor,
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -1285,9 +1288,26 @@ class _ScanScreenState extends State<ScanScreen> {
         (_cameraController?.value.isInitialized ?? false);
 
     return ManaSurfaceCard(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       child: Column(
         children: [
+          Row(
+            children: [
+              Icon(Icons.tune_rounded, color: scheme.primary, size: 20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Sessão de scan',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(child: _buildCollectionSelector()),
@@ -1436,9 +1456,19 @@ class _ScanScreenState extends State<ScanScreen> {
     if (_buffer.isEmpty) {
       return ManaSurfaceCard(
         padding: const EdgeInsets.all(16),
+        borderColor: scheme.primary.withValues(alpha: 0.20),
         child: Row(
           children: [
-            Icon(Icons.style_outlined, color: scheme.primary, size: 34),
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: scheme.primary.withValues(alpha: 0.16),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child:
+                  Icon(Icons.style_outlined, color: scheme.primary, size: 26),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -1456,25 +1486,73 @@ class _ScanScreenState extends State<ScanScreen> {
       );
     }
 
-    return ListView.separated(
-      scrollDirection: Axis.horizontal,
-      itemCount: _buffer.length,
-      separatorBuilder: (_, __) => const SizedBox(width: 10),
-      itemBuilder: (context, index) {
-        final entry = _buffer[index];
-        return SizedBox(
-          width: 286,
-          child: ScanBufferTile(
-            entry: entry,
-            onTap: () => _openBufferEntryEditor(entry),
-            onRemove: () => _removeBufferedEntry(entry),
-            onIncrement: () =>
-                _setBufferedEntryQuantity(entry, entry.quantity + 1),
-            onDecrement: () =>
-                _setBufferedEntryQuantity(entry, entry.quantity - 1),
-          ),
-        );
-      },
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.28),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Buffer da sessão',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w900,
+                        ),
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: scheme.primary.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '$_totalBuffered cartas',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: scheme.primary,
+                          fontWeight: FontWeight.w900,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: _buffer.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 10),
+                itemBuilder: (context, index) {
+                  final entry = _buffer[index];
+                  return SizedBox(
+                    width: 286,
+                    child: ScanBufferTile(
+                      entry: entry,
+                      onTap: () => _openBufferEntryEditor(entry),
+                      onRemove: () => _removeBufferedEntry(entry),
+                      onIncrement: () =>
+                          _setBufferedEntryQuantity(entry, entry.quantity + 1),
+                      onDecrement: () =>
+                          _setBufferedEntryQuantity(entry, entry.quantity - 1),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

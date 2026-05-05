@@ -47,14 +47,14 @@ class ManaBottomNavBar extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
-    final bg = scheme.surfaceContainerHighest.withValues(alpha: 0.85);
+    final bg = scheme.surfaceContainerHighest.withValues(alpha: 0.94);
     final border = scheme.outlineVariant.withValues(alpha: 0.65);
     final accent = scheme.primary;
 
     return LayoutBuilder(
       builder: (context, c) {
         return Container(
-          height: 72 + bottomInset,
+          height: 76 + bottomInset,
           decoration: BoxDecoration(
             color: bg,
             // Full-width: menos aspecto de “caixa” flutuante.
@@ -65,11 +65,11 @@ class ManaBottomNavBar extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.35),
-                blurRadius: 22,
-                offset: const Offset(0, 10),
+                blurRadius: 24,
+                offset: const Offset(0, -8),
               ),
               BoxShadow(
-                color: accent.withValues(alpha: 0.10),
+                color: accent.withValues(alpha: 0.08),
                 blurRadius: 18,
                 offset: const Offset(0, 0),
               ),
@@ -79,8 +79,8 @@ class ManaBottomNavBar extends StatelessWidget {
             padding: EdgeInsets.only(
               left: 10,
               right: 10,
-              top: 4,
-              bottom: 4 + bottomInset,
+              top: 6,
+              bottom: 5 + bottomInset,
             ),
             child: Row(
               children: List.generate(_destinations.length, (i) {
@@ -138,7 +138,7 @@ class _NavItem extends StatelessWidget {
         selected ? scheme.primary : scheme.onSurface.withValues(alpha: 0.78);
     final iconData = selected ? dest.selectedIcon : dest.icon;
 
-    final circleSize = isHome ? 38.0 : 34.0;
+    final circleSize = isHome ? 40.0 : 36.0;
     final iconSize = isHome ? 23.0 : 21.0;
 
     return Material(
@@ -172,8 +172,8 @@ class _NavItem extends StatelessWidget {
                       ? [
                           BoxShadow(
                             color: scheme.primary.withValues(alpha: 0.35),
-                            blurRadius: 16,
-                            offset: const Offset(0, 4),
+                            blurRadius: 18,
+                            offset: const Offset(0, 5),
                           ),
                         ]
                       : const [],
@@ -193,8 +193,8 @@ class _NavItem extends StatelessWidget {
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: fg,
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                      fontSize: 8.5,
-                      letterSpacing: 0.2,
+                      fontSize: 9,
+                      letterSpacing: 0,
                     ),
                   ),
                 ),

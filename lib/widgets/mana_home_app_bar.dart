@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../app/router.dart';
 
 /// Cabeçalho do hub [Início]: definições, título e avatar.
 class ManaHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -51,11 +54,7 @@ class ManaHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           Icons.settings_outlined,
           color: scheme.onSurface.withValues(alpha: 0.9),
         ),
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Definições em breve.')),
-          );
-        },
+        onPressed: () => _showSettingsSheet(context),
       ),
       leadingWidth: 48,
       actions: [
@@ -65,11 +64,7 @@ class ManaHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             color: scheme.primaryContainer.withValues(alpha: 0.4),
             shape: const CircleBorder(),
             child: InkWell(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Perfil em breve.')),
-                );
-              },
+              onTap: () => _showProfileSheet(context),
               customBorder: const CircleBorder(),
               child: Padding(
                 padding: const EdgeInsets.all(2),
@@ -91,4 +86,106 @@ class ManaHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       ],
     );
   }
+}
+
+void _showSettingsSheet(BuildContext context) {
+  showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (sheetContext) {
+      final scheme = Theme.of(sheetContext).colorScheme;
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 18),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.settings_rounded, color: scheme.primary),
+                title: const Text('Definições'),
+                subtitle: const Text('Atalhos rápidos do aplicativo'),
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.qr_code_scanner_rounded),
+                title: const Text('Scan e catálogo'),
+                subtitle: const Text('Abrir scanner e sincronização local'),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.goNamed(AppRoutes.scan);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.collections_bookmark_rounded),
+                title: const Text('Coleções'),
+                subtitle: const Text('Gerenciar cartas e inventário'),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.goNamed(AppRoutes.collectionRoot);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.dark_mode_outlined),
+                title: const Text('Tema'),
+                subtitle: const Text('Tema escuro ativo'),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showProfileSheet(BuildContext context) {
+  showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (sheetContext) {
+      final scheme = Theme.of(sheetContext).colorScheme;
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 18),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: scheme.primaryContainer,
+                  child: const Text('?'),
+                ),
+                title: const Text('Perfil local'),
+                subtitle: const Text('Coleção e decks neste aparelho'),
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.collections_bookmark_rounded),
+                title: const Text('Minhas coleções'),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.goNamed(AppRoutes.collectionRoot);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.style_rounded),
+                title: const Text('Meus decks'),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.goNamed(AppRoutes.decks);
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
