@@ -9,6 +9,7 @@ import '../../widgets/create_collection_dialog.dart';
 import '../../widgets/mana_internal_app_bar.dart';
 import '../../widgets/mana_empty_state.dart';
 import '../../widgets/mana_surface_card.dart';
+import 'widgets/collection_section_switcher.dart';
 
 class CollectionsScreen extends StatefulWidget {
   const CollectionsScreen({super.key});
@@ -53,123 +54,143 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
         icon: const Icon(Icons.add_rounded),
         label: Text(t.newCollectionTitle),
       ),
-      body: StreamBuilder(
-        stream: appDb.collectionDao.watchCollections(),
-        builder: (context, snapshot) {
-          final collections = snapshot.data ?? const [];
-          if (collections.isEmpty) {
-            return ManaEmptyState(
-              icon: Icons.folder_special_outlined,
-              title: t.collectionsEmptyTitle,
-              subtitle: t.collectionsEmptySubtitle,
-            );
-          }
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: CollectionSectionSwitcher(
+              currentSection: CollectionSection.cards,
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder(
+              stream: appDb.collectionDao.watchCollections(),
+              builder: (context, snapshot) {
+                final collections = snapshot.data ?? const [];
+                if (collections.isEmpty) {
+                  return ManaEmptyState(
+                    icon: Icons.folder_special_outlined,
+                    title: t.collectionsEmptyTitle,
+                    subtitle: t.collectionsEmptySubtitle,
+                  );
+                }
 
-          final showAllCards = collections.length >= 2;
-          final totalRows = collections.length + (showAllCards ? 1 : 0);
+                final showAllCards = collections.length >= 2;
+                final totalRows = collections.length + (showAllCards ? 1 : 0);
 
-          return ListView.separated(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-            itemCount: totalRows,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
-            itemBuilder: (context, index) {
-              if (showAllCards && index == 0) {
-                return ManaSurfaceCard(
-                  onTap: () => context.pushNamed(AppRoutes.allCards),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: scheme.tertiary.withValues(alpha: 0.18),
-                          borderRadius: BorderRadius.circular(12),
+                return ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                  itemCount: totalRows,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  itemBuilder: (context, index) {
+                    if (showAllCards && index == 0) {
+                      return ManaSurfaceCard(
+                        onTap: () => context.pushNamed(AppRoutes.allCards),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
                         ),
-                        child: Icon(
-                          Icons.auto_awesome_rounded,
-                          color: scheme.tertiary,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
                           children: [
-                            Text(
-                              t.allCardsTitle,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w800),
+                            Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: scheme.tertiary.withValues(alpha: 0.18),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                Icons.auto_awesome_rounded,
+                                color: scheme.tertiary,
+                              ),
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              t.allCardsSubtitle,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: scheme.onSurfaceVariant,
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    t.allCardsTitle,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.w800),
                                   ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    t.allCardsSubtitle,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: scheme.onSurfaceVariant,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              color: scheme.onSurfaceVariant,
                             ),
                           ],
                         ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                    ],
-                  ),
-                );
-              }
+                      );
+                    }
 
-              final collectionIndex = index - (showAllCards ? 1 : 0);
-              final c = collections[collectionIndex];
-              return ManaSurfaceCard(
-                onTap: () {
-                  context.pushNamed(
-                    AppRoutes.collectionDetail,
-                    pathParameters: {'collectionId': c.id},
-                    extra: c.name,
-                  );
-                },
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: scheme.primary.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(12),
+                    final collectionIndex = index - (showAllCards ? 1 : 0);
+                    final c = collections[collectionIndex];
+                    return ManaSurfaceCard(
+                      onTap: () {
+                        context.pushNamed(
+                          AppRoutes.collectionDetail,
+                          pathParameters: {'collectionId': c.id},
+                          extra: c.name,
+                        );
+                      },
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
                       ),
-                      child: Icon(
-                        Icons.folder_special_rounded,
-                        color: scheme.primary,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: scheme.primary.withValues(alpha: 0.18),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.folder_special_rounded,
+                              color: scheme.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Text(
+                              c.name,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        c.name,
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                      ),
-                    ),
-                    Icon(Icons.chevron_right_rounded,
-                        color: scheme.onSurfaceVariant),
-                  ],
-                ),
-              );
-            },
-          );
-        },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

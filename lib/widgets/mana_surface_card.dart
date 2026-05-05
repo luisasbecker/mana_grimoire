@@ -7,44 +7,54 @@ class ManaSurfaceCard extends StatelessWidget {
     required this.child,
     this.onTap,
     this.padding = const EdgeInsets.all(14),
+    this.borderColor,
+    this.backgroundColor,
   });
 
   final Widget child;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry padding;
+  final Color? borderColor;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final radius = BorderRadius.circular(18);
     final shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: radius,
       side: BorderSide(
-        color: scheme.outlineVariant.withValues(alpha: 0.25),
+        color: borderColor ?? scheme.outlineVariant.withValues(alpha: 0.28),
       ),
     );
 
     final content = Padding(padding: padding, child: child);
-
-    if (onTap == null) {
-      return Material(
-        color: scheme.surfaceContainerHigh,
-        elevation: 0,
-        shape: shape,
-        clipBehavior: Clip.antiAlias,
-        child: content,
-      );
-    }
-
-    return Material(
-      color: scheme.surfaceContainerHigh,
+    final material = Material(
+      color: backgroundColor ?? scheme.surfaceContainerHigh,
       elevation: 0,
       shape: shape,
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: content,
+      child: onTap == null
+          ? content
+          : InkWell(
+              onTap: onTap,
+              borderRadius: radius,
+              child: content,
+            ),
+    );
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.10),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
+      child: material,
     );
   }
 }

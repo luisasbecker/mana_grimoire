@@ -13,8 +13,8 @@ import '../screens/decks/edit_deck_screen.dart';
 import '../screens/decks/add_card_to_deck_screen.dart';
 import '../screens/decks/decks_screen.dart';
 import '../screens/home/home_hub_screen.dart';
-import '../screens/placeholder/placeholder_tab_screen.dart';
 import '../screens/scan/scan_screen.dart';
+import '../screens/social/social_hub_screen.dart';
 import '../screens/tabs/play_session_screen.dart';
 import '../screens/tabs/play_tab_screen.dart';
 import '../screens/scryfall_add_card/scryfall_add_card_screen.dart';
@@ -179,10 +179,7 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/chat',
               name: AppRoutes.chat,
-              builder: (_, __) => const PlaceholderTabScreen(
-                title: 'Chat',
-                subtitle: 'Mensagens e trocas — em breve.',
-              ),
+              builder: (_, __) => const SocialHubScreen(),
             ),
           ],
         ),

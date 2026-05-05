@@ -28,17 +28,29 @@ class ManaEmptyState extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    icon,
-                    size: 56,
-                    color: theme.colorScheme.primary.withValues(alpha: 0.65),
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color:
+                            theme.colorScheme.primary.withValues(alpha: 0.24),
+                      ),
+                    ),
+                    child: Icon(
+                      icon,
+                      size: 38,
+                      color: theme.colorScheme.primary.withValues(alpha: 0.82),
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     title,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                   if (subtitle != null) ...[

@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 abstract final class ManaTheme {
   // Dracula palette (core)
   static const Color _bg = Color(0xFF282A36);
+  static const Color _surfaceLow = Color(0xFF303241);
+  static const Color _surfaceHigh = Color(0xFF3A3D4F);
   static const Color _selection = Color(0xFF44475A);
   static const Color _currentLine = Color(0xFF6272A4);
   static const Color _fg = Color(0xFFF8F8F2);
-  static const Color _comment = Color(0xFF6272A4);
+  static const Color _comment = Color(0xFFB8B9C8);
 
   // Dracula accents
   static const Color _red = Color(0xFFFF5555);
@@ -22,8 +24,8 @@ abstract final class ManaTheme {
       brightness: Brightness.dark,
       surface: _bg,
       surfaceContainerLowest: _bg,
-      surfaceContainerLow: _bg,
-      surfaceContainer: _selection,
+      surfaceContainerLow: _surfaceLow,
+      surfaceContainer: _surfaceHigh,
       surfaceContainerHigh: _selection,
       surfaceContainerHighest: _currentLine.withValues(alpha: 0.35),
       secondary: _cyan,
@@ -57,6 +59,10 @@ abstract final class ManaTheme {
         onErrorContainer: _fg,
       ),
       scaffoldBackgroundColor: _bg,
+      textTheme: Typography.whiteCupertino.apply(
+        bodyColor: _fg,
+        displayColor: _fg,
+      ),
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -86,8 +92,8 @@ abstract final class ManaTheme {
       ),
       cardTheme: CardThemeData(
         elevation: 0,
-        color: _selection,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        color: _surfaceHigh,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         clipBehavior: Clip.antiAlias,
       ),
       dialogTheme: DialogThemeData(
@@ -96,17 +102,17 @@ abstract final class ManaTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: _selection.withValues(alpha: 0.75),
+        fillColor: _selection.withValues(alpha: 0.72),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: _currentLine.withValues(alpha: 0.45)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: _purple, width: 1.5),
         ),
         contentPadding:
@@ -116,11 +122,30 @@ abstract final class ManaTheme {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         side: BorderSide.none,
-        backgroundColor: _selection.withValues(alpha: 0.75),
+        backgroundColor: _selection.withValues(alpha: 0.72),
         labelStyle: TextStyle(
           fontSize: 11,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
           color: _comment,
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(48, 46),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          textStyle: const TextStyle(fontWeight: FontWeight.w800),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(48, 46),
+          side: BorderSide(color: _currentLine.withValues(alpha: 0.55)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          textStyle: const TextStyle(fontWeight: FontWeight.w800),
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(

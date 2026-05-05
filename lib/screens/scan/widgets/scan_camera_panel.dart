@@ -40,14 +40,14 @@ class ScanCameraPanel extends StatelessWidget {
     final initialized = controller != null && controller!.value.isInitialized;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(24),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: Colors.black,
           border: Border.all(
             color: showSuccessFrame
                 ? const Color(0xFF31E981)
-                : scheme.outlineVariant.withValues(alpha: 0.55),
+                : scheme.outlineVariant.withValues(alpha: 0.48),
             width: showSuccessFrame ? 2.5 : 1,
           ),
         ),
@@ -117,8 +117,8 @@ class ScanCameraPanel extends StatelessWidget {
               bottom: 12,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.62),
-                  borderRadius: BorderRadius.circular(14),
+                  color: Colors.black.withValues(alpha: 0.66),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.10),
                   ),
@@ -175,7 +175,7 @@ class _HudPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.58),
+        color: Colors.black.withValues(alpha: 0.62),
         borderRadius: BorderRadius.circular(999),
         border: Border.all(color: color.withValues(alpha: 0.42)),
       ),
