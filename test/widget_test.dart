@@ -39,7 +39,7 @@ void main() {
     await tester.tap(find.text('Jogar'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Confirmar e iniciar'), findsOneWidget);
+    expect(find.text('Iniciar partida'), findsOneWidget);
   });
 
   testWidgets('Collection section switcher opens cards decks and trades',
