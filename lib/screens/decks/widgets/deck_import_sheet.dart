@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../../../data/local/db/db_instance.dart';
 import '../../../data/remote/scryfall/scryfall_cache_service.dart';
 import '../../../data/remote/scryfall/scryfall_client.dart';
+import '../../../data/remote/scryfall/scryfall_local_search_service.dart';
 import 'deck_import_parser.dart';
 
 class DeckImportSheet extends StatefulWidget {
@@ -22,6 +23,7 @@ class DeckImportSheet extends StatefulWidget {
 class _DeckImportSheetState extends State<DeckImportSheet> {
   final _client = ScryfallClient();
   final _cacheService = ScryfallCacheService();
+  final _localSearch = ScryfallLocalSearchService();
   final _uuid = const Uuid();
   final _controller = TextEditingController();
 
@@ -70,7 +72,7 @@ class _DeckImportSheetState extends State<DeckImportSheet> {
       }
 
       try {
-        final results = await _client.searchCards(p.name);
+        final results = await _searchRemoteThenLocal(p.name);
         if (results.isEmpty) {
           _notFound += 1;
           _failedLines.add(p.rawLine);
@@ -113,6 +115,14 @@ class _DeckImportSheetState extends State<DeckImportSheet> {
 
     final msg = t.deckImportResultSummary(_importedCards, _notFound);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  Future<List<Map<String, dynamic>>> _searchRemoteThenLocal(String q) async {
+    try {
+      return await _client.searchCards(q);
+    } catch (_) {
+      return _localSearch.searchCards(q, limit: 1);
+    }
   }
 
   @override

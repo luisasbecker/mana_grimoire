@@ -57,6 +57,8 @@ class ScanRecognitionCandidate {
   String get collectorNumber => card.collectorNumber;
   String? get imageSmall => card.imageUrlSmall;
   String? get imageNormal => card.imageUrlNormal;
+  String? get imagePng => card.imageUrlPng;
+  String? get bestImageUrl => imageSmall ?? imageNormal ?? imagePng;
   String get editionLabel => card.editionLabel;
 }
 

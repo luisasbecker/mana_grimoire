@@ -12,6 +12,7 @@ import '../screens/decks/deck_detail_screen.dart';
 import '../screens/decks/edit_deck_screen.dart';
 import '../screens/decks/add_card_to_deck_screen.dart';
 import '../screens/decks/decks_screen.dart';
+import '../screens/game_assistant/screens/game_assistant_screen.dart';
 import '../screens/home/home_hub_screen.dart';
 import '../screens/scan/scan_screen.dart';
 import '../screens/social/social_hub_screen.dart';
@@ -37,6 +38,7 @@ abstract final class AppRoutes {
   static const homeHub = 'homeHub';
   static const chat = 'chat';
   static const play = 'play';
+  static const gameAssistant = 'gameAssistant';
   static const playSession = 'playSession';
   static const selectPrinting = 'selectPrinting';
   static const devScryfallTest = 'devScryfallTest';
@@ -52,6 +54,8 @@ final GlobalKey<NavigatorState> _chatNavKey =
     GlobalKey<NavigatorState>(debugLabel: 'chatNav');
 final GlobalKey<NavigatorState> _playNavKey =
     GlobalKey<NavigatorState>(debugLabel: 'playNav');
+final GlobalKey<NavigatorState> _gameAssistantNavKey =
+    GlobalKey<NavigatorState>(debugLabel: 'gameAssistantNav');
 
 /// Navigator raiz do [appRouter] — empilha rotas por cima do shell (ex.: modal → select printing).
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -190,6 +194,16 @@ final GoRouter appRouter = GoRouter(
               path: '/play',
               name: AppRoutes.play,
               builder: (_, __) => const PlayTabScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _gameAssistantNavKey,
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/game-assistant',
+              name: AppRoutes.gameAssistant,
+              builder: (_, __) => const GameAssistantScreen(),
             ),
           ],
         ),

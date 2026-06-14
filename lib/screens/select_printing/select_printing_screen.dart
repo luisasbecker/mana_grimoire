@@ -3,6 +3,7 @@ import 'package:mana_grimoire/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../data/remote/scryfall/scryfall_client.dart';
+import '../../data/remote/scryfall/scryfall_local_search_service.dart';
 import '../../widgets/cached_card_thumbnail.dart';
 import '../../widgets/mana_internal_app_bar.dart';
 import '../../widgets/mana_surface_card.dart';
@@ -42,6 +43,7 @@ class SelectPrintingScreen extends StatefulWidget {
 
 class _SelectPrintingScreenState extends State<SelectPrintingScreen> {
   final _client = ScryfallClient();
+  final _localSearch = ScryfallLocalSearchService();
   final _scrollController = ScrollController();
 
   static const int _maxTotalPrintings = 600;
@@ -90,15 +92,30 @@ class _SelectPrintingScreenState extends State<SelectPrintingScreen> {
         'oracleid:${widget.oracleId}',
         unique: 'prints',
       );
+      if (!mounted) return;
       setState(() {
         _printings.addAll(page.data);
         _nextPageUrl = page.nextPageUrl;
         _hasMore = page.hasMore && _nextPageUrl != null;
       });
-    } catch (e) {
-      setState(() => _error = e.toString());
+    } catch (error) {
+      final localPage = await _localSearch.searchCardsFirstPage(
+        'oracleid:${widget.oracleId}',
+        unique: 'prints',
+        limit: _maxTotalPrintings,
+      );
+      if (!mounted) return;
+      if (localPage.data.isNotEmpty) {
+        setState(() {
+          _printings.addAll(localPage.data);
+          _nextPageUrl = null;
+          _hasMore = false;
+        });
+      } else {
+        setState(() => _error = scryfallLocalFallbackErrorMessage(error));
+      }
     } finally {
-      setState(() => _loadingInitial = false);
+      if (mounted) setState(() => _loadingInitial = false);
     }
   }
 
@@ -198,12 +215,16 @@ class _SelectPrintingScreenState extends State<SelectPrintingScreen> {
 
                                 final c = _printings[index];
                                 final id = c['id'] as String?;
+                                final name = (c['name'] as String?) ?? '';
                                 final setCode = (c['set'] as String?) ?? '';
                                 final setName =
                                     (c['set_name'] as String?) ?? '';
                                 final collector =
                                     (c['collector_number'] as String?) ?? '';
-                                final img = ScryfallClient.extractImageSmall(c);
+                                final img =
+                                    ScryfallClient.extractImageSmall(c) ??
+                                        ScryfallClient.extractImageNormal(c) ??
+                                        ScryfallClient.extractImagePng(c);
 
                                 final selected = id != null &&
                                     id == widget.selectedPrintingId;
@@ -218,7 +239,12 @@ class _SelectPrintingScreenState extends State<SelectPrintingScreen> {
                                   ),
                                   child: Row(
                                     children: [
-                                      CachedCardThumbnail(imageUrl: img),
+                                      CachedCardThumbnail(
+                                        imageUrl: img,
+                                        label: name,
+                                        caption:
+                                            '${setCode.toUpperCase()} #$collector',
+                                      ),
                                       const SizedBox(width: 12),
                                       Expanded(
                                         child: Column(

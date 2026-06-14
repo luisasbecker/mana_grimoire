@@ -2,3 +2,31 @@ build/
 *.apk
 *.aab
 .gradle/
+# macOS
+.DS_Store
+
+# Flutter / Dart
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+
+# Android / Gradle
+.gradle/
+android/**/local.properties
+android/**/key.properties
+*.jks
+
+# iOS / Xcode / Flutter generated
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/flutter_assets/
+ios/Flutter/ephemeral/
+ios/Flutter/.last_build_id
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/**/Pods/
+ios/**/DerivedData/
+ios/**/xcuserdata/

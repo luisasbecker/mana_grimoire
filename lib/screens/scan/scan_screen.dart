@@ -101,6 +101,13 @@ class _ScanScreenState extends State<ScanScreen> {
   int get _totalBuffered =>
       _buffer.fold<int>(0, (sum, entry) => sum + entry.quantity);
 
+  bool get _catalogReady => _isCatalogReady(_catalogStatus);
+
+  bool _isCatalogReady(ScanCatalogSyncSnapshot snapshot) {
+    return snapshot.phase == ScanCatalogSyncPhase.completed &&
+        snapshot.cardCount >= ScanCatalogSyncService.minimumViableCardCount;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -186,7 +193,8 @@ class _ScanScreenState extends State<ScanScreen> {
         'Catálogo local pronto com ${snapshot.cardCount} cartas.',
       ScanCatalogSyncPhase.failed =>
         snapshot.lastError ?? 'Falha ao atualizar o catálogo.',
-      ScanCatalogSyncPhase.idle => 'Atualização cancelada.',
+      ScanCatalogSyncPhase.idle => snapshot.lastError ??
+          'Catálogo local pendente. Baixe o banco antes do live scan.',
     };
     _error = snapshot.phase == ScanCatalogSyncPhase.failed
         ? snapshot.lastError
@@ -300,8 +308,13 @@ class _ScanScreenState extends State<ScanScreen> {
     final controller = _cameraController;
     if (controller == null || !controller.value.isInitialized) return;
     if (controller.value.isStreamingImages) return;
+    if (_syncingCatalog) {
+      setState(() {
+        _status = 'Aguarde o download do catálogo terminar.';
+      });
+      return;
+    }
 
-    _catalogSyncService.cancelSync();
     setState(() {
       _status = 'Carregando catálogo local...';
       _error = null;
@@ -1103,10 +1116,6 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   Widget _buildCameraPanel(BuildContext context) {
-    final catalogReady =
-        _catalogStatus.phase == ScanCatalogSyncPhase.completed &&
-            _catalogStatus.cardCount >=
-                ScanCatalogSyncService.minimumViableCardCount;
     return ScanCameraPanel(
       controller: _cameraController,
       cameraLoading: _cameraLoading,
@@ -1116,7 +1125,7 @@ class _ScanScreenState extends State<ScanScreen> {
       error: _error,
       liveCandidate: _livePreviewCandidate,
       bufferCount: _totalBuffered,
-      catalogReady: catalogReady,
+      catalogReady: _catalogReady,
       confirmationsSeen: _pendingLiveCandidateSeenCount,
       confirmationsRequired: _pendingLiveCandidateConfirmationsRequired,
     );
@@ -1130,10 +1139,29 @@ class _ScanScreenState extends State<ScanScreen> {
         : (progress.clamp(0, 1) * 100).round().clamp(0, 100);
     final hasLocalCatalog = _catalogStatus.cardCount >=
         ScanCatalogSyncService.minimumViableCardCount;
-    final ready = _catalogStatus.phase == ScanCatalogSyncPhase.completed &&
-        hasLocalCatalog;
-    final statusColor =
-        hasLocalCatalog ? const Color(0xFF50FA7B) : scheme.secondary;
+    final ready = _catalogReady;
+    final failed = _catalogStatus.phase == ScanCatalogSyncPhase.failed;
+    final statusColor = failed
+        ? scheme.error
+        : ready
+            ? const Color(0xFF50FA7B)
+            : _catalogStatus.isRunning
+                ? scheme.primary
+                : scheme.secondary;
+    final icon = failed
+        ? Icons.error_outline_rounded
+        : _catalogStatus.isRunning
+            ? Icons.downloading_rounded
+            : hasLocalCatalog
+                ? Icons.offline_pin_outlined
+                : Icons.cloud_download_outlined;
+    final showProgress =
+        _catalogStatus.isRunning || ready || (failed && progress != null);
+    final progressValue = ready
+        ? 1.0
+        : progress == null || progress <= 0
+            ? null
+            : progress.clamp(0, 1).toDouble();
     return ManaSurfaceCard(
       padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
       borderColor: statusColor.withValues(alpha: 0.24),
@@ -1143,9 +1171,7 @@ class _ScanScreenState extends State<ScanScreen> {
           Row(
             children: [
               Icon(
-                hasLocalCatalog
-                    ? Icons.offline_pin_outlined
-                    : Icons.cloud_download_outlined,
+                icon,
                 color: statusColor,
               ),
               const SizedBox(width: 10),
@@ -1154,9 +1180,7 @@ class _ScanScreenState extends State<ScanScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      ready
-                          ? 'Catálogo local pronto'
-                          : 'Catálogo local necessário',
+                      _catalogTitle(_catalogStatus),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -1179,7 +1203,7 @@ class _ScanScreenState extends State<ScanScreen> {
               OutlinedButton.icon(
                 onPressed: _syncingCatalog || _scanLoopActive
                     ? null
-                    : () => _runCatalogSync(force: ready),
+                    : () => _runCatalogSync(),
                 icon: _syncingCatalog
                     ? const SizedBox.square(
                         dimension: 16,
@@ -1188,26 +1212,31 @@ class _ScanScreenState extends State<ScanScreen> {
                     : const Icon(Icons.download_for_offline_outlined),
                 label: FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: Text(ready ? 'Atualizar' : 'Baixar'),
+                  child: Text(
+                    _syncingCatalog
+                        ? 'Baixando'
+                        : ready
+                            ? 'Atualizar'
+                            : 'Baixar',
+                  ),
                 ),
               ),
             ],
           ),
-          if (_catalogStatus.isRunning) ...[
+          if (showProgress) ...[
             const SizedBox(height: 10),
             LinearProgressIndicator(
               minHeight: 6,
               borderRadius: BorderRadius.circular(999),
-              value: progress == null || progress <= 0
-                  ? null
-                  : progress.clamp(0, 1).toDouble(),
+              value: progressValue,
+              color: statusColor,
             ),
             const SizedBox(height: 6),
             Row(
               children: [
                 Expanded(
                   child: Text(
-                    _catalogRunningDetail(_catalogStatus),
+                    _catalogProgressDetail(_catalogStatus),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -1218,7 +1247,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 ),
                 if (percent != null)
                   Text(
-                    '$percent%',
+                    ready ? '100%' : '$percent%',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: scheme.onSurfaceVariant,
                           fontWeight: FontWeight.w900,
@@ -1227,9 +1256,35 @@ class _ScanScreenState extends State<ScanScreen> {
               ],
             ),
           ],
+          if (failed && _catalogStatus.lastError != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              _catalogStatus.lastError!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: scheme.error,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+          ],
         ],
       ),
     );
+  }
+
+  String _catalogTitle(ScanCatalogSyncSnapshot snapshot) {
+    if (snapshot.isRunning) {
+      return snapshot.phase == ScanCatalogSyncPhase.checking
+          ? 'Verificando catálogo'
+          : 'Baixando catálogo local';
+    }
+    if (snapshot.phase == ScanCatalogSyncPhase.failed) {
+      return 'Falha ao atualizar catálogo';
+    }
+    return _isCatalogReady(snapshot)
+        ? 'Catálogo local pronto'
+        : 'Catálogo local necessário';
   }
 
   String _catalogRunningLabel(ScanCatalogSyncSnapshot snapshot) {
@@ -1249,18 +1304,38 @@ class _ScanScreenState extends State<ScanScreen> {
         _ => '${snapshot.cardCount} cartas no banco local',
       };
     }
-    if (snapshot.phase == ScanCatalogSyncPhase.idle &&
-        snapshot.lastError != null) {
+    if (_isCatalogReady(snapshot)) {
+      if (snapshot.lastError != null) {
+        return '${snapshot.cardCount} cartas prontas • PT-BR parcial';
+      }
+      final completedAt = snapshot.completedAt;
+      if (completedAt != null) {
+        return '${snapshot.cardCount} cartas • atualizado em ${_formatCatalogTimestamp(completedAt)}';
+      }
+      return '${snapshot.cardCount} cartas prontas para scan offline';
+    }
+    if (snapshot.lastError != null) {
       return snapshot.lastError!;
     }
     return '${snapshot.cardCount} cartas no banco local';
   }
 
-  String _catalogRunningDetail(ScanCatalogSyncSnapshot snapshot) {
+  String _catalogProgressDetail(ScanCatalogSyncSnapshot snapshot) {
     final bytes = _catalogByteProgress(snapshot);
     final cards = '${snapshot.cardCount} cartas indexadas';
     if (snapshot.phase == ScanCatalogSyncPhase.checking) {
       return bytes ?? 'Preparando download...';
+    }
+    if (_isCatalogReady(snapshot)) {
+      if (snapshot.lastError != null) {
+        return bytes == null
+            ? 'Concluído • PT-BR parcial'
+            : 'Concluído • $bytes • PT-BR parcial';
+      }
+      return bytes == null ? 'Concluído • $cards' : 'Concluído • $bytes';
+    }
+    if (snapshot.phase == ScanCatalogSyncPhase.failed) {
+      return bytes == null ? 'Interrompido • $cards' : 'Interrompido • $bytes';
     }
     return bytes == null ? cards : '$bytes • $cards';
   }
@@ -1279,6 +1354,13 @@ class _ScanScreenState extends State<ScanScreen> {
       return '${(bytes / gb).toStringAsFixed(1)} GB';
     }
     return '${(bytes / mb).toStringAsFixed(0)} MB';
+  }
+
+  String _formatCatalogTimestamp(DateTime value) {
+    final local = value.toLocal();
+    String twoDigits(int number) => number.toString().padLeft(2, '0');
+    return '${twoDigits(local.day)}/${twoDigits(local.month)} '
+        '${twoDigits(local.hour)}:${twoDigits(local.minute)}';
   }
 
   Widget _buildControlsCard(BuildContext context) {

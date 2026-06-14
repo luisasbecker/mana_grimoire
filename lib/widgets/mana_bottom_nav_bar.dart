@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Barra inferior fixa com 5 destinos.
+/// Barra inferior fixa com destinos principais.
 ///
-/// - Home fica exatamente no centro.
 /// - O selecionado tem destaque circular + glow.
 class ManaBottomNavBar extends StatelessWidget {
   const ManaBottomNavBar({
@@ -39,6 +38,11 @@ class ManaBottomNavBar extends StatelessWidget {
       label: 'Jogar',
       icon: Icons.sports_esports_outlined,
       selectedIcon: Icons.sports_esports,
+    ),
+    _Dest(
+      label: 'Assist. Jogo',
+      icon: Icons.view_in_ar_outlined,
+      selectedIcon: Icons.view_in_ar,
     ),
   ];
 

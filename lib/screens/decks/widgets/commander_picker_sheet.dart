@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mana_grimoire/l10n/app_localizations.dart';
 import '../../../data/remote/scryfall/scryfall_cache_service.dart';
 import '../../../data/remote/scryfall/scryfall_client.dart';
+import '../../../data/remote/scryfall/scryfall_local_search_service.dart';
 import '../../../widgets/cached_card_thumbnail.dart';
 import '../../../widgets/mana_empty_state.dart';
 import '../../../widgets/mana_surface_card.dart';
@@ -26,23 +27,49 @@ class CommanderPickerSheet extends StatefulWidget {
 class _CommanderPickerSheetState extends State<CommanderPickerSheet> {
   final _client = ScryfallClient();
   final _cacheService = ScryfallCacheService();
+  final _localSearch = ScryfallLocalSearchService();
   bool _loading = false;
   String _query = '';
   List<Map<String, dynamic>> _results = [];
+  String? _error;
 
   Future<void> _search(String v) async {
     setState(() => _query = v);
     final q = v.trim();
     if (q.isEmpty) {
-      setState(() => _results = []);
+      setState(() {
+        _results = [];
+        _error = null;
+      });
       return;
     }
     setState(() => _loading = true);
     try {
-      final res = await _client.searchCards(q);
-      setState(() => _results = res.take(30).toList());
+      final res = await _searchRemoteThenLocal(q);
+      if (!mounted) return;
+      setState(() {
+        _results = res;
+        _error = null;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _results = [];
+        _error = error.toString();
+      });
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _searchRemoteThenLocal(String q) async {
+    try {
+      final res = await _client.searchCards(q);
+      return res.take(30).toList();
+    } catch (error) {
+      final local = await _localSearch.searchCards(q, limit: 30);
+      if (local.isNotEmpty) return local;
+      throw scryfallLocalFallbackErrorMessage(error);
     }
   }
 
@@ -107,9 +134,10 @@ class _CommanderPickerSheetState extends State<CommanderPickerSheet> {
                           title: _query.trim().isEmpty
                               ? t.pickCommanderEmptyTitle
                               : t.pickCommanderNoResultsTitle,
-                          subtitle: _query.trim().isEmpty
-                              ? t.pickCommanderEmptySubtitle
-                              : t.pickCommanderNoResultsSubtitle,
+                          subtitle: _error ??
+                              (_query.trim().isEmpty
+                                  ? t.pickCommanderEmptySubtitle
+                                  : t.pickCommanderNoResultsSubtitle),
                         )
                       : ListView.separated(
                           controller: scrollController,
@@ -121,7 +149,10 @@ class _CommanderPickerSheetState extends State<CommanderPickerSheet> {
                             final name = (card['name'] as String?) ?? 'Unknown';
                             final typeLine =
                                 (card['type_line'] as String?) ?? '';
-                            final img = ScryfallClient.extractImageSmall(card);
+                            final img =
+                                ScryfallClient.extractImageSmall(card) ??
+                                    ScryfallClient.extractImageNormal(card) ??
+                                    ScryfallClient.extractImagePng(card);
                             return ManaSurfaceCard(
                               onTap: () => _pick(card),
                               padding: const EdgeInsets.all(12),
@@ -130,6 +161,7 @@ class _CommanderPickerSheetState extends State<CommanderPickerSheet> {
                                 children: [
                                   CachedCardThumbnail(
                                     imageUrl: img,
+                                    label: name,
                                     width: 52,
                                     height: 72,
                                   ),

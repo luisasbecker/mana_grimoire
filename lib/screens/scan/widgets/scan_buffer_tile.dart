@@ -36,6 +36,8 @@ class ScanBufferTile extends StatelessWidget {
             children: [
               CachedCardThumbnail(
                 imageUrl: card.imageUrlSmall,
+                label: card.name,
+                caption: card.editionLabel,
                 width: dense ? 38 : 48,
                 height: dense ? 54 : 68,
               ),

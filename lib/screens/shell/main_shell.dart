@@ -44,6 +44,9 @@ class MainShell extends StatelessWidget {
                   case 4:
                     context.goNamed(AppRoutes.play);
                     return;
+                  case 5:
+                    context.goNamed(AppRoutes.gameAssistant);
+                    return;
                 }
               },
             ),
