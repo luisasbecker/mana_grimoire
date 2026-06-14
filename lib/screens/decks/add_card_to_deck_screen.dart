@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import '../../data/local/db/db_instance.dart';
 import '../../data/remote/scryfall/scryfall_cache_service.dart';
 import '../../data/remote/scryfall/scryfall_client.dart';
+import '../../data/remote/scryfall/scryfall_local_search_service.dart';
 import '../../widgets/cached_card_thumbnail.dart';
 import '../../widgets/mana_internal_app_bar.dart';
 import '../../widgets/mana_empty_state.dart';
@@ -26,6 +27,7 @@ class AddCardToDeckScreen extends StatefulWidget {
 class _AddCardToDeckScreenState extends State<AddCardToDeckScreen> {
   final _client = ScryfallClient();
   final _cacheService = ScryfallCacheService();
+  final _localSearch = ScryfallLocalSearchService();
   final _uuid = const Uuid();
 
   Timer? _debounce;
@@ -55,8 +57,8 @@ class _AddCardToDeckScreenState extends State<AddCardToDeckScreen> {
       _error = null;
     });
     try {
-      final res = await _client.searchCards(q);
-      final first = res.take(30).toList();
+      final first = await _searchRemoteThenLocal(q);
+      if (!mounted) return;
       setState(() => _results = first);
 
       await _cacheService.cacheScryfallCards(first);
@@ -64,6 +66,17 @@ class _AddCardToDeckScreenState extends State<AddCardToDeckScreen> {
       if (mounted) setState(() => _error = e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _searchRemoteThenLocal(String q) async {
+    try {
+      final res = await _client.searchCards(q);
+      return res.take(30).toList();
+    } catch (error) {
+      final local = await _localSearch.searchCards(q, limit: 30);
+      if (local.isNotEmpty) return local;
+      throw scryfallLocalFallbackErrorMessage(error);
     }
   }
 
@@ -121,7 +134,9 @@ class _AddCardToDeckScreenState extends State<AddCardToDeckScreen> {
                         final setCode = (card['set'] as String?) ?? '';
                         final collector =
                             (card['collector_number'] as String?) ?? '';
-                        final img = ScryfallClient.extractImageSmall(card);
+                        final img = ScryfallClient.extractImageSmall(card) ??
+                            ScryfallClient.extractImageNormal(card) ??
+                            ScryfallClient.extractImagePng(card);
 
                         return ManaSurfaceCard(
                           onTap: () async {
@@ -150,6 +165,8 @@ class _AddCardToDeckScreenState extends State<AddCardToDeckScreen> {
                             children: [
                               CachedCardThumbnail(
                                 imageUrl: img,
+                                label: name,
+                                caption: '${setCode.toUpperCase()} #$collector',
                                 width: 56,
                                 height: 78,
                               ),

@@ -8,6 +8,7 @@ import '../../../data/local/db/app_database.dart';
 import '../../../data/local/db/db_instance.dart';
 import '../../../data/remote/scryfall/scryfall_cache_service.dart';
 import '../../../data/remote/scryfall/scryfall_client.dart';
+import '../../../data/remote/scryfall/scryfall_local_search_service.dart';
 import '../../../screens/scryfall_add_card/widgets/add_to_collection_sheet.dart';
 import '../../../widgets/cached_card_thumbnail.dart';
 
@@ -28,6 +29,7 @@ class DeckCardDetailSheet extends StatefulWidget {
 class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
   final _client = ScryfallClient();
   final _cacheService = ScryfallCacheService();
+  final _localSearch = ScryfallLocalSearchService();
 
   bool _loadingCard = false;
   bool _changingPrinting = false;
@@ -56,7 +58,7 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
       _cardError = null;
     });
     try {
-      final json = await _client.getCardById(printingId);
+      final json = await _cardByIdRemoteThenLocal(printingId);
       if (!mounted) return;
       setState(() => _cardJson = json);
     } catch (e) {
@@ -331,7 +333,7 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
     // Cache the picked printing so the deck list can render it.
     setState(() => _changingPrinting = true);
     try {
-      final card = await _client.getCardById(picked);
+      final card = await _cardByIdRemoteThenLocal(picked);
       await _cacheService.cacheSingleScryfallCard(card);
       final printing = await _printingById(picked);
 
@@ -363,6 +365,18 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
     return (appDb.select(appDb.scryfallPrintings)
           ..where((table) => table.printingId.equals(printingId)))
         .getSingleOrNull();
+  }
+
+  Future<Map<String, dynamic>> _cardByIdRemoteThenLocal(
+    String printingId,
+  ) async {
+    try {
+      return await _client.getCardById(printingId);
+    } catch (error) {
+      final local = await _localSearch.getCardById(printingId);
+      if (local != null) return local;
+      throw scryfallLocalFallbackErrorMessage(error);
+    }
   }
 
   @override
@@ -437,6 +451,8 @@ class _DeckCardDetailSheetState extends State<DeckCardDetailSheet> {
                   children: [
                     CachedCardThumbnail(
                       imageUrl: bigImg,
+                      label: name,
+                      caption: setLine,
                       width: 120,
                       height: 168,
                     ),

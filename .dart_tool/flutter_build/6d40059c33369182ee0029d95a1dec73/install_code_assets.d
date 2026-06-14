@@ -1,0 +1,1 @@
+ /Users/gilbertojunior/Downloads/mana_grimoire/.dart_tool/flutter_build/6d40059c33369182ee0029d95a1dec73/native_assets.json: 

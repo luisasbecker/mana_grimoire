@@ -93,7 +93,7 @@ class _CollectionDetailScreenState extends State<CollectionDetailScreen> {
                       final row = items[index];
                       final p = row.printing;
                       final it = row.item;
-                      final img = p.imageSmall;
+                      final img = p.imageSmall ?? p.imageNormal ?? p.imagePng;
 
                       return ManaSurfaceCard(
                         onTap: () => _openEditSheet(row),
@@ -103,6 +103,9 @@ class _CollectionDetailScreenState extends State<CollectionDetailScreen> {
                           children: [
                             CachedCardThumbnail(
                               imageUrl: img,
+                              label: p.name,
+                              caption:
+                                  '${p.setCode.toUpperCase()} #${p.collectorNumber}',
                               width: 56,
                               height: 78,
                             ),

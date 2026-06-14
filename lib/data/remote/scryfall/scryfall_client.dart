@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
+import 'scryfall_tls.dart';
+
 /// Uma página de resultados da API `/cards/search` (Scryfall).
 class ScryfallCardSearchPage {
   ScryfallCardSearchPage({
@@ -16,7 +18,7 @@ class ScryfallCardSearchPage {
 }
 
 class ScryfallClient {
-  ScryfallClient({Dio? dio}) : _dio = dio ?? Dio() {
+  ScryfallClient({Dio? dio}) : _dio = dio ?? createScryfallDio() {
     _dio.options.baseUrl = 'https://api.scryfall.com';
     _dio.options.connectTimeout = const Duration(seconds: 15);
     _dio.options.receiveTimeout = const Duration(seconds: 20);

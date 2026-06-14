@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_grimoire/l10n/app_localizations.dart';
 
 import '../../../data/local/db/daos/deck_entries_dao.dart';
+import '../../../widgets/cached_card_thumbnail.dart';
 import 'deck_card_detail_sheet.dart';
 
 class DeckCardPreviewViewer extends StatefulWidget {
@@ -97,6 +97,11 @@ class _DeckCardPreviewViewerState extends State<DeckCardPreviewViewer> {
                 itemBuilder: (context, i) {
                   final row = rows[i];
                   final url = _bestImageUrl(row);
+                  final printing = row.printing;
+                  final name = printing?.name ?? row.entry.oracleId;
+                  final setLine = printing == null
+                      ? null
+                      : '${printing.setCode.toUpperCase()} #${printing.collectorNumber}';
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(18, 28, 18, 96),
@@ -118,25 +123,18 @@ class _DeckCardPreviewViewerState extends State<DeckCardPreviewViewer> {
                                 ),
                               ],
                             ),
-                            child: url == null || url.isEmpty
-                                ? const Center(
-                                    child: Icon(
-                                      Icons.image_not_supported_outlined,
-                                      color: Colors.white54,
-                                      size: 48,
-                                    ),
-                                  )
-                                : CachedNetworkImage(
-                                    imageUrl: url,
-                                    fit: BoxFit.cover,
-                                    errorWidget: (_, __, ___) => const Center(
-                                      child: Icon(
-                                        Icons.image_not_supported_outlined,
-                                        color: Colors.white54,
-                                        size: 48,
-                                      ),
-                                    ),
-                                  ),
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return CachedCardThumbnail(
+                                  imageUrl: url,
+                                  label: name,
+                                  caption: setLine,
+                                  width: constraints.maxWidth,
+                                  height: constraints.maxHeight,
+                                  showFrame: false,
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),

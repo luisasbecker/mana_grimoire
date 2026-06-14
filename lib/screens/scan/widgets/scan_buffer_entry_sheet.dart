@@ -79,6 +79,8 @@ class _ScanBufferEntrySheetState extends State<ScanBufferEntrySheet> {
               child: CachedCardThumbnail(
                 imageUrl:
                     _selectedCard.imageUrlNormal ?? _selectedCard.imageUrlSmall,
+                label: _selectedCard.name,
+                caption: _selectedCard.editionLabel,
                 width: 120,
                 height: 168,
               ),

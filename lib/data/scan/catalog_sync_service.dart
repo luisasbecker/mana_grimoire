@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 
 import '../local/db/app_database.dart';
+import '../remote/scryfall/scryfall_tls.dart';
 import 'scan_catalog_filter.dart';
 
 enum ScanCatalogSyncPhase { idle, checking, importing, completed, failed }
@@ -52,7 +53,7 @@ class ScanCatalogSyncService {
     required AppDatabase database,
     Dio? dio,
   })  : _database = database,
-        _dio = dio ?? Dio() {
+        _dio = dio ?? createScryfallDio() {
     _dio.options.baseUrl = 'https://api.scryfall.com';
     _dio.options.connectTimeout = const Duration(seconds: 15);
     _dio.options.receiveTimeout = const Duration(seconds: 30);
@@ -71,7 +72,8 @@ class ScanCatalogSyncService {
   static const int _downloadProgressUpdateBytes = 8 * 1024 * 1024;
   static const Duration _downloadProgressUpdateInterval =
       Duration(milliseconds: 700);
-  static const Duration _localizedPageDelay = Duration(milliseconds: 90);
+  static const Duration _localizedPageDelay = Duration(milliseconds: 350);
+  static const int _localizedPageMaxAttempts = 8;
 
   final AppDatabase _database;
   final Dio _dio;
@@ -150,37 +152,20 @@ class ScanCatalogSyncService {
         .getSingleOrNull();
     if (row == null) {
       final count = await countCachedCards();
-      final hasLocalizedCoverage = await hasLocalizedScanCoverage();
+      final isReady = _isCatalogReady(cardCount: count);
       return ScanCatalogSyncSnapshot(
-        phase: _isCatalogReady(
-          cardCount: count,
-          hasLocalizedCoverage: hasLocalizedCoverage,
-        )
+        phase: isReady
             ? ScanCatalogSyncPhase.completed
             : ScanCatalogSyncPhase.idle,
         cardCount: count,
-        progress: _isCatalogReady(
-          cardCount: count,
-          hasLocalizedCoverage: hasLocalizedCoverage,
-        )
-            ? 1
-            : null,
-        lastError: _isCatalogReady(
-          cardCount: count,
-          hasLocalizedCoverage: hasLocalizedCoverage,
-        )
-            ? null
-            : _incompleteCatalogMessage,
+        progress: isReady ? 1 : null,
+        lastError: isReady ? null : _incompleteCatalogMessage,
       );
     }
     final snapshot = _snapshotFromRow(row.data);
     if (snapshot.isRunning) return snapshot;
     final actualCount = await countCachedCards();
-    final hasLocalizedCoverage = await hasLocalizedScanCoverage();
-    final isReady = _isCatalogReady(
-      cardCount: actualCount,
-      hasLocalizedCoverage: hasLocalizedCoverage,
-    );
+    final isReady = _isCatalogReady(cardCount: actualCount);
     if (actualCount == snapshot.cardCount &&
         snapshot.phase == ScanCatalogSyncPhase.completed &&
         isReady) {
@@ -233,26 +218,22 @@ class ScanCatalogSyncService {
   Future<bool> hasSyncedCatalog() async {
     final status = await currentStatus();
     if (status.phase == ScanCatalogSyncPhase.completed &&
-        status.cardCount >= minimumViableCardCount &&
-        await hasLocalizedScanCoverage()) {
+        status.cardCount >= minimumViableCardCount) {
       return true;
     }
-    return await countCachedCards() >= minimumViableCardCount &&
-        await hasLocalizedScanCoverage();
+    return await countCachedCards() >= minimumViableCardCount;
   }
 
-  bool _isCatalogReady({
-    required int cardCount,
-    required bool hasLocalizedCoverage,
-  }) {
-    return cardCount >= minimumViableCardCount && hasLocalizedCoverage;
+  bool _isCatalogReady({required int cardCount}) {
+    return cardCount >= minimumViableCardCount;
   }
 
   String get _incompleteCatalogMessage {
-    return 'Catálogo local incompleto. Atualize para baixar nomes PT-BR antes de escanear.';
+    return 'Catálogo local incompleto. Baixe o banco antes de escanear.';
   }
 
   void cancelSync() {
+    if (!_syncInProgress) return;
     _cancelRequested = true;
   }
 
@@ -321,21 +302,21 @@ class ScanCatalogSyncService {
       }
 
       final startedAt = DateTime.now().toUtc();
+      final shouldImportDefaultBulk = force || !defaultBulkUpToDate;
       final importing = await _writeStatus(
         phase: ScanCatalogSyncPhase.importing,
         bulkUpdatedAt: bulkInfo.updatedAt,
         startedAt: startedAt,
         completedAt: null,
-        cardCount: 0,
-        progress: 0,
+        cardCount: shouldImportDefaultBulk ? 0 : localCardCount,
+        progress: shouldImportDefaultBulk ? 0 : 0.90,
         downloadUri: bulkInfo.downloadUri.toString(),
-        downloadedBytes: 0,
+        downloadedBytes: shouldImportDefaultBulk ? 0 : bulkInfo.size,
         totalBytes: bulkInfo.size,
       );
       onProgress?.call(importing);
 
       var importedCount = localCardCount;
-      final shouldImportDefaultBulk = force || !defaultBulkUpToDate;
       if (shouldImportDefaultBulk) {
         importedCount = await _importBulkCards(
           bulkInfo.downloadUri,
@@ -344,12 +325,20 @@ class ScanCatalogSyncService {
           onProgress: onProgress,
         );
       }
-      importedCount = await _importLocalizedScanPrintings(
-        startedAt: startedAt,
-        baseImportedCount: importedCount,
-        bulkInfo: bulkInfo,
-        onProgress: onProgress,
-      );
+      String? localizedWarning;
+      try {
+        importedCount = await _importLocalizedScanPrintings(
+          startedAt: startedAt,
+          baseImportedCount: importedCount,
+          bulkInfo: bulkInfo,
+          onProgress: onProgress,
+        );
+      } catch (error) {
+        final cachedCount = await countCachedCards();
+        if (cachedCount < minimumViableCardCount) rethrow;
+        localizedWarning =
+            'Catálogo principal pronto. Nomes PT-BR ficaram parciais: $error';
+      }
       if (shouldImportDefaultBulk) {
         await _deleteCardsNotRefreshedSince(startedAt);
       }
@@ -361,6 +350,7 @@ class ScanCatalogSyncService {
         completedAt: DateTime.now().toUtc(),
         cardCount: cardCount == 0 ? importedCount : cardCount,
         progress: 1,
+        lastError: localizedWarning,
         downloadUri: bulkInfo.downloadUri.toString(),
         downloadedBytes: bulkInfo.size,
         totalBytes: bulkInfo.size,
@@ -416,19 +406,10 @@ class ScanCatalogSyncService {
 
     do {
       if (_cancelRequested) throw const _CatalogSyncCancelled();
-      final response = nextPageUrl == null
-          ? await _dio.get<Map<String, dynamic>>(
-              '/cards/search',
-              queryParameters: {
-                'q': 'lang:$language',
-                'unique': 'prints',
-                'include_multilingual': true,
-                'include_extras': false,
-                'include_variations': false,
-                'order': 'name',
-              },
-            )
-          : await _dio.getUri<Map<String, dynamic>>(Uri.parse(nextPageUrl));
+      final response = await _fetchLocalizedSearchPage(
+        language: language,
+        nextPageUrl: nextPageUrl,
+      );
 
       final payload = response.data;
       if (payload == null || payload['object'] == 'error') {
@@ -492,6 +473,76 @@ class ScanCatalogSyncService {
     return imported;
   }
 
+  Future<Response<Map<String, dynamic>>> _fetchLocalizedSearchPage({
+    required String language,
+    required String? nextPageUrl,
+  }) async {
+    for (var attempt = 1; attempt <= _localizedPageMaxAttempts; attempt++) {
+      if (_cancelRequested) throw const _CatalogSyncCancelled();
+      try {
+        if (nextPageUrl == null) {
+          return await _dio.get<Map<String, dynamic>>(
+            '/cards/search',
+            queryParameters: {
+              'q': 'lang:$language',
+              'unique': 'prints',
+              'include_multilingual': true,
+              'include_extras': false,
+              'include_variations': false,
+              'order': 'name',
+            },
+          );
+        }
+        return await _dio.getUri<Map<String, dynamic>>(Uri.parse(nextPageUrl));
+      } on DioException catch (error) {
+        if (!_shouldRetryLocalizedPage(error) ||
+            attempt == _localizedPageMaxAttempts) {
+          rethrow;
+        }
+        await Future<void>.delayed(_retryDelayFor(error, attempt));
+      }
+    }
+    throw StateError('Localized Scryfall page retry loop exhausted.');
+  }
+
+  bool _shouldRetryLocalizedPage(DioException error) {
+    final statusCode = error.response?.statusCode;
+    return statusCode == 429 ||
+        statusCode == 500 ||
+        statusCode == 502 ||
+        statusCode == 503 ||
+        statusCode == 504 ||
+        error.type == DioExceptionType.connectionTimeout ||
+        error.type == DioExceptionType.receiveTimeout ||
+        error.type == DioExceptionType.connectionError;
+  }
+
+  Duration _retryDelayFor(DioException error, int attempt) {
+    final retryAfter = error.response?.headers.value('retry-after');
+    final retryAfterSeconds = int.tryParse(retryAfter ?? '');
+    if (retryAfterSeconds != null) {
+      if (retryAfterSeconds > 0) {
+        return Duration(seconds: retryAfterSeconds.clamp(1, 30).toInt());
+      }
+      return Duration(seconds: attempt.clamp(1, 4).toInt());
+    }
+    final retryAfterDate = retryAfter == null
+        ? null
+        : () {
+            try {
+              return HttpDate.parse(retryAfter);
+            } on Exception {
+              return null;
+            }
+          }();
+    if (retryAfterDate != null) {
+      final wait = retryAfterDate.difference(DateTime.now().toUtc());
+      if (wait > Duration.zero) return wait;
+    }
+    final seconds = (attempt * attempt).clamp(1, 16).toInt();
+    return Duration(seconds: seconds);
+  }
+
   Future<_BulkInfo> _fetchBulkInfo() async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/bulk-data/$_datasetType',
@@ -528,8 +579,8 @@ class ScanCatalogSyncService {
     ValueChanged<ScanCatalogSyncSnapshot>? onProgress,
   }) async {
     final client = HttpClient()
-      ..connectionTimeout = const Duration(seconds: 20)
-      ..idleTimeout = const Duration(seconds: 30)
+      ..connectionTimeout = const Duration(seconds: 30)
+      ..idleTimeout = const Duration(minutes: 2)
       ..userAgent = 'ManaGrimoire/0.1 (Flutter; Android/iOS)';
     try {
       final request = await client.getUrl(downloadUri);

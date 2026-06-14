@@ -1,0 +1,1 @@
+ /Users/gilbertojunior/Downloads/mana_grimoire/.dart_tool/flutter_build/a2523d6d0a1be34b9969c33ae18e7fc3/dart_build_result.json: 

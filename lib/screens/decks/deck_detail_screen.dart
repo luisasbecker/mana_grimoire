@@ -329,7 +329,7 @@ class _DeckEntriesList extends StatelessWidget {
         final e = row.entry;
         final p = row.printing;
         final name = p?.name ?? e.oracleId;
-        final img = p?.imageSmall;
+        final img = p?.imageSmall ?? p?.imageNormal ?? p?.imagePng;
         final setLine = p == null
             ? null
             : '${p.setCode.toUpperCase()} · #${p.collectorNumber}';
@@ -356,6 +356,8 @@ class _DeckEntriesList extends StatelessWidget {
             children: [
               CachedCardThumbnail(
                 imageUrl: img,
+                label: name,
+                caption: setLine,
                 width: 52,
                 height: 72,
               ),

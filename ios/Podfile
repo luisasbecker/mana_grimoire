@@ -22,8 +22,51 @@ def flutter_root
 end
 
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+require 'fileutils'
 
 flutter_ios_podfile_setup
+
+def ensure_grpc_core_modulemap(installer)
+  grpc_modulemap = File.join(
+    installer.sandbox.root,
+    'Target Support Files',
+    'gRPC-Core',
+    'gRPC-Core.modulemap'
+  )
+  grpc_private_dir = File.join(
+    installer.sandbox.root,
+    'Headers',
+    'Private',
+    'grpc'
+  )
+  grpc_private_modulemap = File.join(grpc_private_dir, 'gRPC-Core.modulemap')
+
+  return unless File.exist?(grpc_modulemap)
+
+  FileUtils.mkdir_p(grpc_private_dir)
+  unless File.exist?(grpc_private_modulemap) &&
+         File.identical?(grpc_modulemap, grpc_private_modulemap)
+    FileUtils.cp(grpc_modulemap, grpc_private_modulemap)
+  end
+end
+
+def remove_missing_firestore_internal_weak_framework(installer)
+  support_files_dir = File.join(
+    installer.sandbox.root,
+    'Target Support Files',
+    'Pods-Runner'
+  )
+
+  Dir.glob(File.join(support_files_dir, 'Pods-Runner.*.xcconfig')).each do |config_file|
+    contents = File.read(config_file)
+    next unless contents.include?('-weak_framework "FirebaseFirestoreInternal"')
+
+    File.write(
+      config_file,
+      contents.gsub(' -weak_framework "FirebaseFirestoreInternal"', '')
+    )
+  end
+end
 
 target 'Runner' do
   use_modular_headers!
@@ -41,4 +84,9 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'
     end
   end
+end
+
+post_integrate do |installer|
+  ensure_grpc_core_modulemap(installer)
+  remove_missing_firestore_internal_weak_framework(installer)
 end
